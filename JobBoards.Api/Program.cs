@@ -2,7 +2,7 @@ using JobBoards.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    builder.Services.AddData();
+    builder.Services.AddData(builder.Configuration);
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();

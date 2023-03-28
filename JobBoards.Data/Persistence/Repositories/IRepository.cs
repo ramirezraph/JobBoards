@@ -1,6 +1,6 @@
 using JobBoards.Data.Entities.Interfaces;
 
-namespace JobBoards.Data.Repositories;
+namespace JobBoards.Data.Persistence.Repositories;
 
 public interface IRepository<T> where T : IEntity
 {

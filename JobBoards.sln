@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobBoards.Api", "JobBoards.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobBoards.Data", "JobBoards.Data\JobBoards.Data.csproj", "{98E35759-21A0-497C-833C-A6C0001D15D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobBoards.WebApplication", "JobBoards.WebApplication\JobBoards.WebApplication.csproj", "{1ADF3D2E-6609-4A77-87DF-78627F5178B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobBoards.WebApplication", "JobBoards.WebApplication\JobBoards.WebApplication.csproj", "{E5CE66B0-F041-42C3-B706-69A4A6BF1515}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,9 +26,9 @@ Global
 		{98E35759-21A0-497C-833C-A6C0001D15D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98E35759-21A0-497C-833C-A6C0001D15D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98E35759-21A0-497C-833C-A6C0001D15D8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1ADF3D2E-6609-4A77-87DF-78627F5178B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1ADF3D2E-6609-4A77-87DF-78627F5178B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1ADF3D2E-6609-4A77-87DF-78627F5178B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1ADF3D2E-6609-4A77-87DF-78627F5178B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5CE66B0-F041-42C3-B706-69A4A6BF1515}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5CE66B0-F041-42C3-B706-69A4A6BF1515}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5CE66B0-F041-42C3-B706-69A4A6BF1515}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5CE66B0-F041-42C3-B706-69A4A6BF1515}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

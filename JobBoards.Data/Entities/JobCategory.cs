@@ -35,4 +35,8 @@ public class JobCategory : Entity<Guid>
             null,
             null);
     }
+
+#pragma warning disable CS8618
+    public JobCategory() { }
+#pragma warning restore CS8618
 }

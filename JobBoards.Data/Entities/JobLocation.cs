@@ -2,7 +2,7 @@ using JobBoards.Data.Entities.Common;
 
 namespace JobBoards.Data.Entities;
 
-public class Location : Entity<Guid>
+public class JobLocation : Entity<Guid>
 {
     public string City { get; private set; }
     public string Country { get; private set; }
@@ -10,7 +10,7 @@ public class Location : Entity<Guid>
     public DateTime? UpdatedAt { get; private set; }
     public DateTime? DeletedAt { get; private set; }
 
-    private Location(
+    private JobLocation(
         Guid locationId,
         string city,
         string country,
@@ -25,7 +25,7 @@ public class Location : Entity<Guid>
         DeletedAt = deletedAt;
     }
 
-    public static Location CreateNew(string city, string country)
+    public static JobLocation CreateNew(string city, string country)
     {
         return new(
             Guid.NewGuid(),
@@ -35,4 +35,8 @@ public class Location : Entity<Guid>
             null,
             null);
     }
+
+#pragma warning disable CS8618
+    public JobLocation() { }
+#pragma warning restore CS8618
 }

@@ -6,7 +6,7 @@ public class JobPost : Entity<Guid>
 {
     public string Title { get; private set; }
     public string Description { get; private set; }
-    public Guid LocationId { get; private set; }
+    public Guid JobLocationId { get; private set; }
     public double MinSalary { get; private set; }
     public double MaxSalary { get; private set; }
     public bool IsActive { get; private set; }
@@ -21,7 +21,7 @@ public class JobPost : Entity<Guid>
         Guid jobPostId,
         string title,
         string description,
-        Guid locationId,
+        Guid jobLocationId,
         double minSalary,
         double maxSalary,
         bool isActive,
@@ -34,7 +34,7 @@ public class JobPost : Entity<Guid>
     {
         Title = title;
         Description = description;
-        LocationId = locationId;
+        JobLocationId = jobLocationId;
         MinSalary = minSalary;
         MaxSalary = maxSalary;
         IsActive = isActive;
@@ -49,7 +49,7 @@ public class JobPost : Entity<Guid>
     public static JobPost CreateNew(
         string title,
         string description,
-        Guid locationId,
+        Guid jobLocationId,
         double minSalary,
         double maxSalary,
         bool isActive,
@@ -61,7 +61,7 @@ public class JobPost : Entity<Guid>
             Guid.NewGuid(),
             title,
             description,
-            locationId,
+            jobLocationId,
             minSalary,
             maxSalary,
             isActive,

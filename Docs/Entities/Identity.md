@@ -10,7 +10,7 @@ public class ApplicationUser : IdentityUser
 
 ```json
 {
-	"id", "00000000-0000-0000-0000-000000000000",
+	"id": "00000000-0000-0000-0000-000000000000",
 	"userName": "johndoe",
 	"email": "john@email.com",
 	"emailConfirmed": false,

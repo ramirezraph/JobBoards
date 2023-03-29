@@ -8,7 +8,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddIdentity(this IServiceCollection services)
     {
-        services.AddDefaultIdentity<ApplicationUser>(options =>
+        services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         {
             // Password settings.
             options.Password.RequireDigit = false;
@@ -26,8 +26,6 @@ public static class DependencyInjection
             options.User.RequireUniqueEmail = true;
         })
         .AddEntityFrameworkStores<JobBoardsDbContext>();
-
-        services.AddScoped<UserManager<ApplicationUser>, UserManager<ApplicationUser>>();
 
         return services;
     }

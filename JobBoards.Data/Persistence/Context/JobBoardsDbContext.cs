@@ -1,3 +1,4 @@
+using JobBoards.Data.Entities;
 using JobBoards.Data.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,8 @@ public class JobBoardsDbContext : IdentityDbContext<ApplicationUser>
     public JobBoardsDbContext(DbContextOptions<JobBoardsDbContext> options) : base(options)
     {
     }
+
+    public DbSet<JobType> JobTypes { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

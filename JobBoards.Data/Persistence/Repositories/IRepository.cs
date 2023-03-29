@@ -1,8 +1,8 @@
-using JobBoards.Data.Entities.Interfaces;
+using JobBoards.Data.Entities.Common;
 
 namespace JobBoards.Data.Persistence.Repositories;
 
-public interface IRepository<T> where T : IEntity
+public interface IRepository<T> where T : Entity<Guid>
 {
     IEnumerable<T> GetAll();
     T? GetById(Guid Id);

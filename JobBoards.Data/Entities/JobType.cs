@@ -35,4 +35,8 @@ public class JobType : Entity<Guid>
             null,
             null);
     }
+
+#pragma warning disable CS8618
+    public JobType() { }
+#pragma warning restore CS8618
 }

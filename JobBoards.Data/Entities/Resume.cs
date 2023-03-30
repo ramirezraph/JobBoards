@@ -24,4 +24,19 @@ public class Resume : Entity<Guid>
         UpdatedAt = updatedAt;
         DeletedAt = deletedAt;
     }
+
+    public static Resume CreateNew(Guid jobSeekerId, string downloadLink)
+    {
+        return new(
+            Guid.NewGuid(),
+            jobSeekerId,
+            downloadLink,
+            DateTime.UtcNow,
+            null,
+            null);
+    }
+
+#pragma warning disable CS8618
+    public Resume() { }
+#pragma warning restore CS8618
 }

@@ -14,7 +14,7 @@ public class JobBoardsDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<JobType> JobTypes { get; set; } = null!;
     public DbSet<JobCategory> JobCategories { get; set; } = null!;
     public DbSet<JobLocation> JobLocations { get; set; } = null!;
-
+    public DbSet<Resume> Resumes { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

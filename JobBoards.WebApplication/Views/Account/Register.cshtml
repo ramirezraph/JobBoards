@@ -1,15 +1,39 @@
-@model Views_Account_Register
+@using JobBoards.WebApplication.ViewModels.Account
+@model RegisterViewModel
 
 <div class="container mt-5" style="width: 400px;">
-    <form asp-action="Register" method="post">
+    <form asp-controller="Account" asp-action="Register" method="post">
         <div class="card p-4 text-start">
             <p class="text-secondary fs-3">Register</p>
             <p class="mt-n3 text-secondary">Please fill out the form</p>
-            <input type="text" class="form-control" name="FullName" placeholder="Full Name" required>
-            <input type="email" class="form-control mt-3" name="Email" placeholder="Email" required>
-            <input type="password" class="form-control mt-3" name="Password" placeholder="Password" required>
-            <input type="password" class="form-control mt-3" name="Password" placeholder="Confirm Password" required>
+
+            <div>
+                <input class="form-control" asp-for="FullName" placeholder="Full Name" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="mt-3">
+                <input class="form-control" asp-for="Email" placeholder="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="mt-3">
+                <input type="password" class="form-control" asp-for="Password" placeholder="Password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="mt-3">
+                <input type="password" class="form-control" asp-for="ConfirmPassword" placeholder="Confirm Password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
             <button type="submit" class="btn btn-primary mt-3">Submit</button>
+
+            @if (ViewBag.RegisterFailedMessage is not null)
+            {
+                <p class="text-danger mt-3">@ViewBag.RegisterFailedMessage</p>
+            }
+
             <div class="d-flex justify-content-center" style="margin-top: 3rem;">
                 <span>Already have an account?</span>
                 <a class="ms-2" asp-controller="Account" asp-action="Login">Sign In</a>

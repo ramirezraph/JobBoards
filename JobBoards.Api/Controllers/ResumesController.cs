@@ -50,7 +50,7 @@ namespace JobBoards.Api.Controllers
 
             return CreatedAtAction(nameof(GetResumeById), new { id = newResume.Id }, newResume);
         }
-    
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteResume(Guid id)
         {

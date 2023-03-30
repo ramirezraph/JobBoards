@@ -1,0 +1,4 @@
+@host = http://localhost:5153/api
+@jobCategoryId = 15489087-af4b-46d0-881d-00f6cd9387bf
+
+GET {{host}}/jobCategories/{{jobCategoryId}}

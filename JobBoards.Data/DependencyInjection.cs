@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using JobBoards.Data.Identity;
 using JobBoards.Data.Persistence;
+using JobBoards.Data.Mappings;
 
 namespace JobBoards.Data;
 
@@ -11,7 +12,8 @@ public static class DependencyInjection
     {
         services
             .AddPersistence(configuration)
-            .AddIdentity();
+            .AddIdentity()
+            .AddMappings();
 
         return services;
     }

@@ -4,6 +4,7 @@ using JobBoards.Data.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobBoards.Data.Persistence.Migrations
 {
     [DbContext(typeof(JobBoardsDbContext))]
-    partial class JobBoardsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230329152808_AddedJobCategoryAndJobLocation")]
+    partial class AddedJobCategoryAndJobLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,6 +38,7 @@ namespace JobBoards.Data.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -46,7 +50,7 @@ namespace JobBoards.Data.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("JobCategories", (string)null);
+                    b.ToTable("JobCategories");
                 });
 
             modelBuilder.Entity("JobBoards.Data.Entities.JobLocation", b =>
@@ -74,7 +78,7 @@ namespace JobBoards.Data.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations", (string)null);
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("JobBoards.Data.Entities.JobType", b =>
@@ -90,6 +94,7 @@ namespace JobBoards.Data.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -101,7 +106,7 @@ namespace JobBoards.Data.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("JobTypes", (string)null);
+                    b.ToTable("JobTypes");
                 });
 
             modelBuilder.Entity("JobBoards.Data.Identity.ApplicationUser", b =>

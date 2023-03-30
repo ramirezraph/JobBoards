@@ -1,0 +1,4 @@
+@host = http://localhost:5153/api
+@jobCategoryId = 67c43e05-e5dd-47fa-945d-83fb66d7923a
+
+DELETE  {{host}}/jobCategories/{{jobCategoryId}}

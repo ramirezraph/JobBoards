@@ -22,6 +22,25 @@ public class AccountController : Controller
         return View();
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Login(LoginViewModel loginViewModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(loginViewModel);
+        }
+
+        var loginResult = await _signInManager.PasswordSignInAsync(loginViewModel.Email, loginViewModel.Password, false, false);
+
+        if (!loginResult.Succeeded)
+        {
+            ViewBag.LoginFailedMessage = "Login failed. Please check your email and password and try again.";
+            return View(loginViewModel);
+        }
+
+        return RedirectToAction(actionName: "Index", controllerName: "Home");
+    }
+
     [HttpGet]
     public IActionResult Register()
     {
@@ -47,7 +66,7 @@ public class AccountController : Controller
         var result = await _userManager.CreateAsync(newUser, registerViewModel.Password);
         if (!result.Succeeded)
         {
-            ViewBag["RegisterFailedMessage"] = "Failed to register user. Please try again.";
+            ViewBag.RegisterFailedMessage = "Failed to register user. Please try again.";
             return View(registerViewModel);
         }
 

@@ -4,16 +4,16 @@ namespace JobBoards.Data.Entities;
 
 public class JobType : Entity<Guid>
 {
-    public string Name { get; private set; }
-    public string Description { get; private set; }
-    public DateTime CreatedAt { get; private set; }
-    public DateTime? UpdatedAt { get; private set; }
-    public DateTime? DeletedAt { get; private set; }
+    public string Name { get; set; }
+    public string? Description { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     private JobType(
         Guid jobTypeId,
         string name,
-        string description,
+        string? description,
         DateTime createdAt,
         DateTime? updatedAt,
         DateTime? deletedAt) : base(jobTypeId)
@@ -25,7 +25,7 @@ public class JobType : Entity<Guid>
         DeletedAt = deletedAt;
     }
 
-    public static JobType CreateNew(string name, string description)
+    public static JobType CreateNew(string name, string? description)
     {
         return new(
             Guid.NewGuid(),

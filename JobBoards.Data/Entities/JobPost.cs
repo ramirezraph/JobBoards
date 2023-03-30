@@ -4,18 +4,18 @@ namespace JobBoards.Data.Entities;
 
 public class JobPost : Entity<Guid>
 {
-    public string Title { get; private set; }
-    public string Description { get; private set; }
-    public Guid JobLocationId { get; private set; }
-    public double MinSalary { get; private set; }
-    public double MaxSalary { get; private set; }
-    public bool IsActive { get; private set; }
-    public Guid JobCategoryId { get; private set; }
-    public Guid JobTypeId { get; private set; }
-    public DateTime Expiration { get; private set; }
-    public DateTime CreatedAt { get; private set; }
-    public DateTime? UpdatedAt { get; private set; }
-    public DateTime? DeletedAt { get; private set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public Guid JobLocationId { get; set; }
+    public double MinSalary { get; set; }
+    public double MaxSalary { get; set; }
+    public bool IsActive { get; set; }
+    public Guid JobCategoryId { get; set; }
+    public Guid JobTypeId { get; set; }
+    public DateTime Expiration { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     private JobPost(
         Guid jobPostId,

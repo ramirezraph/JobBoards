@@ -4,11 +4,11 @@ namespace JobBoards.Data.Entities;
 
 public class JobLocation : Entity<Guid>
 {
-    public string City { get; private set; }
-    public string Country { get; private set; }
-    public DateTime CreatedAt { get; private set; }
-    public DateTime? UpdatedAt { get; private set; }
-    public DateTime? DeletedAt { get; private set; }
+    public string City { get; set; }
+    public string Country { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     private JobLocation(
         Guid locationId,

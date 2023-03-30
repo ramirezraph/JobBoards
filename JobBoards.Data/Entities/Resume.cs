@@ -4,11 +4,11 @@ namespace JobBoards.Data.Entities;
 
 public class Resume : Entity<Guid>
 {
-    public Guid JobSeekerId { get; private set; }
-    public string DownloadLink { get; private set; }
-    public DateTime CreatedAt { get; private set; }
-    public DateTime? UpdatedAt { get; private set; }
-    public DateTime? DeletedAt { get; private set; }
+    public Guid JobSeekerId { get; set; }
+    public string DownloadLink { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     private Resume(
         Guid resumeId,

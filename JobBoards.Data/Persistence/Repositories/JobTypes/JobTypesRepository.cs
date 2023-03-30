@@ -35,10 +35,11 @@ namespace JobBoards.Data.Persistence.Repositories.JobTypes
             await _dbContext.SaveChangesAsync();
         }
 
+
         public async Task UpdateAsync(Guid id, JobType entity)
         {
             var jobType = await _dbContext.JobTypes.FindAsync(id);
-            if(jobType is null)
+            if (jobType is null)
             {
                 throw new Exception("Trying to update job type that doesn't exit.");
             }

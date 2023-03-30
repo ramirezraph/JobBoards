@@ -1,70 +1,23 @@
 @model Views_Account_Register
 
-
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8">
-            <h1 class="text-center mb-4">Register</h1>
-            <form asp-action="Register" method="post" class="needs-validation" novalidate>
-                <div class="card mb-3">
-                    <div class="card-header">
-                        Fill out the form
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label for="inputFullName" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="inputFullName" name="FullName" placeholder="Full Name" required>
-                            <div class="invalid-feedback">Please enter your full name.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="Email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="Email" name="Email" placeholder="Email" required>
-                            <div class="invalid-feedback">Please enter a valid email address.</div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="Password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="Password" name="Password" placeholder="Password" required>
-                            <div class="invalid-feedback">Please enter a password.</div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="ConfirmPassword" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" placeholder="Confirm Password" required>
-                            <div class="invalid-feedback">Please confirm your password.</div>
-                        </div>
-                     
-                        <div class="flex items-center justify-between mt-6">
-                            <div class="text-center mt-3">
-                                <span>Already have an account?</span>
-                                <a href="/Account/Login" class="font-medium text-indigo-600 hover:text-indigo-500">Sign in</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer d-flex justify-content-center">
-                        <button type="submit" class="btn btn-primary bg-cyan-600">Register</button>
-                    </div>
-                </div>
-            </form>
+<div class="container mt-5" style="width: 400px;">
+    <form asp-action="Register" method="post">
+        <div class="card p-4 text-start">
+            <p class="text-secondary fs-3">Register</p>
+            <p class="mt-n3 text-secondary">Please fill out the form</p>
+            <input type="text" class="form-control" name="FullName" placeholder="Full Name" required>
+            <input type="email" class="form-control mt-3" name="Email" placeholder="Email" required>
+            <input type="password" class="form-control mt-3" name="Password" placeholder="Password" required>
+            <input type="password" class="form-control mt-3" name="Password" placeholder="Confirm Password" required>
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+            <div class="d-flex justify-content-center" style="margin-top: 3rem;">
+                <span>Already have an account?</span>
+                <a class="ms-2" href="#">Sign In</a>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 
 @section Scripts {
-    <script>
-        // Enable client-side validation
-        (function () {
-            'use strict';
-            var forms = document.querySelectorAll('.needs-validation');
-            Array.prototype.slice.call(forms)
-                .forEach(function (form) {
-                    form.addEventListener('submit', function (event) {
-                        if (!form.checkValidity()) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    });
-                });
-        })();
-    </script>
+
 }

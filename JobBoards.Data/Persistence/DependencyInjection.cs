@@ -2,6 +2,7 @@ using JobBoards.Data.Persistence.Context;
 using JobBoards.Data.Persistence.Repositories.JobCategories;
 using JobBoards.Data.Persistence.Repositories.JobLocations;
 using JobBoards.Data.Persistence.Repositories.JobTypes;
+using JobBoards.Data.Persistence.Repositories.Resumes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,10 @@ public static class DependencyInjection
         services.AddScoped<IJobCategoriesRepository, JobCategoriesRepository>();
 
         services.AddScoped<IJobLocationsRepository, JobLocationsRepository>();
+
         services.AddScoped<IJobTypesRepository, JobTypesRepository>();
+
+        services.AddScoped<IResumesRepository, ResumesRepository>();
 
         return services;
     }

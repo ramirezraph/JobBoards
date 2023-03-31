@@ -21,4 +21,10 @@ public class JobsController : Controller
     {
         return View();
     }
+
+    [HttpGet]
+    public IActionResult ManageDetails()
+    {
+        return View();
+    }
 }

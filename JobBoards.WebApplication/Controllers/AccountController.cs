@@ -10,9 +10,11 @@ public class AccountController : Controller
         return View();
     }
 
-    [HttpGet]
+   [HttpGet]
     public IActionResult Register()
     {
         return View();
     }
+
+    
 }

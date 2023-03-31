@@ -1,0 +1,10 @@
+@host = http://localhost:5153/api
+@jobCategoryId = d828185e-73ac-486b-ab06-8237da42997e
+
+POST {{host}}/jobCategories/{{jobCategoryId}}
+Content-Type: application/json
+
+{
+    "name": "Test",
+	"description": "Hello there this is another updateseee"
+}

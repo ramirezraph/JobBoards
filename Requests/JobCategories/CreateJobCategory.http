@@ -1,0 +1,9 @@
+@host = http://localhost:5153/api
+
+POST {{host}}/jobCategories
+Content-Type: application/json
+
+{
+    "name": "Test",
+	"description": null
+}

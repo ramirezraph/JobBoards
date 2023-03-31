@@ -1,15 +1,21 @@
 
 using JobBoards.Data;
+using JobBoards.Data.Persistence.Initialization;
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    builder.Services.AddData(builder.Configuration);
+    builder.Services
+        .AddData(builder.Configuration)
+        .AddDbInitializer();
+
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddControllersWithViews();
 }
 
 var app = builder.Build();
 {
+    await DbInitializer.InitializeDatabase(app.Services);
+
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {

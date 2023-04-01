@@ -52,19 +52,15 @@
                         <input type="text" class="form-control">
                     </div>
                 </div>
+
                 <div class="mt-2">
                     <label class="form-label text-black-50">Employment Type</label>
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input">
-                        <label class="form-check-label">Full-time</label>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input">
-                        <label class="form-check-label">Part-time</label>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input">
-                        <label class="form-check-label">Freelance</label>
+                        @foreach (var jobType in Model.JobTypes)
+                        {
+                            <input type="checkbox" class="form-check-input">
+                            <option value="@jobType.Id">@jobType.Name</option>
+                        }
                     </div>
                 </div>
                 <div class="mt-2">

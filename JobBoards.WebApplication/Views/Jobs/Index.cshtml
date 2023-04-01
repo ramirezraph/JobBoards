@@ -36,7 +36,13 @@
                 </div>
                 <div class="mt-2">
                     <label class="form-label text-black-50">Location</label>
-                    <input type="text" class="form-control">
+                    <select class="form-select">
+                    <option selected>All</option>
+                    @foreach (var jobLocation in Model.JobLocations)
+                    {
+                        <option value="@jobLocation.Id">@jobLocation.City</option>
+                    }
+                    </select>
                 </div>
                 <div class="mt-2">
                     <label class="form-label text-black-50">Salary</label>

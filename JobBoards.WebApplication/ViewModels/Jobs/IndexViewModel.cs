@@ -5,4 +5,5 @@ namespace JobBoards.WebApplication.ViewModels.Jobs;
 public class IndexViewModel
 {
     public List<JobCategory> JobCategories { get; set; } = new();
+    public List<JobLocation> JobLocations { get; set; } = new();
 }

@@ -75,4 +75,35 @@ public static class DbSeeder
         await dbContext.JobCategories.AddRangeAsync(jobCategories);
         await dbContext.SaveChangesAsync();
     }
+
+    public static async Task SeedJobLocations(JobBoardsDbContext dbContext)
+    {
+        if (dbContext.JobLocations.Any())
+        {
+            return;
+        }
+
+        var jobLocations = new List<JobLocation>
+        {
+            JobLocation.CreateNew("Quezon City", "Philippines"),
+            JobLocation.CreateNew("Makati", "Philippines"),
+            JobLocation.CreateNew("Imus, Cavite", "Philippines"),
+            JobLocation.CreateNew("Marikina", "Philippines"),
+            JobLocation.CreateNew("Navotas", "Philippines"),
+            JobLocation.CreateNew("Manila", "Philippines"),
+            JobLocation.CreateNew("Mandaluyong", "Philippines"),
+            JobLocation.CreateNew("Meycauayan, Bulacan", "Philippines"),
+            JobLocation.CreateNew("Paranaque", "Philippines"),
+            JobLocation.CreateNew("Taguig", "Philippines"),
+            JobLocation.CreateNew("Bulakan, Bulacan", "Philippines"),
+            JobLocation.CreateNew("Angeles, Pampanga", "Philippines"),
+            JobLocation.CreateNew("Las Pinas", "Philippines"),
+            JobLocation.CreateNew("Mariveles, Bataan", "Philippines"),
+            JobLocation.CreateNew("Calamba, Laguna", "Philippines"),
+            JobLocation.CreateNew("Batangas", "Philippines")
+        };
+
+        await dbContext.JobLocations.AddRangeAsync(jobLocations);
+        await dbContext.SaveChangesAsync();
+    }
 }

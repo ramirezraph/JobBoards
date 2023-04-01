@@ -7,24 +7,24 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
     }
 
-        .centered-container .card {
-            border: none;
-        }
+    .centered-container .card {
+        border: none;
+    }
 </style>
 
 <div class="centered-container">
     <div class="card">
         <div class="card-body">
-            <h2 class="card-title text-primary">Create Job Post</h2>
+            <h1 class="card-title text-primary">Create Job Post</h1>
             <form action="/jobs/create" method="POST">
-                <div class="form-group">
+                <div class="form-group mt-2">
                     <label for="jobTitle">Job Title</label>
-                    <input type="text" class="form-control" id="jobTitle" name="jobTitle" placeholder="Enter job title" required>
+                    <input type="text" class="form-control" id="jobTitle" name="jobTitle" placeholder="Enter job title"
+                        required>
                 </div>
-                <div class="form-group">
+                <div class="form-group mt-2">
                     <label for="jobType">Job Type</label>
                     <select class="form-control" id="jobType" name="jobType" required>
                         <option value="">--Select Job Type--</option>
@@ -34,23 +34,25 @@
                         <option value="temporary">Temporary</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group mt-2">
                     <label for="salary">Salary</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">₱</span>
                         </div>
-                        <input type="number" class="form-control" id="salaryMin" name="salaryMin" placeholder="Minimum Salary" min="0" required>
+                        <input type="number" class="form-control" id="salaryMin" name="salaryMin"
+                            placeholder="Minimum Salary" min="0" required>
                         <div class="input-group-prepend input-group-append">
                             <span class="input-group-text">-</span>
                         </div>
-                        <input type="number" class="form-control" id="salaryMax" name="salaryMax" placeholder="Maximum Salary" min="0" required>
+                        <input type="number" class="form-control" id="salaryMax" name="salaryMax"
+                            placeholder="Maximum Salary" min="0" required>
                         <div class="input-group-append">
                             <span class="input-group-text">₱</span>
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group mt-2">
                     <label for="jobCategory">Job Category</label>
                     <select class="form-control" id="jobCategory" name="jobCategory" required>
                         <option value="">--Select Job Category--</option>
@@ -60,16 +62,18 @@
                         <option value="Sales">Sales</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group mt-2">
                     <label for="jobLocation">Job Location</label>
-                    <input type="text" class="form-control" id="jobLocation" name="jobLocation" placeholder="Enter job location" required>
+                    <input type="text" class="form-control" id="jobLocation" name="jobLocation"
+                        placeholder="Enter job location" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group mt-2">
                     <label for="jobDescription">Job Description</label>
-                    <textarea class="form-control" id="jobDescription" name="jobDescription" rows="5" required></textarea>
+                    <textarea class="form-control" id="jobDescription" name="jobDescription" rows="5"
+                        required></textarea>
                 </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary mt-2">Create</button>
+                <div class="form-group mt-2">
+                    <button type="submit" class="btn btn-primary mt-2 w-25">Create</button>
                     <button type="button" class="btn btn-secondary mt-2" onclick="window.history.back()">Cancel</button>
                 </div>
             </form>

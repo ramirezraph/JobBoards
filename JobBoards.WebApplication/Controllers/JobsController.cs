@@ -34,12 +34,6 @@ public class JobsController : Controller
     }
 
     [HttpGet]
-    public IActionResult ManageDetails()
-    {
-        return View();
-    }
-    
-    [HttpGet]
     public IActionResult Update()
     {
         return View();

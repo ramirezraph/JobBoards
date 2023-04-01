@@ -1,4 +1,5 @@
 using JobBoards.Data.Identity;
+using JobBoards.Data.Persistence.Repositories.JobCategories;
 using JobBoards.WebApplication.ViewModels.Jobs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,19 +11,24 @@ public class JobsController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IJobCategoriesRepository _jobCategoriesRepository;
 
-    public JobsController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+    public JobsController(
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        IJobCategoriesRepository jobCategoriesRepository)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _jobCategoriesRepository = jobCategoriesRepository;
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         var viewModel = new IndexViewModel
         {
-
+            JobCategories = await _jobCategoriesRepository.GetAllAsync(),
         };
         return View(viewModel);
     }

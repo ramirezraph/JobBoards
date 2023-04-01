@@ -12,31 +12,26 @@ public class DbInitializer : IDbInitializer
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<DbInitializer> _logger;
+    private readonly JobBoardsDbContext _dbContext;
     public DbInitializer(
         RoleManager<IdentityRole> roleManager,
         UserManager<ApplicationUser> userManager,
-        ILogger<DbInitializer> logger)
+        ILogger<DbInitializer> logger,
+        JobBoardsDbContext dbContext)
     {
         _roleManager = roleManager;
         _logger = logger;
         _userManager = userManager;
+        _dbContext = dbContext;
     }
 
     public async Task Initialize()
     {
         _logger.LogInformation("Initializing Database");
 
-        if (!_roleManager.Roles.Any())
-        {
-            _logger.LogInformation("Adding Roles");
-            await DbSeeder.SeedRoles(_roleManager);
-        }
-
-        if (!_userManager.Users.Any())
-        {
-            _logger.LogInformation("Adding Admin User");
-            await DbSeeder.SeedAdminUser(_userManager);
-        }
+        await DbSeeder.SeedRoles(_roleManager);
+        await DbSeeder.SeedAdminUser(_userManager);
+        await DbSeeder.SeedJobCategories(_dbContext);
     }
 
     public static async Task InitializeDatabase(IServiceProvider serviceProvider)

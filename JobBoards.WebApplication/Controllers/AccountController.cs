@@ -1,4 +1,5 @@
 using JobBoards.Data.Identity;
+using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using JobBoards.WebApplication.ViewModels.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,13 @@ public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IJobSeekersRepository _jobSeekersRepository;
 
-    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJobSeekersRepository jobSeekersRepository)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _jobSeekersRepository = jobSeekersRepository;
     }
 
     [HttpGet]
@@ -70,7 +73,11 @@ public class AccountController : Controller
             return View(registerViewModel);
         }
 
-        // TODO: Add Role
+        // Add Role
+        await _userManager.AddToRoleAsync(newUser, "User");
+
+        // Register as Jobseeker
+        await _jobSeekersRepository.RegisterUserAsJobSeeker(newUser.Id);
 
         // Sign in the user
         await _signInManager.SignInAsync(newUser, isPersistent: false);

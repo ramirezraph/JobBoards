@@ -35,10 +35,5 @@ namespace JobBoards.Data.Persistence.Repositories.Resumes
             _dbContext.Resumes.Remove(entity);
             await _dbContext.SaveChangesAsync();
         }
-
-        public Task UpdateAsync(Guid id, Resume entity)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

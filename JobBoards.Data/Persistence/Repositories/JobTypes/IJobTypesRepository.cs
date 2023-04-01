@@ -5,6 +5,6 @@ namespace JobBoards.Data.Persistence.Repositories.JobTypes
 {
     public interface IJobTypesRepository : IRepository<JobType>
     {
-
+        Task UpdateAsync(Guid id, JobType entity);
     }
 }

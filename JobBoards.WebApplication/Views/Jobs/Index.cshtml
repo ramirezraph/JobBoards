@@ -1,3 +1,10 @@
+@using JobBoards.WebApplication.ViewModels.Jobs
+@model IndexViewModel;
+
+@{
+    ViewData["Title"] = "Jobs";
+}
+
 <div class="container">
     <span class="fw-bold">Job Listings</span>
 
@@ -61,9 +68,12 @@
                     <span class="fw-bold">Search Result</span>
                     <span class="ms-2 text-black-50" style="font-size: 12px;">Showing 2 of 10 Jobs</span>
                 </div>
-                <a asp-controller="Jobs" asp-action="Create" class="btn btn-primary">
-                    Create New Job
-                </a>
+                @if (User.IsInRole("Employer") || User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Jobs" asp-action="Create" class="btn btn-primary">
+                        Create New Job
+                    </a>
+                }
             </div>
             <div class="mt-3">
                 <div class="card p-3 text-start">

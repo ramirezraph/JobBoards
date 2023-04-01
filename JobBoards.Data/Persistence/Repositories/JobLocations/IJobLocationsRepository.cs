@@ -5,5 +5,5 @@ namespace JobBoards.Data.Persistence.Repositories.JobLocations;
 
 public interface IJobLocationsRepository : IRepository<JobLocation>
 {
-
+    Task UpdateAsync(Guid id, JobLocation entity);
 }

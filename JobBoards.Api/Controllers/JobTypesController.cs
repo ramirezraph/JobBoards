@@ -28,7 +28,7 @@ namespace JobBoards.Api.Controllers
         public async Task<IActionResult> GetJobTypeById(Guid id)
         {
             var jobType = await _jobTypesRepository.GetByIdAsync(id);
-            if(jobType is null)
+            if (jobType is null)
             {
                 return NotFound();
             }
@@ -47,14 +47,14 @@ namespace JobBoards.Api.Controllers
             var newJobType = JobType.CreateNew(request.Name, request.Description);
             await _jobTypesRepository.AddAsync(newJobType);
 
-            return CreatedAtAction(nameof(GetJobTypeById), new { id = newJobType.Id}, newJobType);
+            return CreatedAtAction(nameof(GetJobTypeById), new { id = newJobType.Id }, newJobType);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteJobType(Guid id)
         {
             var jobType = await _jobTypesRepository.GetByIdAsync(id);
-            if(jobType is null)
+            if (jobType is null)
             {
                 return NotFound();
             }
@@ -72,7 +72,7 @@ namespace JobBoards.Api.Controllers
             }
 
             var jobType = await _jobTypesRepository.GetByIdAsync(id);
-            if(jobType is null)
+            if (jobType is null)
             {
                 return NotFound();
             }

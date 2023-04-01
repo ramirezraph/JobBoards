@@ -1,6 +1,8 @@
+using JobBoards.Data.Entities;
+
 namespace JobBoards.WebApplication.ViewModels.Jobs;
 
 public class IndexViewModel
 {
-
+    public List<JobCategory> JobCategories { get; set; } = new();
 }

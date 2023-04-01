@@ -26,7 +26,13 @@
             <form asp-controller="Jobs" asp-action="Index" method="post">
                 <div>
                     <label class="form-label text-black-50">Job Category</label>
-                    <input type="text" class="form-control">
+                    <select class="form-select">
+                        <option selected>All</option>
+                        @foreach (var jobCategory in Model.JobCategories)
+                        {
+                            <option value="@jobCategory.Id">@jobCategory.Name</option>
+                        }
+                    </select>
                 </div>
                 <div class="mt-2">
                     <label class="form-label text-black-50">Location</label>

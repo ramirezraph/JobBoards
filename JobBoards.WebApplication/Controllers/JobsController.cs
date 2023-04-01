@@ -72,8 +72,8 @@ public class JobsController : Controller
         var viewModel = new CreateViewModel
         {
             JobCategories = await _jobCategoriesRepository.GetAllAsync(),
-            // JobTypes = await _jobTypesRepository.GetAllAsync(),
-            // JobLocations = await _jobLocations.GetAllAsync(),
+            JobTypes = await _jobTypesRepository.GetAllAsync(),
+            JobLocations = await _jobLocationsRepository.GetAllAsync(),
         };
         return View(viewModel);
     }
@@ -85,8 +85,8 @@ public class JobsController : Controller
         if (!ModelState.IsValid)
         {
             viewModel.JobCategories = await _jobCategoriesRepository.GetAllAsync();
-            // viewModel.JobTypes = await _jobTypesRepository.GetAllAsync();
-            // viewModel.JobLocations = await _jobLocationsRepository.GetAllAsync();
+            viewModel.JobTypes = await _jobTypesRepository.GetAllAsync();
+            viewModel.JobLocations = await _jobLocationsRepository.GetAllAsync();
 
             return View(viewModel);
         }

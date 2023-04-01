@@ -28,6 +28,17 @@ public class JobPostsRepository : IJobPostsRepository
         return await _dbContext.JobPosts.FindAsync(id);
     }
 
+    public async Task<List<JobPost>> GetNewListingsAsync()
+    {
+        return await _dbContext.JobPosts
+            .OrderByDescending(jp => jp.CreatedAt)
+            .Take(3)
+            .Include(jp => jp.JobType)
+            .Include(jp => jp.JobCategory)
+            .Include(jp => jp.JobLocation)
+            .ToListAsync();
+    }
+
     public async Task RemoveAsync(JobPost entity)
     {
         _dbContext.Remove(entity);

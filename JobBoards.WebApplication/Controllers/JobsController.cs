@@ -46,10 +46,12 @@ public class JobsController : Controller
     {
         var viewModel = new IndexViewModel
         {
+            JobPosts = await _jobPostsRepository.GetAllAsync(),
             JobCategories = await _jobCategoriesRepository.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
             JobTypes = await _jobTypesRepository.GetAllAsync()
         };
+
         return View(viewModel);
     }
 

@@ -83,58 +83,43 @@
                     </a>
                 }
             </div>
-            <div class="mt-3">
-                <div class="card p-3 text-start">
-                    <div class="d-flex justify-content-between">
-                        <span class="fs-6 fw-bold">Business Analyst</span>
-                        <span class="text-black-50">Full-time PHP 60,000 - PHP 75,000</span>
+            @if (Model.JobPosts.Any())
+            {
+                @foreach (var jobPost in Model.JobPosts)
+                {
+                    <div class="mt-3">
+                        <div class="card p-3 text-start">
+                            <div class="d-flex justify-content-between">
+                                <span class="fs-6 fw-bold">@jobPost.Title</span>
+                                <span class="text-black-50">@jobPost.JobType.Name PHP @jobPost.MinSalary - PHP
+                                    @jobPost.MaxSalary</span>
+                            </div>
+                            <p class="mt-3 text-black">
+                                @jobPost.Description
+                            </p>
+                            <div class="d-flex justify-content-between">
+                                <span style="font-weight: 500;">@jobPost.JobLocation.City, @jobPost.JobLocation.Country</span>
+                                <span class="text-black-50">
+                                    @jobPost.CreatedAt
+                                </span>
+                            </div>
+                            <div class="mt-3 d-flex">
+                                <a asp-controller="Jobs" asp-action="Details" class="btn btn-secondary me-2">
+                                    View Details
+                                </a>
+                                <button class="btn btn-primary">
+                                    Apply Now
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <p class="mt-3 text-black">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae esse accusamus, culpa nostrum
-                        dolor eius impedit accusantium ...
-                    </p>
-                    <div class="d-flex justify-content-between">
-                        <span style="font-weight: 500;">Makati City</span>
-                        <span class="text-black-50">
-                            Posted 1h ago
-                        </span>
-                    </div>
-                    <div class="mt-3 d-flex">
-                        <a asp-controller="Jobs" asp-action="Details" class="btn btn-secondary me-2">
-                            View Details
-                        </a>
-                        <button class="btn btn-primary">
-                            Apply Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-3">
-                <div class="card p-3 text-start">
-                    <div class="d-flex justify-content-between">
-                        <span class="fs-6 fw-bold">.NET Fullstack Developer</span>
-                        <span class="text-black-50">Full-time PHP 60,000 - PHP 75,000</span>
-                    </div>
-                    <p class="mt-3 text-black">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae esse accusamus, culpa nostrum
-                        dolor eius impedit accusantium ...
-                    </p>
-                    <div class="d-flex justify-content-between">
-                        <span style="font-weight: 500;">Makati City</span>
-                        <span class="text-black-50">
-                            Posted 1h ago
-                        </span>
-                    </div>
-                    <div class="mt-3 d-flex">
-                        <a asp-controller="Jobs" asp-action="Details" class="btn btn-secondary me-2">
-                            View Details
-                        </a>
-                        <button class="btn btn-primary">
-                            Apply Now
-                        </button>
-                    </div>
-                </div>
-            </div>
+                }
+            }
+            else
+            {
+                <p class="text-black-50 mt-2">No Jobs found.</p>
+            }
+
         </div>
     </div>
 </div>

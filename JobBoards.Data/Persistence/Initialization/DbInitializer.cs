@@ -26,11 +26,17 @@ public class DbInitializer : IDbInitializer
     {
         _logger.LogInformation("Initializing Database");
 
-        _logger.LogInformation("Adding Roles");
-        await DbSeeder.SeedRoles(_roleManager);
+        if (!_roleManager.Roles.Any())
+        {
+            _logger.LogInformation("Adding Roles");
+            await DbSeeder.SeedRoles(_roleManager);
+        }
 
-        _logger.LogInformation("Adding Admin User");
-        await DbSeeder.SeedAdminUser(_userManager);
+        if (!_userManager.Users.Any())
+        {
+            _logger.LogInformation("Adding Admin User");
+            await DbSeeder.SeedAdminUser(_userManager);
+        }
     }
 
     public static async Task InitializeDatabase(IServiceProvider serviceProvider)

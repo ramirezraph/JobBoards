@@ -105,10 +105,10 @@ public class JobsController : Controller
             formValues.JobLocationId,
             formValues.MinSalary,
             formValues.MaxSalary,
-            true,
+            true, // TODO: Create a form field for IsActive
             formValues.JobCategoryId,
             formValues.JobTypeId,
-            DateTime.UtcNow.AddYears(1),
+            DateTime.UtcNow.AddYears(1), // TODO: Create a form field for Expiration
             signedInUserId
         );
 

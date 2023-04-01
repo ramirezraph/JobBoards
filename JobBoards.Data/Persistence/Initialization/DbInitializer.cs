@@ -32,6 +32,8 @@ public class DbInitializer : IDbInitializer
         await DbSeeder.SeedRoles(_roleManager);
         await DbSeeder.SeedAdminUser(_userManager);
         await DbSeeder.SeedJobCategories(_dbContext);
+        await DbSeeder.SeedJobLocations(_dbContext);
+        await DbSeeder.SeedJobTypes(_dbContext);
     }
 
     public static async Task InitializeDatabase(IServiceProvider serviceProvider)

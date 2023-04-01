@@ -30,7 +30,13 @@ public class JobsController : Controller
     [HttpGet]
     public IActionResult Details()
     {
-        return View();
+        var viewModel = new DetailsViewModel
+        {
+            IsSignedIn = User.Identity?.IsAuthenticated ?? false,
+            HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),
+            WithApplication = false
+        };
+        return View(viewModel);
     }
 
     [HttpGet]

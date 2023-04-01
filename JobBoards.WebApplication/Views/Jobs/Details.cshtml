@@ -1,3 +1,6 @@
+@using JobBoards.WebApplication.ViewModels.Jobs;
+@model DetailsViewModel;
+
 @{
     ViewData["Title"] = "Job Details";
 }
@@ -67,48 +70,65 @@
                     </div>
                 </div>
             </div>
-            <div class="card mt-2">
-                <div class="card-body">
-                    <h6 class="card-title">Applications</h6>
-                    <div class="row mt-3">
-                        <h6 class="col-4 d-inline"># of Job Applicants:</h6>
-                        <div class="col-8">
-                            21
+
+            @if (Model.HasWriteAccess)
+            {
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <h6 class="card-title">Applications</h6>
+                        <div class="row mt-3">
+                            <h6 class="col-4 d-inline"># of Job Applicants:</h6>
+                            <div class="col-8">
+                                21
+                            </div>
                         </div>
+                        <a asp-controller="Jobs" asp-action="ManageJobApplications"
+                            class="btn btn-secondary btn-block w-100 mt-3">Manage Applications</a>
                     </div>
-                    <a asp-controller="Jobs" asp-action="ManageJobApplications"
-                        class="btn btn-secondary btn-block w-100 mt-3">Manage Applications</a>
                 </div>
-            </div>
-            <div class="card mt-2">
-                <div class="card-body">
-                    <h6 class="card-title">My Application</h6>
-                    <div class="row mt-3">
-                        <h6 class="col-4 d-inline">Status:</h6>
-                        <div class="col-8 text-info">
-                            Viewed
+            }
+
+            @if (Model.WithApplication)
+            {
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <h6 class="card-title">My Application</h6>
+                        <div class="row mt-3">
+                            <h6 class="col-4 d-inline">Status:</h6>
+                            <div class="col-8 text-info">
+                                Viewed
+                            </div>
                         </div>
-                    </div>
-                    <div class="row mt-3">
-                        <h6 class="col-4 d-inline">Resume:</h6>
-                        <div class="col-8 text-info">
-                            my-resume.pdf
+                        <div class="row mt-3">
+                            <h6 class="col-4 d-inline">Resume:</h6>
+                            <div class="col-8 text-info">
+                                my-resume.pdf
+                            </div>
                         </div>
-                    </div>
-                    <div class="row mt-3">
-                        <h6 class="col-4 d-inline">Applied</h6>
-                        <div class="col-8">
-                            04/02/2023 - 3:23 PM
+                        <div class="row mt-3">
+                            <h6 class="col-4 d-inline">Applied</h6>
+                            <div class="col-8">
+                                04/02/2023 - 3:23 PM
+                            </div>
                         </div>
+                        <a href="#" class="btn btn-danger btn-block w-100 mt-3">Withdraw</a>
                     </div>
-                    <a href="#" class="btn btn-danger btn-block w-100 mt-3">Withdraw</a>
                 </div>
-            </div>
+            }
+
             <a asp-controller="Jobs" asp-action="Index" class="btn btn-secondary btn-block w-100 mt-2">Back to List</a>
-            <a href="#" class="btn btn-primary btn-block w-100 mt-2">Apply Now</a>
-            <a href="#" class="btn btn-secondary btn-block w-100 mt-1">Deactivate Job Post</a>
-            <a asp-controller="Jobs" asp-action="Update" class="btn btn-primary btn-block w-100 mt-1">Edit</a>
-            <a href="#" class="btn btn-danger btn-block w-100 mt-1">Delete</a>
+
+            @if (!Model.HasWriteAccess && !Model.WithApplication)
+            {
+                <a href="#" class="btn btn-primary btn-block w-100 mt-2">Apply Now</a>
+            }
+
+            @if (Model.HasWriteAccess)
+            {
+                <a href="#" class="btn btn-secondary btn-block w-100 mt-1">Deactivate Job Post</a>
+                <a asp-controller="Jobs" asp-action="Update" class="btn btn-primary btn-block w-100 mt-1">Edit</a>
+                <a href="#" class="btn btn-danger btn-block w-100 mt-1">Delete</a>
+            }
         </div>
     </div>
 </div>

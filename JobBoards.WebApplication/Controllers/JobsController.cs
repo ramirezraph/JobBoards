@@ -49,21 +49,31 @@ public class JobsController : Controller
             JobPosts = await _jobPostsRepository.GetAllAsync(),
             JobCategories = await _jobCategoriesRepository.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
-            JobTypes = await _jobTypesRepository.GetAllAsync()
+            JobTypes = await _jobTypesRepository.GetAllAsync(),
+            HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),
         };
 
         return View(viewModel);
     }
 
     [HttpGet]
-    public IActionResult Details()
+    public async Task<IActionResult> Details(Guid id)
     {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(id);
+
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
         var viewModel = new DetailsViewModel
         {
+            JobPost = jobPost,
             IsSignedIn = User.Identity?.IsAuthenticated ?? false,
             HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),
             WithApplication = false
         };
+
         return View(viewModel);
     }
 

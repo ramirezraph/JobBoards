@@ -25,7 +25,11 @@ public class JobPostsRepository : IJobPostsRepository
 
     public async Task<JobPost?> GetByIdAsync(Guid id)
     {
-        return await _dbContext.JobPosts.FindAsync(id);
+        return await _dbContext.JobPosts
+            .Include(jp => jp.JobType)
+            .Include(jp => jp.JobCategory)
+            .Include(jp => jp.JobLocation)
+            .SingleOrDefaultAsync(jp => jp.Id == id);
     }
 
     public async Task<List<JobPost>> GetNewListingsAsync()
@@ -36,6 +40,7 @@ public class JobPostsRepository : IJobPostsRepository
             .Include(jp => jp.JobType)
             .Include(jp => jp.JobCategory)
             .Include(jp => jp.JobLocation)
+            .Include(jp => jp.JobApplications)
             .ToListAsync();
     }
 

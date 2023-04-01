@@ -8,34 +8,13 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-md-8">
-            <div class="card">
+            <div class="card border-0">
                 <div class="card-body">
-                    <h2 class="card-title text-primary">Software Engineer</h2>
-                    <h4 class="card-subtitle text-muted mb-4">Full-time, PHP 60,000 - PHP 75,000</h4>
+                    <h2 class="card-title text-primary" style="font-size: 48px;">@Model.JobPost.Title</h2>
+                    <h4 class="card-subtitle text-muted mb-4">@Model.JobPost.JobType.Name, PHP @Model.JobPost.MinSalary
+                        - PHP @Model.JobPost.MaxSalary</h4>
                     <p class="card-text">
-                        We are looking for a highly skilled and experienced Software Engineer to join our team. In this
-                        role, you will be responsible for designing, developing, and maintaining software applications
-                        that meet the needs of our clients. You will work closely with other members of the development
-                        team to ensure that our applications are robust, scalable, and efficient.
-                    </p>
-                    <p class="card-text">
-                        <strong>Responsibilities:</strong>
-                    <ul>
-                        <li>Design and develop software applications</li>
-                        <li>Write clean, efficient, and well-documented code</li>
-                        <li>Collaborate with cross-functional teams to define, design, and ship new features</li>
-                        <li>Identify and troubleshoot software defects and issues</li>
-                    </ul>
-                    </p>
-                    <p class="card-text">
-                        <strong>Requirements:</strong>
-                    <ul>
-                        <li>Bachelor's degree in Computer Science or related field</li>
-                        <li>At least 3 years of experience in software development</li>
-                        <li>Proficient in PHP, JavaScript, and other web technologies</li>
-                        <li>Experience with SQL and database design</li>
-                        <li>Strong problem-solving skills</li>
-                    </ul>
+                        @Model.JobPost.Description
                     </p>
                 </div>
             </div>
@@ -47,25 +26,25 @@
                     <div class="row mt-3">
                         <h6 class="col-4 d-inline">Job Type:</h6>
                         <div class="col-8">
-                            Full-time
+                            @Model.JobPost.JobType.Name
                         </div>
                     </div>
                     <div class="row mt-2">
                         <h6 class="col-4 d-inline">Salary:</h6>
                         <div class="col-8">
-                            PHP 60,000 - PHP 75,000
+                            PHP @Model.JobPost.MinSalary - PHP @Model.JobPost.MaxSalary
                         </div>
                     </div>
                     <div class="row mt-2">
                         <h6 class="col-4 d-inline">Location:</h6>
                         <div class="col-8">
-                            Metro Manila
+                            @Model.JobPost.JobLocation.City, @Model.JobPost.JobLocation.Country
                         </div>
                     </div>
                     <div class="row mt-2">
                         <h6 class="col-4 d-inline">Posted:</h6>
                         <div class="col-8">
-                            03/31/2023 - 5:50 PM
+                            @Model.JobPost.CreatedAt
                         </div>
                     </div>
                 </div>
@@ -79,7 +58,7 @@
                         <div class="row mt-3">
                             <h6 class="col-4 d-inline"># of Job Applicants:</h6>
                             <div class="col-8">
-                                21
+                                @Model.JobPost.JobApplications.Count
                             </div>
                         </div>
                         <a asp-controller="Jobs" asp-action="ManageJobApplications"

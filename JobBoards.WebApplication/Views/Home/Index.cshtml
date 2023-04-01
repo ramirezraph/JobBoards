@@ -30,7 +30,7 @@
             @foreach (var jobPost in Model.NewListings)
             {
                 <div class="col-md-4 mb-3 mb-md-0">
-                    <a asp-controller="Jobs" asp-action="Details"
+                    <a asp-controller="Jobs" asp-action="Details" asp-route-id="@jobPost.Id"
                         class="btn text-start rounded p-4 bg-white border border-gray-300 d-flex flex-column justify-content-between h-100">
                         <div class="d-flex flex-column">
                             <h5 class="text-gray-900 font-semibold">
@@ -42,7 +42,7 @@
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-4">
                             <p class="m-0" style="font-weight: 500;">
-                                @jobPost.JobLocation.City, @jobPost.JobLocation.Country
+                                @jobPost.JobLocation.City
                             </p>
                             <p class="text-black-50 m-0" style="font-size: 0.8rem;">
                                 @jobPost.CreatedAt

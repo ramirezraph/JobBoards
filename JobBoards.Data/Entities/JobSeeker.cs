@@ -5,18 +5,27 @@ namespace JobBoards.Data.Entities;
 
 public class JobSeeker : Entity<Guid>
 {
-    public Guid UserId { get; set; }
-    public ApplicationUser User { get; set; } = default!;
+    public string UserId { get; set; }
     public Guid ResumeId { get; set; }
+    public Resume Resume { get; set; } = default!;
+    public ICollection<JobApplication> JobApplications { get; set; } = new List<JobApplication>();
 
-    public JobSeeker(
+    private JobSeeker(
         Guid jobSeekerId,
-        Guid userId,
-        ApplicationUser user,
+        string userId,
         Guid resumeId) : base(jobSeekerId)
     {
         UserId = userId;
-        User = user;
         ResumeId = resumeId;
     }
+    public static JobSeeker RegisterUserAsJobseeker(string userId)
+    {
+        return new(Guid.NewGuid(), userId, Guid.Empty);
+    }
+#pragma warning disable CS8618
+    public JobSeeker()
+    {
+    }
+#pragma warning restore CS8618
+
 }

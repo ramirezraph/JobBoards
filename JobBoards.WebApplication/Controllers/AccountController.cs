@@ -83,6 +83,12 @@ public class AccountController : Controller
         return View();
     }
 
+    [HttpGet]
+    public IActionResult ChangePassword()
+    {
+        return View();
+    }
+
     [HttpPost]
     public async Task<IActionResult> Logout()
     {

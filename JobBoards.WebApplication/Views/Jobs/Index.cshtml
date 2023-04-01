@@ -56,9 +56,14 @@
             </form>
         </div>
         <div class="col-8">
-            <div class="d-flex align-items-center">
-                <span class="fw-bold">Search Result</span>
-                <span class="ms-2 text-black-50" style="font-size: 12px;">Showing 2 of 10 Jobs</span>
+            <div class="d-flex justify-content-between">
+                <div class="d-flex align-items-center">
+                    <span class="fw-bold">Search Result</span>
+                    <span class="ms-2 text-black-50" style="font-size: 12px;">Showing 2 of 10 Jobs</span>
+                </div>
+                <a asp-controller="Jobs" asp-action="Create" class="btn btn-primary">
+                    Create New Job
+                </a>
             </div>
             <div class="mt-3">
                 <div class="card p-3 text-start">
@@ -77,7 +82,7 @@
                         </span>
                     </div>
                     <div class="mt-3 d-flex">
-                        <a asp-controller="Jobs" asp-action="Details" class="btn btn-dark me-2">
+                        <a asp-controller="Jobs" asp-action="Details" class="btn btn-secondary me-2">
                             View Details
                         </a>
                         <button class="btn btn-primary">
@@ -103,7 +108,7 @@
                         </span>
                     </div>
                     <div class="mt-3 d-flex">
-                        <a asp-controller="Jobs" asp-action="Details" class="btn btn-dark me-2">
+                        <a asp-controller="Jobs" asp-action="Details" class="btn btn-secondary me-2">
                             View Details
                         </a>
                         <button class="btn btn-primary">

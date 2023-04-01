@@ -37,11 +37,11 @@
                 <div class="mt-2">
                     <label class="form-label text-black-50">Location</label>
                     <select class="form-select">
-                    <option selected>All</option>
-                    @foreach (var jobLocation in Model.JobLocations)
-                    {
-                        <option value="@jobLocation.Id">@jobLocation.City</option>
-                    }
+                        <option selected>All</option>
+                        @foreach (var jobLocation in Model.JobLocations)
+                        {
+                            <option value="@jobLocation.Id">@jobLocation.City</option>
+                        }
                     </select>
                 </div>
                 <div class="mt-2">
@@ -55,13 +55,13 @@
 
                 <div class="mt-2">
                     <label class="form-label text-black-50">Employment Type</label>
-                    <div class="mb-3 form-check">
-                        @foreach (var jobType in Model.JobTypes)
-                        {
+                    @foreach (var jobType in Model.JobTypes)
+                    {
+                        <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input">
                             <option value="@jobType.Id">@jobType.Name</option>
-                        }
-                    </div>
+                        </div>
+                    }
                 </div>
                 <div class="mt-2">
                     <button type="submit" class="btn btn-outline-primary w-100" style="font-weight: 500;">

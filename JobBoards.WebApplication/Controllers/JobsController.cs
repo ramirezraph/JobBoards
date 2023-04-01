@@ -38,6 +38,12 @@ public class JobsController : Controller
     {
         return View();
     }
+    
+    [HttpGet]
+    public IActionResult Update()
+    {
+        return View();
+    }
 
     [HttpGet]
     public IActionResult ManageJobApplications()

@@ -106,4 +106,22 @@ public static class DbSeeder
         await dbContext.JobLocations.AddRangeAsync(jobLocations);
         await dbContext.SaveChangesAsync();
     }
+
+    public static async Task SeedJobTypes(JobBoardsDbContext dbContext)
+    {
+        if (dbContext.JobTypes.Any())
+        {
+            return;
+        }
+
+        var jobTypes = new List<JobType>
+        {
+            JobType.CreateNew("Full-Time", null),
+            JobType.CreateNew("Part-Time", null),
+            JobType.CreateNew("Freelance", null),
+        };
+
+        await dbContext.JobTypes.AddRangeAsync(jobTypes);
+        await dbContext.SaveChangesAsync();
+    }
 }

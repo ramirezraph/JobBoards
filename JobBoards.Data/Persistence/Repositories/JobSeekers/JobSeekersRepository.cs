@@ -38,7 +38,7 @@ public class JobSeekersRepository : IJobSeekersRepository
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task UpdateResume(Guid id, string resumeDownloadLink)
+    public async Task UpdateResumeAsync(Guid id, Uri newUri, string fileName)
     {
         var jobseeker = await _dbContext.JobSeekers.FindAsync(id);
         if (jobseeker is null)
@@ -54,7 +54,7 @@ public class JobSeekersRepository : IJobSeekersRepository
         }
 
         // Add the new resume
-        var newResume = Resume.CreateNew(jobseeker.Id, resumeDownloadLink);
+        var newResume = Resume.CreateNew(jobseeker.Id, newUri, fileName);
         await _resumesRepository.AddAsync(newResume);
         jobseeker.ResumeId = newResume.Id;
 
@@ -72,6 +72,8 @@ public class JobSeekersRepository : IJobSeekersRepository
 
     public Task<JobSeeker?> GetJobSeekerProfileByUserId(string userId)
     {
-        return _dbContext.JobSeekers.SingleOrDefaultAsync(js => js.UserId == userId);
+        return _dbContext.JobSeekers
+            .Include(js => js.Resume)
+            .SingleOrDefaultAsync(js => js.UserId == userId);
     }
 }

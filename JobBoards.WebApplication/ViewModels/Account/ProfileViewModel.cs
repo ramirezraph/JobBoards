@@ -32,6 +32,8 @@ public class FileExtensionsAttribute : ValidationAttribute
 }
 public class ProfileViewModel
 {
+    public string UserId { get; set; } = default!;
+
     [Required]
     [DisplayName("Full Name")]
     public string FullName { get; set; } = default!;
@@ -40,7 +42,7 @@ public class ProfileViewModel
     [EmailAddress]
     public string Email { get; set; } = default!;
 
-    [FileExtensions(new[] { ".pdf", ".docx" })]
+    [FileExtensions(new[] { ".pdf" })]
     [DisplayName("Resume File")]
     public IFormFile? ResumeFile { get; set; }
 

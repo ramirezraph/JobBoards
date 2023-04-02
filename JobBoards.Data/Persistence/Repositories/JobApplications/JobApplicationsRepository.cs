@@ -28,6 +28,14 @@ public class JobApplicationsRepository : IJobApplicationsRepository
     {
         return await _dbContext.JobApplications
                 .Where(ja => ja.JobSeekerId == jobSeekerId)
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobType)
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobCategory)
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobLocation)
+                .Include(ja => ja.JobSeeker)
+                    .ThenInclude(js => js.Resume)
                 .ToListAsync();
     }
 
@@ -35,6 +43,8 @@ public class JobApplicationsRepository : IJobApplicationsRepository
     {
         return await _dbContext.JobApplications
                 .Where(ja => ja.JobPostId == postId)
+                .Include(ja => ja.JobSeeker)
+                    .ThenInclude(js => js.Resume)
                 .ToListAsync();
     }
 
@@ -43,6 +53,15 @@ public class JobApplicationsRepository : IJobApplicationsRepository
         return await _dbContext.JobApplications
                 .Include(ja => ja.JobSeeker)
                 .SingleOrDefaultAsync(ja => ja.Id == id);
+    }
+
+    public async Task<JobApplication?> GetJobSeekerApplicationToJobPostAsync(Guid jobSeekerId, Guid postId)
+    {
+        return await _dbContext.JobApplications
+                 .Include(ja => ja.JobSeeker)
+                    .ThenInclude(js => js.Resume)
+                 .Include(ja => ja.JobPost)
+                 .SingleOrDefaultAsync(ja => ja.JobPostId == postId && ja.JobSeekerId == jobSeekerId);
     }
 
     public Task RemoveAsync(JobApplication entity)

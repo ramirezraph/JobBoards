@@ -66,9 +66,11 @@
                                 </div>
                                 <div class="row">
                                     <span class="col-2" style="font-weight: 500;">Resume:</span>
-                                    <div class="col-10 text-info">
+                                    <a asp-controller="Jobseekers" asp-action="DownloadResume"
+                                asp-route-userId="@jobApplication.JobSeeker.UserId" class="col-10 text-info"
+                                        style="text-decoration: none;">
                                         @jobApplication.JobSeeker.Resume.FileName
-                                    </div>
+                                    </a>
                                 </div>
                                 <div class="row mt-2">
                                     <span class="col-2" style="font-weight: 500;">Applied:</span>

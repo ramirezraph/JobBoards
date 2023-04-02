@@ -17,6 +17,7 @@ public class JobBoardsDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<JobPost> JobPosts { get; set; } = null!;
     public DbSet<JobSeeker> JobSeekers { get; set; } = null!;
     public DbSet<Resume> Resumes { get; set; } = null!;
+    public DbSet<JobApplication> JobApplications { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,5 +34,18 @@ public class JobBoardsDbContext : IdentityDbContext<ApplicationUser>
             .WithOne(jp => jp.CreatedBy)
             .HasForeignKey(jp => jp.CreatedById)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<JobApplication>()
+            .HasKey(ja => new { ja.JobPostId, ja.JobSeekerId });
+
+        modelBuilder.Entity<JobApplication>()
+            .HasOne(ja => ja.JobPost)
+            .WithMany(jp => jp.JobApplications)
+            .HasForeignKey(ja => ja.JobPostId);
+
+        modelBuilder.Entity<JobApplication>()
+            .HasOne(ja => ja.JobSeeker)
+            .WithMany(js => js.JobApplications)
+            .HasForeignKey(ja => ja.JobSeekerId);
     }
 }

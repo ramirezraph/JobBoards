@@ -1,4 +1,5 @@
 using JobBoards.Data.Persistence.Context;
+using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobCategories;
 using JobBoards.Data.Persistence.Repositories.JobLocations;
 using JobBoards.Data.Persistence.Repositories.JobPosts;
@@ -33,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<IResumesRepository, ResumesRepository>();
         services.AddScoped<IJobSeekersRepository, JobSeekersRepository>();
         services.AddScoped<IJobPostsRepository, JobPostsRepository>();
+        services.AddScoped<IJobApplicationsRepository, JobApplicationsRepository>();
 
         return services;
     }

@@ -1,10 +1,24 @@
+@using JobBoards.WebApplication.ViewModels.Jobs
+@model JobApplicationsViewModel
+
 <div class="container">
     <div class="my-5">
-        <h1 class="text-primary text-center" style="font-size: 48px;">Business Analyst</h1>
-        <p class="text-center text-black-50 fs-3" style="margin-top: -0.5rem;">Full-time Position - PHP 60,000 - PHP
-            70,000 - Makati City,
-            Philippines
+        <h1 class="text-primary text-center" style="font-size: 48px;">@Model.JobPost.Title</h1>
+        <p class="text-center text-black-50 fs-3" style="margin-top: -0.5rem;">@Model.JobPost.JobType.Name - PHP
+            @Model.JobPost.MinSalary - PHP
+            @Model.JobPost.MaxSalary - @Model.JobPost.JobLocation.City,
+            @Model.JobPost.JobLocation.Country
         </p>
+        <div class="w-100 text-center d-flex justify-content-center">
+            <a asp-controller="Jobs" asp-action="Index" class="btn me-3 btn-outline-dark">
+                Back to
+                List
+            </a>
+            <a asp-controller="Jobs" asp-action="Details" asp-route-id="@Model.JobPost.Id"
+                class="btn btn-outline-primary me-3" onclick="window.history.back()">
+                View Job Details
+            </a>
+        </div>
     </div>
     <div class="d-flex flex-column align-items-center justify-content-center h-100 w-100">
         <h2 class="text-cyan-600 text-left align-top">
@@ -21,7 +35,8 @@
                     <span class="text-black-50">Search for Applicant's Name</span>
                 </div>
                 <div class="col-12 col-md-8 d-flex flex-row justify-content-between align-items-center">
-                    <span class="text-black-50" style="font-size: 12px;">Showing 2 of 10
+                    <span class="text-black-50" style="font-size: 12px;">Showing @Model.JobApplications.Count of
+                        @Model.JobApplications.Count
                         Applicants</span>
                     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
@@ -37,60 +52,45 @@
                         <label class="btn btn-outline-primary" for="btnradio4">Not Suitable</label>
                     </div>
                 </div>
-                <div class="col-12 col-md-8 mb-4 mt-3">
-                    <div
-                        class="text-start rounded p-4 bg-white border border-gray-300 d-flex flex-column justify-content-between">
-                        <div class="w-100 row">
-                            <h3 class="col-12">
-                                John Doe
-                            </h3>
-                        </div>
-                        <div class="row">
-                            <span class="col-2" style="font-weight: 500;">Resume:</span>
-                            <div class="col-10 text-info">
-                                my-resume.pdf
+                @if (Model.JobApplications.Any())
+                {
+                    @foreach (var jobApplication in Model.JobApplications)
+                    {
+                        <div class="col-12 col-md-8 mb-4 mt-3">
+                            <div
+                                class="text-start rounded p-4 bg-white border border-gray-300 d-flex flex-column justify-content-between">
+                                <div class="w-100 row">
+                                    <h3 class="col-12">
+                                        @jobApplication.JobSeeker.UserId
+                                    </h3>
+                                </div>
+                                <div class="row">
+                                    <span class="col-2" style="font-weight: 500;">Resume:</span>
+                                    <div class="col-10 text-info">
+                                        @jobApplication.JobSeeker.Resume.DownloadLink
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <span class="col-2" style="font-weight: 500;">Applied:</span>
+                                    <div class="col-10">
+                                        @jobApplication.CreatedAt
+                                    </div>
+                                </div>
+                                <div class="d-flex mt-3 p-0">
+                                    <button type="submit" class="btn p-0 m-0 me-4">INTERVIEW</button>
+                                    <button type="submit" class="btn p-0 m-0 me-4">SHORTLIST</button>
+                                    <button type="submit" class="btn p-0 m-0 text-danger">NOT SUITABLE</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="row mt-2">
-                            <span class="col-2" style="font-weight: 500;">Applied:</span>
-                            <div class="col-10">
-                                04/02/2023 - 3:23 PM
-                            </div>
-                        </div>
-                        <div class="d-flex mt-3 p-0">
-                            <button type="submit" class="btn p-0 m-0 me-4">INTERVIEW</button>
-                            <button type="submit" class="btn p-0 m-0 me-4">SHORTLIST</button>
-                            <button type="submit" class="btn p-0 m-0 text-danger">NOT SUITABLE</button>
-                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12 col-md-8 mb-4 mt-3">
+                        <p>No job application found.</p>
                     </div>
-                </div>
-                <div class="col-12 col-md-8 mb-4">
-                    <div
-                        class="text-start rounded p-4 bg-white border border-gray-300 d-flex flex-column justify-content-between">
-                        <div class="w-100 row">
-                            <h3 class="col-12">
-                                Isaac Newton
-                            </h3>
-                        </div>
-                        <div class="row">
-                            <span class="col-2" style="font-weight: 500;">Resume:</span>
-                            <div class="col-10 text-info">
-                                my-resume.pdf
-                            </div>
-                        </div>
-                        <div class="row mt-2">
-                            <span class="col-2" style="font-weight: 500;">Applied:</span>
-                            <div class="col-10">
-                                04/02/2023 - 3:23 PM
-                            </div>
-                        </div>
-                        <div class="d-flex mt-3 p-0">
-                            <button type="submit" class="btn p-0 m-0 me-4">INTERVIEW</button>
-                            <button type="submit" class="btn p-0 m-0 me-4">SHORTLIST</button>
-                            <button type="submit" class="btn p-0 m-0 text-danger">NOT SUITABLE</button>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
         </div>
     </div>

@@ -1,6 +1,10 @@
-﻿@{
+﻿@using JobBoards.WebApplication.ViewModels.Home;
+@model IndexViewModel;
+
+@{
     ViewData["Title"] = "Home Page";
 }
+
 <div class="container">
     <div class="my-5">
         <h1 class="text-primary text-center">
@@ -21,69 +25,37 @@
 </div>
 <div class="mt-5">
     <div class="row">
-        <div class="col-md-4 mb-3 mb-md-0">
-            <a asp-controller="Jobs" asp-action="Details"
-                class="btn text-start rounded p-4 bg-white border border-gray-300 d-flex flex-column justify-content-between h-100">
-                <div class="d-flex flex-column">
-                    <h5 class="text-gray-900 font-semibold">
-                        Software Engineer
-                    </h5>
-                    <p class="text-black-50">
-                        Full-time, PHP 60,000 - PHP 75,000
-                    </p>
+        @if (Model.NewListings.Any())
+        {
+            @foreach (var jobPost in Model.NewListings)
+            {
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <a asp-controller="Jobs" asp-action="Details" asp-route-id="@jobPost.Id"
+                        class="btn text-start rounded p-4 bg-white border border-gray-300 d-flex flex-column justify-content-between h-100">
+                        <div class="d-flex flex-column">
+                            <h5 class="text-gray-900 font-semibold">
+                                @jobPost.Title
+                            </h5>
+                            <p class="text-black-50">
+                                @jobPost.JobType.Name, PHP @jobPost.MinSalary - PHP @jobPost.MaxSalary
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <p class="m-0" style="font-weight: 500;">
+                                @jobPost.JobLocation.City
+                            </p>
+                            <p class="text-black-50 m-0" style="font-size: 0.8rem;">
+                                @jobPost.CreatedAt
+                            </p>
+                        </div>
+                    </a>
                 </div>
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                    <p class="m-0" style="font-weight: 500;">
-                        Metro Manila
-                    </p>
-                    <p class="text-black-50 m-0" style="font-size: 0.8rem;">
-                        Posted 1h ago
-                    </p>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4 mb-3 mb-md-0">
-            <a asp-controller="Jobs" asp-action="Details"
-                class="btn text-start rounded p-4 bg-white border border-gray-300 d-flex flex-column justify-content-between h-100">
-                <div class="d-flex flex-column">
-                    <h5 class="text-gray-900 font-semibold">
-                        Senior Software Engineer
-                    </h5>
-                    <p class="text-black-50">
-                        Full-time, PHP 70,000 - PHP 80,000
-                    </p>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                    <p class="m-0" style="font-weight: 500;">
-                        Metro Manila
-                    </p>
-                    <p class="text-black-50 m-0" style="font-size: 0.8rem;">
-                        Posted 1h ago
-                    </p>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4 mb-3 mb-md-0">
-            <a asp-controller="Jobs" asp-action="Details"
-                class="btn text-start rounded p-4 bg-white border border-gray-300 d-flex flex-column justify-content-between h-100">
-                <div class="d-flex flex-column">
-                    <h5 class="text-gray-900 font-semibold">
-                        .NET Fullstack Developer
-                    </h5>
-                    <p class="text-black-50">
-                        Full-time, PHP 25,000 - PHP 30,000
-                    </p>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                    <p class="m-0" style="font-weight: 500;">
-                        Makati City
-                    </p>
-                    <p class="text-black-50 m-0" style="font-size: 0.8rem;">
-                        Posted 2h ago
-                    </p>
-                </div>
-            </a>
-        </div>
+            }
+        }
+        else
+        {
+            <p class="text-black-50">No job posts found.</p>
+        }
         <div class="row m-0 p-2.5 mt-3">
             <a asp-controller="Jobs" action="JobListing" class="btn btn-outline-primary w-auto">
                 View more

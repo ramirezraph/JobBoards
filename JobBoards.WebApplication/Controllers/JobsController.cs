@@ -10,35 +10,39 @@ using JobBoards.WebApplication.ViewModels.Jobs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using JobBoards.Data.Persistence.Repositories.JobApplications;
 
 namespace JobBoards.WebApplication.Controllers;
 
 public class JobsController : Controller
 {
+    private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IJobPostsRepository _jobPostsRepository;
     private readonly IJobCategoriesRepository _jobCategoriesRepository;
     private readonly IJobLocationsRepository _jobLocationsRepository;
     private readonly IJobTypesRepository _jobTypesRepository;
-    private readonly IMapper _mapper;
+    private readonly IJobApplicationsRepository _jobApplicationsRepository;
 
     public JobsController(
+        IMapper mapper,
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IJobCategoriesRepository jobCategoriesRepository,
-        IMapper mapper,
         IJobPostsRepository jobPostsRepository,
         IJobLocationsRepository jobLocationsRepository,
-        IJobTypesRepository jobTypesRepository)
+        IJobTypesRepository jobTypesRepository,
+        IJobApplicationsRepository jobApplicationsRepository)
     {
+        _mapper = mapper;
         _userManager = userManager;
         _signInManager = signInManager;
         _jobCategoriesRepository = jobCategoriesRepository;
-        _mapper = mapper;
         _jobPostsRepository = jobPostsRepository;
         _jobLocationsRepository = jobLocationsRepository;
         _jobTypesRepository = jobTypesRepository;
+        _jobApplicationsRepository = jobApplicationsRepository;
     }
 
     [HttpGet]
@@ -46,22 +50,34 @@ public class JobsController : Controller
     {
         var viewModel = new IndexViewModel
         {
+            JobPosts = await _jobPostsRepository.GetAllAsync(),
             JobCategories = await _jobCategoriesRepository.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
-            JobTypes = await _jobTypesRepository.GetAllAsync()
+            JobTypes = await _jobTypesRepository.GetAllAsync(),
+            HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),
         };
+
         return View(viewModel);
     }
 
     [HttpGet]
-    public IActionResult Details()
+    public async Task<IActionResult> Details(Guid id)
     {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(id);
+
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
         var viewModel = new DetailsViewModel
         {
+            JobPost = jobPost,
             IsSignedIn = User.Identity?.IsAuthenticated ?? false,
             HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),
             WithApplication = false
         };
+
         return View(viewModel);
     }
 
@@ -119,15 +135,82 @@ public class JobsController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Admin, Employer")]
-    public IActionResult Update()
+    public async Task<IActionResult> Update(Guid id)
     {
-        return View();
+        var jobPost = await _jobPostsRepository.GetByIdAsync(id);
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new EditViewModel
+        {
+            Form = new EditViewModel.InputModel(jobPost),
+            JobCategories = await _jobCategoriesRepository.GetAllAsync(),
+            JobTypes = await _jobTypesRepository.GetAllAsync(),
+            JobLocations = await _jobLocationsRepository.GetAllAsync(),
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Admin, Employer")]
+    public async Task<IActionResult> Update(EditViewModel viewModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            viewModel.JobCategories = await _jobCategoriesRepository.GetAllAsync();
+            viewModel.JobTypes = await _jobTypesRepository.GetAllAsync();
+            viewModel.JobLocations = await _jobLocationsRepository.GetAllAsync();
+
+            return View(viewModel);
+        }
+
+        var formValues = viewModel.Form;
+
+        var signedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (signedInUserId is null)
+        {
+            return Unauthorized();
+        }
+
+        var updatedJobPost = JobPost.CreateNew(
+                   formValues.Title,
+                   formValues.Description,
+                   formValues.JobLocationId,
+                   formValues.MinSalary,
+                   formValues.MaxSalary,
+                   true, // TODO: Create a form field for IsActive
+                   formValues.JobCategoryId,
+                   formValues.JobTypeId,
+                   DateTime.UtcNow.AddYears(1), // TODO: Create a form field for Expiration
+                   signedInUserId
+               );
+
+        await _jobPostsRepository.UpdateAsync(viewModel.Form.Id, updatedJobPost);
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = formValues.Id });
     }
 
     [HttpGet]
+    [Route("[controller]/Applications/{id:guid}")]
     [Authorize(Roles = "Admin, Employer")]
-    public IActionResult ManageJobApplications()
+    public async Task<IActionResult> ManageJobApplications(Guid id)
     {
-        return View();
+        var jobPost = await _jobPostsRepository.GetByIdAsync(id);
+
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new JobApplicationsViewModel
+        {
+            JobPost = jobPost,
+            JobApplications = await _jobApplicationsRepository.GetAllByPostIdAsync(id)
+        };
+
+        return View(viewModel);
     }
 }

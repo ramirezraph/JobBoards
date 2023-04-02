@@ -1,1 +1,43 @@
-<h1>Manage Profile</h1>
+@using JobBoards.WebApplication.ViewModels.Account
+@model ProfileViewModel
+
+<div class="container mt-5" style="width: 600px;">
+    <div class="card p-4 text-start">
+        <p class="text-secondary fs-3">My Profile</p>
+
+        <form asp-controller="Account" asp-action="Profile" method="POST">
+            <div class="mt-2">
+                <label asp-for="FullName"></label>
+                <input asp-for="FullName" class="form-control mt-2" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+            <div class="mt-2">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control mt-2" readonly />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            @if (User.IsInRole("User"))
+            {
+                <div class="mt-2">
+                    <label for="formFile" class="form-label">Resume</label>
+                    <input class="form-control" type="file" id="formFile">
+                </div>
+            }
+            <div class="mt-2">
+                <button type="submit" class="btn w-100 btn-primary mt-3">Save Changes</button>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model.UpdateResultMessage))
+            {
+                <div class="mt-4">
+                    <p class="text-info">@Model.UpdateResultMessage</p>
+                </div>
+            }
+        </form>
+    </div>
+    <div class="p-4">
+        <a asp-controller="Account" asp-action="ChangePassword" class="btn w-100 btn-secondary mt-3">Change
+            Password</a>
+        <a href="#" class="btn w-100 btn-danger mt-2">Deactivate</a>
+    </div>
+</div>
+

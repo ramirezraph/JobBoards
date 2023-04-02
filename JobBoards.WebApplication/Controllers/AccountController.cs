@@ -1,6 +1,7 @@
 using JobBoards.Data.Identity;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using JobBoards.WebApplication.ViewModels.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -85,12 +86,49 @@ public class AccountController : Controller
     }
 
     [HttpGet]
-    public IActionResult Profile()
+    [Authorize]
+    public async Task<IActionResult> Profile()
     {
-        return View();
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return RedirectToAction(controllerName: "Account", actionName: "Login");
+        }
+        var viewModel = new ProfileViewModel
+        {
+            FullName = user.FullName,
+            Email = user.Email ?? ""
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> Profile(ProfileViewModel viewModel)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return RedirectToAction(controllerName: "Account", actionName: "Login");
+        }
+
+        // user.Email = viewModel.Email;
+        user.FullName = viewModel.FullName;
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            viewModel.UpdateResultMessage = "Profile update failed. Please try again.";
+            return View(viewModel);
+        }
+
+        viewModel.UpdateResultMessage = "Profile updated successfully.";
+        return View(viewModel);
     }
 
     [HttpGet]
+    [Authorize]
     public IActionResult ChangePassword()
     {
         return View();

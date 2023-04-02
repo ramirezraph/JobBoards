@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/JobBoards.Api/bin/Debug/net7.0/JobBoards.Api.dll",
+            "program": "${workspaceFolder}/JobBoards.WebApplication/bin/Debug/net7.0/JobBoards.WebApplication.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/JobBoards.Api",
+            "cwd": "${workspaceFolder}/JobBoards.WebApplication",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
@@ -24,7 +24,8 @@
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
-            }
+            },
+            "requireExactSource": false,
         },
         {
             "name": ".NET Core Attach",

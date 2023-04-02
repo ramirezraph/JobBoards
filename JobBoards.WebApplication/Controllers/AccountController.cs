@@ -113,7 +113,17 @@ public class AccountController : Controller
             return RedirectToAction(controllerName: "Account", actionName: "Login");
         }
 
-        // user.Email = viewModel.Email;
+        if (!ModelState.IsValid)
+        {
+            return View(viewModel);
+        }
+
+        // Upload the Resume file
+
+        // Get the download link
+
+        // Store to ResumesRepository
+
         user.FullName = viewModel.FullName;
 
         var result = await _userManager.UpdateAsync(user);

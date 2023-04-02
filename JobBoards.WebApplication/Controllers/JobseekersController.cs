@@ -4,6 +4,7 @@ using JobBoards.Data.Identity;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobPosts;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
+using JobBoards.WebApplication.ViewModels.Jobseekers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,9 +28,28 @@ public class JobseekersController : Controller
     }
 
     [HttpGet]
-    public IActionResult JobApplications()
+    [Authorize(Roles = "User")]
+    public async Task<IActionResult> JobApplications()
     {
-        return View();
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return RedirectToAction(controllerName: "Account", actionName: "Login");
+        }
+
+        var jobSeekerProfile = await _jobSeekersRepository.GetJobSeekerProfileByUserId(user.Id);
+
+        if (jobSeekerProfile is null)
+        {
+            return BadRequest("No jobseeker profile was found.");
+        }
+
+        var viewModel = new JobApplicationsViewModel
+        {
+            JobApplications = await _jobApplicationsRepository.GetAllByJobSeekerIdAsync(jobSeekerProfile.Id)
+        };
+
+        return View(viewModel);
     }
 
     [Authorize(Roles = "User")]

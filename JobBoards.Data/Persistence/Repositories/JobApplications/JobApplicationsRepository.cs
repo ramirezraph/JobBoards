@@ -28,6 +28,14 @@ public class JobApplicationsRepository : IJobApplicationsRepository
     {
         return await _dbContext.JobApplications
                 .Where(ja => ja.JobSeekerId == jobSeekerId)
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobType)
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobCategory)
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobLocation)
+                .Include(ja => ja.JobSeeker)
+                    .ThenInclude(js => js.Resume)
                 .ToListAsync();
     }
 

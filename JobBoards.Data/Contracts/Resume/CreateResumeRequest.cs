@@ -7,12 +7,14 @@ namespace JobBoards.Data.Contracts.Resume
     {
         [Required]
         public Guid JobSeekerId { get; set; }
-        public string DownloadLink { get; set; }
+        public Uri Uri { get; set; }
+        public string FileName { get; set; }
 
-        public CreateResumeRequest(Guid jobSeekerId, string downloadLink)
+        public CreateResumeRequest(Guid jobSeekerId, Uri uri, string fileName)
         {
             JobSeekerId = jobSeekerId;
-            DownloadLink = downloadLink;
+            Uri = uri;
+            FileName = fileName;
         }
     }
 }

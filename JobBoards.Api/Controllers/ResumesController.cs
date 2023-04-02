@@ -45,7 +45,7 @@ namespace JobBoards.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var newResume = Resume.CreateNew(request.JobSeekerId, request.DownloadLink);
+            var newResume = Resume.CreateNew(request.JobSeekerId, request.Uri, request.FileName);
             await _resumesRepository.AddAsync(newResume);
 
             return CreatedAtAction(nameof(GetResumeById), new { id = newResume.Id }, newResume);

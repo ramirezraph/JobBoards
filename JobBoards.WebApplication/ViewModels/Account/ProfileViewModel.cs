@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using JobBoards.Data.Entities;
 
 namespace JobBoards.WebApplication.ViewModels.Account;
 
@@ -44,4 +45,6 @@ public class ProfileViewModel
     public IFormFile? ResumeFile { get; set; }
 
     public string? UpdateResultMessage { get; set; }
+
+    public Resume? UserResume { get; set; }
 }

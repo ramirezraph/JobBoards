@@ -1,9 +1,13 @@
+using Azure.Storage.Blobs;
+using JobBoards.Data.Entities;
 using JobBoards.Data.Identity;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
+using JobBoards.Data.Persistence.Repositories.Resumes;
 using JobBoards.WebApplication.ViewModels.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Storage.Blob;
 
 namespace JobBoards.WebApplication.Controllers;
 
@@ -12,12 +16,16 @@ public class AccountController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IJobSeekersRepository _jobSeekersRepository;
+    private readonly IResumesRepository _resumesRepository;
+    private readonly BlobServiceClient _blobServiceClient;
 
-    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJobSeekersRepository jobSeekersRepository)
+    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJobSeekersRepository jobSeekersRepository, IResumesRepository resumesRepository, BlobServiceClient blobServiceClient)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _jobSeekersRepository = jobSeekersRepository;
+        _resumesRepository = resumesRepository;
+        _blobServiceClient = blobServiceClient;
     }
 
     [HttpGet]
@@ -99,6 +107,14 @@ public class AccountController : Controller
             FullName = user.FullName,
             Email = user.Email ?? ""
         };
+        var jobSeekerProfile = await _jobSeekersRepository.GetJobSeekerProfileByUserId(user.Id);
+        if (jobSeekerProfile is not null)
+        {
+            if (jobSeekerProfile.ResumeId != Guid.Empty)
+            {
+                viewModel.UserResume = jobSeekerProfile.Resume;
+            }
+        }
 
         return View(viewModel);
     }
@@ -118,11 +134,24 @@ public class AccountController : Controller
             return View(viewModel);
         }
 
-        // Upload the Resume file
+        if (viewModel.ResumeFile != null)
+        {
+            var jobSeekerProfile = await _jobSeekersRepository.GetJobSeekerProfileByUserId(user.Id);
+            if (jobSeekerProfile is not null)
+            {
+                // Upload the resume to Azure Storage.
+                BlobContainerClient resumesContainer = _blobServiceClient.GetBlobContainerClient("resumes");
+                var blobName = jobSeekerProfile.Id.ToString();
+                BlobClient blobClient = resumesContainer.GetBlobClient(blobName);
+                using var stream = viewModel.ResumeFile.OpenReadStream();
+                await blobClient.UploadAsync(stream);
 
-        // Get the download link
+                // Save the resume to the database.
+                await _jobSeekersRepository.UpdateResumeAsync(jobSeekerProfile.Id, blobClient.Uri, viewModel.ResumeFile.FileName);
 
-        // Store to ResumesRepository
+                viewModel.UserResume = jobSeekerProfile.Resume;
+            }
+        }
 
         user.FullName = viewModel.FullName;
 
@@ -134,6 +163,8 @@ public class AccountController : Controller
         }
 
         viewModel.UpdateResultMessage = "Profile updated successfully.";
+
+
         return View(viewModel);
     }
 

@@ -18,8 +18,19 @@
             </div>
             @if (User.IsInRole("User"))
             {
-                <div class="mt-2">
-                    <label asp-for="ResumeFile" class="form-label"></label>
+                @if (Model.UserResume is not null)
+                {
+                    <div class="mt-2">
+                        <p class="form-label">
+                            Resume
+                        </p>
+                        <button class="btn btn-outline-info">
+                            @Model.UserResume.FileName
+                        </button>
+                    </div>
+                }
+                <div class="mt-4">
+                    <label class="form-label">Add or update your resume</label>
                     <input asp-for="ResumeFile" class="form-control" type="file">
                     <span asp-validation-for="ResumeFile" class="text-danger"></span>
                 </div>

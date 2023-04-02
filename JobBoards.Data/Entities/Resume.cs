@@ -6,7 +6,8 @@ public class Resume : Entity<Guid>
 {
     public Guid JobSeekerId { get; set; }
     public JobSeeker JobSeeker { get; set; } = default!;
-    public string DownloadLink { get; set; }
+    public Uri Uri { get; set; }
+    public string FileName { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
@@ -14,24 +15,28 @@ public class Resume : Entity<Guid>
     private Resume(
         Guid resumeId,
         Guid jobSeekerId,
-        string downloadLink,
+        Uri uri,
+        string fileName,
         DateTime createdAt,
         DateTime? updatedAt,
         DateTime? deletedAt) : base(resumeId)
     {
         JobSeekerId = jobSeekerId;
-        DownloadLink = downloadLink;
+        Uri = uri;
+        FileName = fileName;
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
         DeletedAt = deletedAt;
+        FileName = fileName;
     }
 
-    public static Resume CreateNew(Guid jobSeekerId, string downloadLink)
+    public static Resume CreateNew(Guid jobSeekerId, Uri uri, string fileName)
     {
         return new(
             Guid.NewGuid(),
             jobSeekerId,
-            downloadLink,
+            uri,
+            fileName,
             DateTime.UtcNow,
             null,
             null);

@@ -110,9 +110,10 @@
                                 </a>
                                 @if (!Model.HasWriteAccess)
                                 {
-                                    <button class="btn btn-primary">
+                                    <a asp-controller="Jobseekers" asp-action="ApplyNow" asp-route-postId="@jobPost.Id"
+                                        class="btn btn-primary">
                                         Apply Now
-                                    </button>
+                                    </a>
                                 }
                                 else
                                 {

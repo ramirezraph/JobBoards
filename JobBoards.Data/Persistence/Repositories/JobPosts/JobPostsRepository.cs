@@ -29,6 +29,7 @@ public class JobPostsRepository : IJobPostsRepository
             .Include(jp => jp.JobType)
             .Include(jp => jp.JobCategory)
             .Include(jp => jp.JobLocation)
+            .Include(jp => jp.JobApplications)
             .SingleOrDefaultAsync(jp => jp.Id == id);
     }
 

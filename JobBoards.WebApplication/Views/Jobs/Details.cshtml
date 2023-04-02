@@ -75,19 +75,19 @@
                         <div class="row mt-3">
                             <h6 class="col-4 d-inline">Status:</h6>
                             <div class="col-8 text-info">
-                                Viewed
+                                @Model.JobApplication.Status
                             </div>
                         </div>
                         <div class="row mt-3">
                             <h6 class="col-4 d-inline">Resume:</h6>
                             <div class="col-8 text-info">
-                                my-resume.pdf
+                                @Model.JobApplication.JobSeeker.Resume.FileName
                             </div>
                         </div>
                         <div class="row mt-3">
                             <h6 class="col-4 d-inline">Applied</h6>
                             <div class="col-8">
-                                04/02/2023 - 3:23 PM
+                                @Model.JobApplication.CreatedAt
                             </div>
                         </div>
                         <a href="#" class="btn btn-danger btn-block w-100 mt-3">Withdraw</a>
@@ -99,7 +99,10 @@
 
             @if (!Model.HasWriteAccess && !Model.WithApplication)
             {
-                <a href="#" class="btn btn-primary btn-block w-100 mt-2">Apply Now</a>
+                <a asp-controller="Jobseekers" asp-action="ApplyNow" asp-route-postId="@Model.JobPost.Id"
+                    class="btn btn-primary btn-block w-100 mt-2">
+                    Apply Now
+                </a>
             }
 
             @if (Model.HasWriteAccess)

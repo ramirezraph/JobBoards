@@ -8,4 +8,5 @@ public interface IJobApplicationsRepository : IRepository<JobApplication>
     Task<List<JobApplication>> GetAllByPostIdAsync(Guid postId);
     Task<List<JobApplication>> GetAllByJobSeekerIdAsync(Guid jobSeekerId);
     Task UpdateStatusAsync(string newStatus);
+    Task<JobApplication?> GetJobSeekerApplicationToJobPostAsync(Guid jobSeekerId, Guid postId);
 }

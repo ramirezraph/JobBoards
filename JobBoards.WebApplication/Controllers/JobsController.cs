@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
+using JobBoards.Data.Persistence.Repositories.JobSeekers;
 
 namespace JobBoards.WebApplication.Controllers;
 
@@ -24,6 +25,7 @@ public class JobsController : Controller
     private readonly IJobLocationsRepository _jobLocationsRepository;
     private readonly IJobTypesRepository _jobTypesRepository;
     private readonly IJobApplicationsRepository _jobApplicationsRepository;
+    private readonly IJobSeekersRepository _jobSeekersRepository;
 
     public JobsController(
         IMapper mapper,
@@ -33,7 +35,8 @@ public class JobsController : Controller
         IJobPostsRepository jobPostsRepository,
         IJobLocationsRepository jobLocationsRepository,
         IJobTypesRepository jobTypesRepository,
-        IJobApplicationsRepository jobApplicationsRepository)
+        IJobApplicationsRepository jobApplicationsRepository,
+        IJobSeekersRepository jobSeekersRepository)
     {
         _mapper = mapper;
         _userManager = userManager;
@@ -43,6 +46,7 @@ public class JobsController : Controller
         _jobLocationsRepository = jobLocationsRepository;
         _jobTypesRepository = jobTypesRepository;
         _jobApplicationsRepository = jobApplicationsRepository;
+        _jobSeekersRepository = jobSeekersRepository;
     }
 
     [HttpGet]
@@ -77,6 +81,23 @@ public class JobsController : Controller
             HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),
             WithApplication = false
         };
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user is not null)
+        {
+            var jobSeekerProfile = await _jobSeekersRepository.GetJobSeekerProfileByUserId(user.Id);
+            if (jobSeekerProfile is not null)
+            {
+                // Check for an existing application.
+                var jobApplication = await _jobApplicationsRepository.GetJobSeekerApplicationToJobPostAsync(jobSeekerProfile.Id, jobPost.Id);
+
+                if (jobApplication is not null)
+                {
+                    viewModel.WithApplication = true;
+                    viewModel.JobApplication = jobApplication;
+                }
+            }
+        }
 
         return View(viewModel);
     }

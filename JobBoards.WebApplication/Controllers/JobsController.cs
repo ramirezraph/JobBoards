@@ -135,9 +135,62 @@ public class JobsController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Admin, Employer")]
-    public IActionResult Update()
+    public async Task<IActionResult> Update(Guid id)
     {
-        return View();
+        var jobPost = await _jobPostsRepository.GetByIdAsync(id);
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new EditViewModel
+        {
+            Form = new EditViewModel.InputModel(jobPost),
+            JobCategories = await _jobCategoriesRepository.GetAllAsync(),
+            JobTypes = await _jobTypesRepository.GetAllAsync(),
+            JobLocations = await _jobLocationsRepository.GetAllAsync(),
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Admin, Employer")]
+    public async Task<IActionResult> Update(EditViewModel viewModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            viewModel.JobCategories = await _jobCategoriesRepository.GetAllAsync();
+            viewModel.JobTypes = await _jobTypesRepository.GetAllAsync();
+            viewModel.JobLocations = await _jobLocationsRepository.GetAllAsync();
+
+            return View(viewModel);
+        }
+
+        var formValues = viewModel.Form;
+
+        var signedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (signedInUserId is null)
+        {
+            return Unauthorized();
+        }
+
+        var updatedJobPost = JobPost.CreateNew(
+                   formValues.Title,
+                   formValues.Description,
+                   formValues.JobLocationId,
+                   formValues.MinSalary,
+                   formValues.MaxSalary,
+                   true, // TODO: Create a form field for IsActive
+                   formValues.JobCategoryId,
+                   formValues.JobTypeId,
+                   DateTime.UtcNow.AddYears(1), // TODO: Create a form field for Expiration
+                   signedInUserId
+               );
+
+        await _jobPostsRepository.UpdateAsync(viewModel.Form.Id, updatedJobPost);
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = formValues.Id });
     }
 
     [HttpGet]

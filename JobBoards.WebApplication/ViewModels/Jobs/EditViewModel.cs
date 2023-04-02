@@ -4,7 +4,7 @@ using JobBoards.Data.Entities;
 
 namespace JobBoards.WebApplication.ViewModels.Jobs;
 
-public class CreateViewModel
+public class EditViewModel
 {
     public List<JobType> JobTypes { get; set; } = new();
     public List<JobCategory> JobCategories { get; set; } = new();
@@ -13,6 +13,8 @@ public class CreateViewModel
 
     public class InputModel
     {
+        public Guid Id { get; set; }
+
         [Required(ErrorMessage = "Please enter a job title.")]
         public string Title { get; set; } = default!;
 
@@ -23,11 +25,9 @@ public class CreateViewModel
         [DisplayName("Job Location")]
         public Guid JobLocationId { get; set; }
 
-        [Required]
         [Range(0, double.MaxValue, ErrorMessage = "Please enter a valid salary.")]
         public double MinSalary { get; set; } = 0;
 
-        [Required]
         [Range(0, double.MaxValue, ErrorMessage = "Please enter a valid salary.")]
         public double MaxSalary { get; set; } = 0;
 
@@ -40,5 +40,35 @@ public class CreateViewModel
         [Required(ErrorMessage = "Please select a job type.")]
         [DisplayName("Job Type")]
         public Guid JobTypeId { get; set; }
+
+        public InputModel(Guid id, string title, string description, Guid jobLocationId, double minSalary, double maxSalary, bool isActive, Guid jobCategoryId, Guid jobTypeId)
+        {
+            Id = id;
+            Title = title;
+            Description = description;
+            JobLocationId = jobLocationId;
+            MinSalary = minSalary;
+            MaxSalary = maxSalary;
+            IsActive = isActive;
+            JobCategoryId = jobCategoryId;
+            JobTypeId = jobTypeId;
+        }
+
+        public InputModel(JobPost jobPost)
+        {
+            Id = jobPost.Id;
+            Title = jobPost.Title;
+            Description = jobPost.Description;
+            JobLocationId = jobPost.JobLocationId;
+            MinSalary = jobPost.MinSalary;
+            MaxSalary = jobPost.MaxSalary;
+            IsActive = jobPost.IsActive;
+            JobCategoryId = jobPost.JobCategoryId;
+            JobTypeId = jobPost.JobTypeId;
+        }
+
+        public InputModel()
+        {
+        }
     }
 }

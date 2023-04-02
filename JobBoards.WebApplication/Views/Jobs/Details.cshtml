@@ -105,7 +105,8 @@
             @if (Model.HasWriteAccess)
             {
                 <a href="#" class="btn btn-secondary btn-block w-100 mt-1">Deactivate Job Post</a>
-                <a asp-controller="Jobs" asp-action="Update" class="btn btn-primary btn-block w-100 mt-1">Edit</a>
+                <a asp-controller="Jobs" asp-action="Update" asp-route-id="@Model.JobPost.Id"
+                    class="btn btn-primary btn-block w-100 mt-1">Edit</a>
                 <a href="#" class="btn btn-danger btn-block w-100 mt-1">Delete</a>
             }
         </div>

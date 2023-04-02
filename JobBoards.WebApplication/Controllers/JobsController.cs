@@ -10,35 +10,39 @@ using JobBoards.WebApplication.ViewModels.Jobs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using JobBoards.Data.Persistence.Repositories.JobApplications;
 
 namespace JobBoards.WebApplication.Controllers;
 
 public class JobsController : Controller
 {
+    private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IJobPostsRepository _jobPostsRepository;
     private readonly IJobCategoriesRepository _jobCategoriesRepository;
     private readonly IJobLocationsRepository _jobLocationsRepository;
     private readonly IJobTypesRepository _jobTypesRepository;
-    private readonly IMapper _mapper;
+    private readonly IJobApplicationsRepository _jobApplicationsRepository;
 
     public JobsController(
+        IMapper mapper,
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IJobCategoriesRepository jobCategoriesRepository,
-        IMapper mapper,
         IJobPostsRepository jobPostsRepository,
         IJobLocationsRepository jobLocationsRepository,
-        IJobTypesRepository jobTypesRepository)
+        IJobTypesRepository jobTypesRepository,
+        IJobApplicationsRepository jobApplicationsRepository)
     {
+        _mapper = mapper;
         _userManager = userManager;
         _signInManager = signInManager;
         _jobCategoriesRepository = jobCategoriesRepository;
-        _mapper = mapper;
         _jobPostsRepository = jobPostsRepository;
         _jobLocationsRepository = jobLocationsRepository;
         _jobTypesRepository = jobTypesRepository;
+        _jobApplicationsRepository = jobApplicationsRepository;
     }
 
     [HttpGet]
@@ -137,9 +141,23 @@ public class JobsController : Controller
     }
 
     [HttpGet]
+    [Route("[controller]/Applications/{id:guid}")]
     [Authorize(Roles = "Admin, Employer")]
-    public IActionResult ManageJobApplications()
+    public async Task<IActionResult> ManageJobApplications(Guid id)
     {
-        return View();
+        var jobPost = await _jobPostsRepository.GetByIdAsync(id);
+
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new JobApplicationsViewModel
+        {
+            JobPost = jobPost,
+            JobApplications = await _jobApplicationsRepository.GetAllByPostIdAsync(id)
+        };
+
+        return View(viewModel);
     }
 }

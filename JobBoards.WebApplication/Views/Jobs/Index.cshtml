@@ -116,7 +116,8 @@
                                 }
                                 else
                                 {
-                                    <a asp-controller="Jobs" asp-action="ManageJobApplications" class="btn btn-secondary">
+                                    <a asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@jobPost.Id"
+                                        class="btn btn-secondary">
                                         Manage Applications
                                     </a>
                                 }

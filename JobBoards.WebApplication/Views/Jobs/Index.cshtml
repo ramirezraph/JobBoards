@@ -23,10 +23,10 @@
     <div class="row mt-3">
         <div class="col-md-4">
             <p class="fw-bold">Filters</p>
-            <form asp-controller="Jobs" asp-action="Index" method="post">
+            <form asp-controller="Jobs" asp-action="RefineSearchResult" method="POST">
                 <div>
                     <label class="form-label text-black-50">Job Category</label>
-                    <select class="form-select">
+                    <select asp-for="Filters.JobCategoryId" class="form-select">
                         <option selected>All</option>
                         @foreach (var jobCategory in Model.JobCategories)
                         {
@@ -36,7 +36,7 @@
                 </div>
                 <div class="mt-2">
                     <label class="form-label text-black-50">Location</label>
-                    <select class="form-select">
+                    <select asp-for="Filters.JobLocationId" class="form-select">
                         <option selected>All</option>
                         @foreach (var jobLocation in Model.JobLocations)
                         {
@@ -47,9 +47,9 @@
                 <div class="mt-2">
                     <label class="form-label text-black-50">Salary</label>
                     <div class="d-flex align-content-center">
-                        <input type="text" class="form-control">
+                        <input asp-for="Filters.MinSalary" type="text" class="form-control">
                         <span class="text-black-50 mx-2 align-self-center">-</span>
-                        <input type="text" class="form-control">
+                        <input asp-for="Filters.MaxSalary" type="text" class="form-control">
                     </div>
                 </div>
 

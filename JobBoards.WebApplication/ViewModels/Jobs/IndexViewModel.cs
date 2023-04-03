@@ -18,6 +18,7 @@ public class IndexViewModel
         public Guid? JobTypeId { get; set; }
         public double? MinSalary { get; set; }
         public double? MaxSalary { get; set; }
+        public List<Guid> JobTypeIds { get; set; } = new();
     }
 }
 

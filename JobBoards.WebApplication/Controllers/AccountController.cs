@@ -190,6 +190,41 @@ public class AccountController : Controller
     {
         return View();
     }
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        var changePasswordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+        if (!changePasswordResult.Succeeded)
+        {
+            foreach (var error in changePasswordResult.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            // If the password change operation fails due to an incorrect current password, add a custom error message
+            if (changePasswordResult.Errors.Any(e => e.Code == "PasswordMismatch"))
+            {
+                ModelState.AddModelError(string.Empty, "The current password is incorrect.");
+            }
+
+            return View(model);
+        }
+
+        await _signInManager.RefreshSignInAsync(user);
+        return RedirectToAction("Index", "Home");
+    }
+
 
     [HttpPost]
     public async Task<IActionResult> Logout()

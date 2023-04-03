@@ -12,13 +12,20 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddData(this IServiceCollection services, IConfiguration configuration)
     {
-        services
+        return services
             .AddPersistence(configuration)
             .AddIdentity()
             .AddAuthentication(configuration)
             .AddAzureStorage(configuration)
             .AddMappings();
+    }
 
-        return services;
+    public static IServiceCollection AddWebAppData(this IServiceCollection services, IConfiguration configuration)
+    {
+        return services
+            .AddPersistence(configuration)
+            .AddIdentity()
+            .AddAzureStorage(configuration)
+            .AddMappings();
     }
 }

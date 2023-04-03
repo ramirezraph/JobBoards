@@ -5,7 +5,7 @@ using JobBoards.Data.Persistence.Initialization;
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services
-        .AddData(builder.Configuration)
+        .AddWebAppData(builder.Configuration)
         .AddDbInitializer();
 
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();

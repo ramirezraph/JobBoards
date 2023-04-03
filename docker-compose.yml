@@ -1,0 +1,35 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
+
+version: '3.4'
+services:
+  jobboardsapi:
+    image: jobboardsapi
+    build:
+      context: .
+      dockerfile: JobBoards.Api/Dockerfile
+    ports:
+      - 6001:6001
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=jobboardssql;Database=JobBoardsDb;User Id=sa;Password=Pa$$w0rd!;Integrated Security=false;TrustServerCertificate=true;
+    depends_on:
+      - jobboardssql
+    restart: on-failure
+  jobboardswebapp:
+    image: jobboardswebapp
+    build:
+      context: .
+      dockerfile: JobBoards.WebApplication/Dockerfile
+    ports:
+      - 5001:5001
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=jobboardssql;Database=JobBoardsDb;User Id=sa;Password=Pa$$w0rd!;Integrated Security=false;TrustServerCertificate=true;
+    depends_on:
+      - jobboardssql
+    restart: on-failure
+  jobboardssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Pa$$w0rd!

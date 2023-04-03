@@ -25,11 +25,14 @@ public class EditViewModel
         [DisplayName("Job Location")]
         public Guid JobLocationId { get; set; }
 
+        [Required]
         [Range(0, double.MaxValue, ErrorMessage = "Please enter a valid salary.")]
-        public double MinSalary { get; set; } = 0;
+        public double MinSalary { get; set; }
 
+        [Required]
         [Range(0, double.MaxValue, ErrorMessage = "Please enter a valid salary.")]
-        public double MaxSalary { get; set; } = 0;
+        [Compare("MinSalary", ErrorMessage = "Maximum salary must be greater than minimum salary.")]
+        public double MaxSalary { get; set; }
 
         public bool IsActive { get; set; } = true;
 

@@ -13,6 +13,7 @@ public class IndexViewModel
 
     public class FilterForm
     {
+        public string? Search { get; set; }
         public Guid? JobCategoryId { get; set; }
         public Guid? JobLocationId { get; set; }
         public Guid? JobTypeId { get; set; }

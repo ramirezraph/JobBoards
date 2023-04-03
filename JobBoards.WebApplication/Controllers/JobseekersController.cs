@@ -89,6 +89,33 @@ public class JobseekersController : Controller
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = postId });
     }
 
+    [Authorize(Roles = "User")]
+    public async Task<IActionResult> WithdrawApplication(Guid applicationId, Guid jobseekerId)
+    {
+        var jobApplication = await _jobApplicationsRepository.GetByIdAsync(applicationId);
+        if (jobApplication is null)
+        {
+            return NotFound();
+        }
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return RedirectToAction(controllerName: "Account", actionName: "Login");
+        }
+
+        var jobSeekerProfile = await _jobSeekersRepository.GetJobSeekerProfileByUserId(user.Id);
+
+        if (jobSeekerProfile is null)
+        {
+            return BadRequest("No jobseeker profile was found.");
+        }
+
+        await _jobApplicationsRepository.WithdrawAsync(jobApplication.Id);
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = jobApplication.JobPostId });
+    }
+
     [HttpGet]
     public async Task<IActionResult> DownloadResume(string userId)
     {

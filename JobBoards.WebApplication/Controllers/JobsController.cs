@@ -59,6 +59,11 @@ public class JobsController : Controller
     {
         var jobPosts = await _jobPostsRepository.GetAllAsync();
 
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            jobPosts = jobPosts.Where(jp => jp.Title.ToLower().Contains(search.ToLower()) || jp.Description.ToLower().Contains(search.ToLower())).ToList();
+        }
+
         if (jobCategoryId != null && jobCategoryId != Guid.Empty)
         {
             jobPosts = jobPosts.Where(jp => jp.JobCategoryId == jobCategoryId).ToList();
@@ -88,6 +93,7 @@ public class JobsController : Controller
             HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),
             Filters = new IndexViewModel.FilterForm
             {
+                Search = search,
                 JobCategoryId = jobCategoryId,
                 JobLocationId = jobLocationId,
                 MinSalary = minSalary,
@@ -106,11 +112,26 @@ public class JobsController : Controller
             actionName: "Index",
             routeValues: new
             {
+                search = indexViewModel.Filters.Search,
                 jobCategoryId = indexViewModel.Filters.JobCategoryId,
                 jobLocationId = indexViewModel.Filters.JobLocationId,
                 minSalary = indexViewModel.Filters.MinSalary,
                 maxSalary = indexViewModel.Filters.MaxSalary
             });
+    }
+
+    public IActionResult SearchForJobs(IndexViewModel indexViewModel)
+    {
+        return RedirectToAction(
+           controllerName: "Jobs",
+           actionName: "Index",
+           routeValues: new
+           {
+               jobCategoryId = indexViewModel.Filters.JobCategoryId,
+               jobLocationId = indexViewModel.Filters.JobLocationId,
+               minSalary = indexViewModel.Filters.MinSalary,
+               maxSalary = indexViewModel.Filters.MaxSalary
+           });
     }
 
     [HttpGet]

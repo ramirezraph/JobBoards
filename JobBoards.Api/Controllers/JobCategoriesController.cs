@@ -2,6 +2,7 @@ using AutoMapper;
 using JobBoards.Data.Contracts.JobCategory;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Persistence.Repositories.JobCategories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoards.Api.Controllers;

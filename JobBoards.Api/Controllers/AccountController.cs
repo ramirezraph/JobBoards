@@ -1,11 +1,13 @@
 using JobBoards.Data.Authentication;
 using JobBoards.Data.Contracts.Account;
 using JobBoards.Data.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoards.Api.Controllers;
 
+[AllowAnonymous]
 public class AccountController : ApiController
 {
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
@@ -39,7 +41,7 @@ public class AccountController : ApiController
             return NotFound("User not found.");
         }
 
-        return Ok(_jwtTokenGenerator.GenerateToken(user));
+        return Ok(await _jwtTokenGenerator.GenerateToken(user));
     }
 
 }

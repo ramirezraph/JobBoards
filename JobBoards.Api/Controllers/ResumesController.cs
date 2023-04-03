@@ -2,66 +2,68 @@
 using JobBoards.Data.Contracts.Resume;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Persistence.Repositories.Resumes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace JobBoards.Api.Controllers
+namespace JobBoards.Api.Controllers;
+
+[Authorize(Roles = "User,Admin")]
+public class ResumesController : ApiController
 {
-    public class ResumesController : ApiController
+    private readonly IResumesRepository _resumesRepository;
+    private readonly IMapper _mapper;
+
+    public ResumesController(IResumesRepository resumesRepository, IMapper mapper)
     {
-        private readonly IResumesRepository _resumesRepository;
-        private readonly IMapper _mapper;
+        _resumesRepository = resumesRepository;
+        _mapper = mapper;
+    }
 
-        public ResumesController(IResumesRepository resumesRepository, IMapper mapper)
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<IActionResult> ListResumes()
+    {
+        List<Resume> resumes = await _resumesRepository.GetAllAsync();
+        return Ok(resumes);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetResumeById(Guid id)
+    {
+        var resume = await _resumesRepository.GetByIdAsync(id);
+        if (resume is null)
         {
-            _resumesRepository = resumesRepository;
-            _mapper = mapper;
+            return NotFound();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ListResumes()
+        return Ok(resume);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateResume(CreateResumeRequest request)
+    {
+        if (!ModelState.IsValid)
         {
-            List<Resume> resumes = await _resumesRepository.GetAllAsync();
-            return Ok(resumes);
+            return BadRequest(ModelState);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetResumeById(Guid id)
-        {
-            var resume = await _resumesRepository.GetByIdAsync(id);
-            if (resume is null)
-            {
-                return NotFound();
-            }
+        var newResume = Resume.CreateNew(request.JobSeekerId, request.Uri, request.FileName);
+        await _resumesRepository.AddAsync(newResume);
 
-            return Ok(resume);
+        return CreatedAtAction(nameof(GetResumeById), new { id = newResume.Id }, newResume);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteResume(Guid id)
+    {
+        var resume = await _resumesRepository.GetByIdAsync(id);
+        if (resume is null)
+        {
+            return NotFound();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateResume(CreateResumeRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var newResume = Resume.CreateNew(request.JobSeekerId, request.Uri, request.FileName);
-            await _resumesRepository.AddAsync(newResume);
-
-            return CreatedAtAction(nameof(GetResumeById), new { id = newResume.Id }, newResume);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteResume(Guid id)
-        {
-            var resume = await _resumesRepository.GetByIdAsync(id);
-            if (resume is null)
-            {
-                return NotFound();
-            }
-
-            await _resumesRepository.RemoveAsync(resume);
-            return NoContent();
-        }
+        await _resumesRepository.RemoveAsync(resume);
+        return NoContent();
     }
 }

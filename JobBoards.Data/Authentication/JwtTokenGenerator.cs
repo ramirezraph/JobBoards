@@ -11,13 +11,14 @@ namespace JobBoards.Data.Authentication;
 public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly IConfiguration _configuration;
-    // private readonly UserManager<ApplicationUser> _userManager;
-    public JwtTokenGenerator(IConfiguration configuration)
+    private readonly UserManager<ApplicationUser> _userManager;
+    public JwtTokenGenerator(IConfiguration configuration, UserManager<ApplicationUser> userManager)
     {
         _configuration = configuration;
+        _userManager = userManager;
     }
 
-    public string GenerateToken(ApplicationUser user)
+    public async Task<string> GenerateToken(ApplicationUser user)
     {
         var issuer = _configuration.GetValue<string>("JwtSettings:Issuer");
         var audience = _configuration.GetValue<string>("JwtSettings:Audience");
@@ -29,7 +30,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
                 Encoding.UTF8.GetBytes(secret)),
             SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Name, user.FullName),
@@ -37,11 +38,11 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         };
 
         // Get user roles and add it to claims
-        // var userRoles = await _userManager.GetRolesAsync(user);
-        // foreach (var role in userRoles)
-        // {
-        //     claims.Append(new Claim(ClaimTypes.Role, role));
-        // }
+        var userRoles = await _userManager.GetRolesAsync(user);
+        foreach (var role in userRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
 
         var securityToken = new JwtSecurityToken(
             issuer: issuer,

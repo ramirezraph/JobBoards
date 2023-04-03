@@ -15,7 +15,7 @@ public static class DependencyInjection
         services
             .AddPersistence(configuration)
             .AddIdentity()
-            .AddAuth(configuration)
+            .AddAuthentication(configuration)
             .AddAzureStorage(configuration)
             .AddMappings();
 

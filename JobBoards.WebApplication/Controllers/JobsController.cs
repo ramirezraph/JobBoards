@@ -86,7 +86,7 @@ public class JobsController : Controller
 
         var viewModel = new IndexViewModel
         {
-            JobPosts = jobPosts,
+            JobPosts = jobPosts.OrderByDescending(jp => jp.CreatedAt).ToList(),
             JobCategories = await _jobCategoriesRepository.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
             JobTypes = await _jobTypesRepository.GetAllAsync(),

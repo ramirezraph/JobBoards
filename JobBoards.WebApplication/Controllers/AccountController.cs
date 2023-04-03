@@ -1,5 +1,6 @@
+using System.Security.Cryptography;
 using Azure.Storage.Blobs;
-using JobBoards.Data.Entities;
+using Azure.Storage.Blobs.Models;
 using JobBoards.Data.Identity;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using JobBoards.Data.Persistence.Repositories.Resumes;
@@ -7,7 +8,6 @@ using JobBoards.WebApplication.ViewModels.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Storage.Blob;
 
 namespace JobBoards.WebApplication.Controllers;
 
@@ -147,7 +147,8 @@ public class AccountController : Controller
                 var blobName = jobSeekerProfile.Id.ToString() + Path.GetExtension(viewModel.ResumeFile.FileName);
                 BlobClient blobClient = resumesContainer.GetBlobClient(blobName);
                 using var stream = viewModel.ResumeFile.OpenReadStream();
-                await blobClient.UploadAsync(stream);
+
+                await blobClient.UploadAsync(stream, true);
 
                 // Save the resume to the database.
                 await _jobSeekersRepository.UpdateResumeAsync(jobSeekerProfile.Id, blobClient.Uri, viewModel.ResumeFile.FileName);

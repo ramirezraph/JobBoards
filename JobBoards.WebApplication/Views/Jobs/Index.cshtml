@@ -8,25 +8,25 @@
 <div class="container">
     <span class="fw-bold">Job Listings</span>
 
-    <div class="mt-3">
-        <div class="row">
-            <div class="col-12">
-                <form class="d-flex">
-                    <input type="text" class="form-control">
-                    <button class="ms-2 btn btn-outline-primary w-25" type="button">Search</button>
-                </form>
-                <span class="text-black-50">Search for job title or keyword</span>
+    <form asp-controller="Jobs" asp-action="RefineSearchResult" method="POST">
+        <div class="mt-3">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex">
+                        <input type="text" asp-for="Filters.Search" class="form-control">
+                        <button class="ms-2 btn btn-outline-primary w-25" type="submit">Search</button>
+                    </div>
+                    <span class="text-black-50">Search for job title or keyword</span>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="row mt-3">
-        <div class="col-md-4">
-            <p class="fw-bold">Filters</p>
-            <form asp-controller="Jobs" asp-action="Index" method="post">
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <p class="fw-bold">Filters</p>
                 <div>
                     <label class="form-label text-black-50">Job Category</label>
-                    <select class="form-select">
+                    <select asp-for="Filters.JobCategoryId" class="form-select">
                         <option selected>All</option>
                         @foreach (var jobCategory in Model.JobCategories)
                         {
@@ -36,7 +36,7 @@
                 </div>
                 <div class="mt-2">
                     <label class="form-label text-black-50">Location</label>
-                    <select class="form-select">
+                    <select asp-for="Filters.JobLocationId" class="form-select">
                         <option selected>All</option>
                         @foreach (var jobLocation in Model.JobLocations)
                         {
@@ -47,9 +47,9 @@
                 <div class="mt-2">
                     <label class="form-label text-black-50">Salary</label>
                     <div class="d-flex align-content-center">
-                        <input type="text" class="form-control">
+                        <input asp-for="Filters.MinSalary" type="text" class="form-control">
                         <span class="text-black-50 mx-2 align-self-center">-</span>
-                        <input type="text" class="form-control">
+                        <input asp-for="Filters.MaxSalary" type="text" class="form-control">
                     </div>
                 </div>
 
@@ -58,7 +58,7 @@
                     @foreach (var jobType in Model.JobTypes)
                     {
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input">
+                            <input type="checkbox" class="form-check-input" checked disabled>
                             <option value="@jobType.Id">@jobType.Name</option>
                         </div>
                     }
@@ -68,70 +68,73 @@
                         REFINE SEARCH RESULT
                     </button>
                 </div>
-            </form>
-        </div>
-        <div class="col-md-8 mt-4 mt-md-0">
-            <div class="d-flex justify-content-between">
-                <div class="d-flex align-items-center">
-                    <span class="fw-bold">Search Result</span>
-                    <span class="ms-2 text-black-50" style="font-size: 12px;">Showing 2 of 10 Jobs</span>
-                </div>
-                @if (User.IsInRole("Employer") || User.IsInRole("Admin"))
-                {
-                    <a asp-controller="Jobs" asp-action="Create" class="btn btn-primary">
-                        Create New Job
-                    </a>
-                }
             </div>
-            @if (Model.JobPosts.Any())
-            {
-                @foreach (var jobPost in Model.JobPosts)
+            <div class="col-md-8 mt-4 mt-md-0">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <span class="fw-bold">Search Result</span>
+                        <span class="ms-2 text-black-50" style="font-size: 12px;">Showing @Model.JobPosts.Count of
+                            @Model.JobPosts.Count
+                            Jobs</span>
+                    </div>
+                    @if (User.IsInRole("Employer") || User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Jobs" asp-action="Create" class="btn btn-primary">
+                            Create New Job
+                        </a>
+                    }
+                </div>
+                @if (Model.JobPosts.Any())
                 {
-                    <div class="mt-3">
-                        <div class="card p-3 text-start">
-                            <div class="d-flex justify-content-between">
-                                <span class="fs-6 fw-bold">@jobPost.Title</span>
-                                <span class="text-black-50">@jobPost.JobType.Name PHP @jobPost.MinSalary - PHP
-                                    @jobPost.MaxSalary</span>
-                            </div>
-                            <p class="mt-3 text-black">
-                                @jobPost.Description
-                            </p>
-                            <div class="d-flex justify-content-between">
-                                <span style="font-weight: 500;">@jobPost.JobLocation.City, @jobPost.JobLocation.Country</span>
-                                <span class="text-black-50">
-                                    @jobPost.CreatedAt
-                                </span>
-                            </div>
-                            <div class="mt-3 d-flex">
-                                <a asp-controller="Jobs" asp-action="Details" asp-route-id="@jobPost.Id"
-                                    class="btn btn-secondary me-2">
-                                    View Details
-                                </a>
-                                @if (!Model.HasWriteAccess)
-                                {
-                                    <a asp-controller="Jobseekers" asp-action="ApplyNow" asp-route-postId="@jobPost.Id"
-                                        class="btn btn-primary">
-                                        Apply Now
+                    @foreach (var jobPost in Model.JobPosts)
+                    {
+                        <div class="mt-3">
+                            <div class="card p-3 text-start">
+                                <div class="d-flex justify-content-between">
+                                    <span class="fs-6 fw-bold">@jobPost.Title</span>
+                                    <span class="text-black-50">@jobPost.JobType.Name PHP @jobPost.MinSalary - PHP
+                                        @jobPost.MaxSalary</span>
+                                </div>
+                                <p class="mt-3 text-black">
+                                    @jobPost.Description
+                                </p>
+                                <div class="d-flex justify-content-between">
+                                    <span style="font-weight: 500;">@jobPost.JobLocation.City,
+                                        @jobPost.JobLocation.Country</span>
+                                    <span class="text-black-50">
+                                        @jobPost.CreatedAt
+                                    </span>
+                                </div>
+                                <div class="mt-3 d-flex">
+                                    <a asp-controller="Jobs" asp-action="Details" asp-route-id="@jobPost.Id"
+                                        class="btn btn-secondary me-2">
+                                        View Details
                                     </a>
-                                }
-                                else
-                                {
-                                    <a asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@jobPost.Id"
-                                        class="btn btn-secondary">
-                                        Manage Applications
-                                    </a>
-                                }
+                                    @if (!Model.HasWriteAccess)
+                                    {
+                                        <a asp-controller="Jobseekers" asp-action="ApplyNow" asp-route-postId="@jobPost.Id"
+                                            class="btn btn-primary">
+                                            Apply Now
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@jobPost.Id"
+                                            class="btn btn-secondary">
+                                            Manage Applications
+                                        </a>
+                                    }
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 }
-            }
-            else
-            {
-                <p class="text-black-50 mt-2">No Jobs found.</p>
-            }
+                else
+                {
+                    <p class="text-black-50 mt-2">No Jobs found.</p>
+                }
 
+            </div>
         </div>
-    </div>
+    </form>
 </div>

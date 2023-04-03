@@ -50,18 +50,88 @@ public class JobsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(
+        string? search = null,
+        Guid? jobCategoryId = null,
+        Guid? jobLocationId = null,
+        double? minSalary = null,
+        double? maxSalary = null)
     {
+        var jobPosts = await _jobPostsRepository.GetAllAsync();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            jobPosts = jobPosts.Where(jp => jp.Title.ToLower().Contains(search.ToLower()) || jp.Description.ToLower().Contains(search.ToLower())).ToList();
+        }
+
+        if (jobCategoryId != null && jobCategoryId != Guid.Empty)
+        {
+            jobPosts = jobPosts.Where(jp => jp.JobCategoryId == jobCategoryId).ToList();
+        }
+
+        if (jobLocationId != null && jobLocationId != Guid.Empty)
+        {
+            jobPosts = jobPosts.Where(jp => jp.JobLocationId == jobLocationId).ToList();
+        }
+
+        if (minSalary != null)
+        {
+            jobPosts = jobPosts.Where(jp => jp.MinSalary >= minSalary || jp.MaxSalary >= minSalary).ToList();
+        }
+
+        if (maxSalary != null)
+        {
+            jobPosts = jobPosts.Where(jp => jp.MaxSalary <= maxSalary).ToList();
+        }
+
         var viewModel = new IndexViewModel
         {
-            JobPosts = await _jobPostsRepository.GetAllAsync(),
+            JobPosts = jobPosts,
             JobCategories = await _jobCategoriesRepository.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
             JobTypes = await _jobTypesRepository.GetAllAsync(),
             HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),
+            Filters = new IndexViewModel.FilterForm
+            {
+                Search = search,
+                JobCategoryId = jobCategoryId,
+                JobLocationId = jobLocationId,
+                MinSalary = minSalary,
+                MaxSalary = maxSalary
+            }
         };
 
         return View(viewModel);
+    }
+
+    [HttpPost]
+    public IActionResult RefineSearchResult(IndexViewModel indexViewModel)
+    {
+        return RedirectToAction(
+            controllerName: "Jobs",
+            actionName: "Index",
+            routeValues: new
+            {
+                search = indexViewModel.Filters.Search,
+                jobCategoryId = indexViewModel.Filters.JobCategoryId,
+                jobLocationId = indexViewModel.Filters.JobLocationId,
+                minSalary = indexViewModel.Filters.MinSalary,
+                maxSalary = indexViewModel.Filters.MaxSalary
+            });
+    }
+
+    public IActionResult SearchForJobs(IndexViewModel indexViewModel)
+    {
+        return RedirectToAction(
+           controllerName: "Jobs",
+           actionName: "Index",
+           routeValues: new
+           {
+               jobCategoryId = indexViewModel.Filters.JobCategoryId,
+               jobLocationId = indexViewModel.Filters.JobLocationId,
+               minSalary = indexViewModel.Filters.MinSalary,
+               maxSalary = indexViewModel.Filters.MaxSalary
+           });
     }
 
     [HttpGet]

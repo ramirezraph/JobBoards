@@ -17,6 +17,10 @@
     .status-notsuitable {
         color: #DC3545;
     }
+
+    .status-withdrawn {
+        color: #DC3545;
+    }
 </style>
 
 <div
@@ -58,10 +62,18 @@
                             </div>
                             <div>
                                 <a class="btn btn-secondary mt-3" asp-controller="Jobs" asp-action="Details"
-                            asp-route-id="@jobApplication.JobPost.Id" class="btn btn-secondary me-2">
+                                     asp-route-id="@jobApplication.JobPost.Id" class="btn btn-secondary me-2">
                                     View Application
                                 </a>
-                                <button type="submit" class="btn btn-danger mt-3">Withdraw</button>
+                                @if (@jobApplication.Status.ToLower() != "withdrawn")
+                                {
+                                    <a asp-controller="Jobseekers" asp-action="WithdrawApplication"
+                                        asp-route-applicationId="@jobApplication.Id"
+                                        asp-route-jobseekerId="@jobApplication.JobSeekerId"
+                                        class="btn btn-danger btn-block w-100 mt-3">
+                                        Withdraw
+                                    </a>
+                                }
                             </div>
                         </div>
                     </div>

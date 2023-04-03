@@ -70,6 +70,17 @@ public class JobApplicationsRepository : IJobApplicationsRepository
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task WithdrawAsync(Guid jobApplicationId)
+    {
+        var jobApplication = await _dbContext.JobApplications.SingleOrDefaultAsync(ja => ja.Id == jobApplicationId);
+        if (jobApplication is not null)
+        {
+            jobApplication.Status = "Withdrawn";
+            _dbContext.JobApplications.Update(jobApplication);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
+
     public async Task UpdateStatusAsync(Guid id, string newStatus)
     {
         var jobApplication = await _dbContext.JobApplications.SingleOrDefaultAsync(ja => ja.Id == id);

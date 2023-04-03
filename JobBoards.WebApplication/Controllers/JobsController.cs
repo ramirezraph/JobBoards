@@ -217,7 +217,7 @@ public class JobsController : Controller
     [HttpGet]
     [Route("[controller]/Applications/{id:guid}")]
     [Authorize(Roles = "Admin, Employer")]
-    public async Task<IActionResult> ManageJobApplications(Guid id)
+    public async Task<IActionResult> ManageJobApplications(Guid id, string? status = null)
     {
         var jobPost = await _jobPostsRepository.GetByIdAsync(id);
 
@@ -226,12 +226,64 @@ public class JobsController : Controller
             return NotFound();
         }
 
+        var jobApplications = await _jobApplicationsRepository.GetAllByPostIdAsync(id);
+
+        if (!string.IsNullOrEmpty(status))
+        {
+            jobApplications = jobApplications.Where(a => a.Status.ToLower().Replace(" ", "") == status.ToLower().Replace(" ", "")).ToList();
+        }
+
         var viewModel = new JobApplicationsViewModel
         {
             JobPost = jobPost,
-            JobApplications = await _jobApplicationsRepository.GetAllByPostIdAsync(id)
+            JobApplications = jobApplications
         };
 
         return View(viewModel);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> MakeShortlisted(Guid jobApplicationId)
+    {
+        var jobApplication = await _jobApplicationsRepository.GetByIdAsync(jobApplicationId);
+
+        if (jobApplication is null)
+        {
+            return NotFound();
+        }
+
+        await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Shortlisted");
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> MakeInterview(Guid jobApplicationId)
+    {
+        var jobApplication = await _jobApplicationsRepository.GetByIdAsync(jobApplicationId);
+
+        if (jobApplication is null)
+        {
+            return NotFound();
+        }
+
+        await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Interview");
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> MakeNotSuitable(Guid jobApplicationId)
+    {
+        var jobApplication = await _jobApplicationsRepository.GetByIdAsync(jobApplicationId);
+
+        if (jobApplication is null)
+        {
+            return NotFound();
+        }
+
+        await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Not Suitable");
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
     }
 }

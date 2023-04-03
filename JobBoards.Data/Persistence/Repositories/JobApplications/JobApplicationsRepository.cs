@@ -64,13 +64,21 @@ public class JobApplicationsRepository : IJobApplicationsRepository
                  .SingleOrDefaultAsync(ja => ja.JobPostId == postId && ja.JobSeekerId == jobSeekerId);
     }
 
-    public Task RemoveAsync(JobApplication entity)
+    public async Task RemoveAsync(JobApplication entity)
     {
-        throw new NotImplementedException();
+        _dbContext.JobApplications.Remove(entity);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public Task UpdateStatusAsync(string newStatus)
+    public async Task UpdateStatusAsync(Guid id, string newStatus)
     {
-        throw new NotImplementedException();
+        var jobApplication = await _dbContext.JobApplications.SingleOrDefaultAsync(ja => ja.Id == id);
+        if (jobApplication is not null)
+        {
+            jobApplication.Status = newStatus;
+
+            _dbContext.JobApplications.Update(jobApplication);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -1,6 +1,24 @@
 @using JobBoards.WebApplication.ViewModels.Jobseekers
 @model JobApplicationsViewModel
 
+<style>
+    .status-submitted {
+        color: #54595E;
+    }
+
+    .status-interview {
+        color: #17A2B8;
+    }
+
+    .status-shortlisted {
+        color: #17A2B8;
+    }
+
+    .status-notsuitable {
+        color: #DC3545;
+    }
+</style>
+
 <div
     class="d-flex flex-column align-items-center justify-content-center grow p-5 space-y-5 h-100 w-100 position-relative">
     <div class="h-25 w-10 position-relative"></div>
@@ -33,7 +51,8 @@
                             </p>
                             <div class="row">
                                 <span class="col-2" style="font-weight: 500;">Status:</span>
-                                <div class="col-10">
+                                <div class="col-10 status-@(
+                                jobApplication.Status.ToLower().Replace(" ", ""))">
                                     @jobApplication.Status
                                 </div>
                             </div>

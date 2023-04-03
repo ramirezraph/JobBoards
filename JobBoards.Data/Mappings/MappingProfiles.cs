@@ -1,6 +1,7 @@
 using AutoMapper;
 using JobBoards.Data.Contracts.JobCategory;
 using JobBoards.Data.Contracts.JobLocation;
+using JobBoards.Data.Contracts.JobPost;
 using JobBoards.Data.Contracts.JobType;
 using JobBoards.Data.Contracts.Resume;
 using JobBoards.Data.Entities;
@@ -25,5 +26,9 @@ public class MappingProfiles : Profile
 
         // Resume
         CreateMap<Resume, CreateResumeRequest>().ReverseMap();
+
+        // Job Post
+        CreateMap<JobPost, UpdateJobPostRequest>().ReverseMap();
+        CreateMap<JobPost, CreateJobPostRequest>().ReverseMap();
     }
 }

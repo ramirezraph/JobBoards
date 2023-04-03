@@ -1,6 +1,10 @@
 @using JobBoards.WebApplication.ViewModels.Jobs
 @model JobApplicationsViewModel
 
+@{
+    var status = Context.Request.Query["status"].ToString();
+}
+
 <style>
     .status-submitted {
         color: #54595E;
@@ -57,17 +61,25 @@
                         @Model.JobApplications.Count
                         Applicants</span>
                     <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
-                        <label class="btn btn-outline-primary" for="btnradio1">All</label>
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
+                            checked="@(string.IsNullOrEmpty(status))">
+                        <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
+                            asp-route-id="@Model.JobPost.Id">All</a>
 
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio2">Interview</label>
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
+                            checked="@(status == "interview")">
+                        <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
+                            asp-route-id="@Model.JobPost.Id" asp-route-status="interview">Interview</a>
 
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio3">Shorlist</label>
+                        <input type=" radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
+                            checked="@(status == "shortlisted")">
+                        <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
+                            asp-route-id="@Model.JobPost.Id" asp-route-status="shortlisted">Shortlist</a>
 
-                        <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="btnradio4">Not Suitable</label>
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off"
+                            checked="@(status == "notsuitable")"><a class="btn btn-outline-primary"
+                            asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@Model.JobPost.Id"
+                            asp-route-status="notsuitable">Not Suitable</a>
                     </div>
                 </div>
                 @if (Model.JobApplications.Any())

@@ -217,7 +217,7 @@ public class JobsController : Controller
     [HttpGet]
     [Route("[controller]/Applications/{id:guid}")]
     [Authorize(Roles = "Admin, Employer")]
-    public async Task<IActionResult> ManageJobApplications(Guid id)
+    public async Task<IActionResult> ManageJobApplications(Guid id, string? status = null)
     {
         var jobPost = await _jobPostsRepository.GetByIdAsync(id);
 
@@ -226,10 +226,17 @@ public class JobsController : Controller
             return NotFound();
         }
 
+        var jobApplications = await _jobApplicationsRepository.GetAllByPostIdAsync(id);
+
+        if (!string.IsNullOrEmpty(status))
+        {
+            jobApplications = jobApplications.Where(a => a.Status.ToLower().Replace(" ", "") == status.ToLower().Replace(" ", "")).ToList();
+        }
+
         var viewModel = new JobApplicationsViewModel
         {
             JobPost = jobPost,
-            JobApplications = await _jobApplicationsRepository.GetAllByPostIdAsync(id)
+            JobApplications = jobApplications
         };
 
         return View(viewModel);

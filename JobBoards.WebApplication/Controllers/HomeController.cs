@@ -28,6 +28,17 @@ public class HomeController : Controller
         return View(viewModel);
     }
 
+    public IActionResult SearchForJobs(IndexViewModel indexViewModel)
+    {
+        return RedirectToAction(
+           controllerName: "Jobs",
+           actionName: "Index",
+           routeValues: new
+           {
+               search = indexViewModel.SearchJob
+           });
+    }
+
     public IActionResult Privacy()
     {
         return View();

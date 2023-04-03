@@ -14,9 +14,9 @@
     <div class="mt-md-5">
         <div class="row">
             <div class="col-12">
-                <form class="d-flex">
-                    <input type="text" class="form-control">
-                    <button class="ms-2 btn btn-outline-primary w-25" type="button">Search</button>
+                <form asp-controller="Home" asp-action="SearchForJobs" method="POST" class="d-flex">
+                    <input type="text" class="form-control" asp-for="SearchJob">
+                    <button class="ms-2 btn btn-outline-primary w-25" type="submit">Search</button>
                 </form>
                 <span class="text-black-50">Search for job title or keyword</span>
             </div>

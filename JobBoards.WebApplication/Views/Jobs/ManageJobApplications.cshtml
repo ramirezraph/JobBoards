@@ -1,6 +1,24 @@
 @using JobBoards.WebApplication.ViewModels.Jobs
 @model JobApplicationsViewModel
 
+<style>
+    .status-submitted {
+        color: #54595E;
+    }
+
+    .status-interview {
+        color: #17A2B8;
+    }
+
+    .status-shortlisted {
+        color: #17A2B8;
+    }
+
+    .status-notsuitable {
+        color: #DC3545;
+    }
+</style>
+
 <div class="container">
     <div class="my-5">
         <h1 class="text-primary text-center" style="font-size: 48px;">@Model.JobPost.Title</h1>
@@ -80,7 +98,8 @@
                                 </div>
                                 <div class="row mt-2">
                                     <span class="col-2" style="font-weight: 500;">Status:</span>
-                                    <div class="col-10">
+                                    <div class="col-10 status-@(
+                                jobApplication.Status.ToLower().Replace(" ", ""))">
                                         @jobApplication.Status
                                     </div>
                                 </div>

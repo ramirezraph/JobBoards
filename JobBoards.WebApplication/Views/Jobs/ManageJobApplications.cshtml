@@ -56,15 +56,22 @@
                     </form>
                     <span class="text-black-50">Search for Applicant's Name</span>
                 </div>
-                <div class="col-12 col-md-8 d-flex flex-row justify-content-between align-items-center">
-                    <span class="text-black-50" style="font-size: 12px;">Showing @Model.JobApplications.Count of
+                <div class="col-12 col-md-8 row p-0 m-0 justify-content-between align-items-center">
+                    <span class="text-black-50 col-12 col-md-4" style="font-size: 12px;">Showing
+                        @Model.JobApplications.Count of
                         @Model.JobApplications.Count
                         Applicants</span>
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    <div class="btn-group col-12 col-md-8 mt-3 mt-md-0" role="group"
+                        aria-label="Basic radio toggle button group">
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
                             checked="@(string.IsNullOrEmpty(status))">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
                             asp-route-id="@Model.JobPost.Id">All</a>
+
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
+                            checked="@(status == "submitted")">
+                        <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
+                            asp-route-id="@Model.JobPost.Id" asp-route-status="submitted">Submitted</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
                             checked="@(status == "interview")">

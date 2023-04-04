@@ -38,6 +38,11 @@
                     <input asp-for="ResumeFile" class="form-control" type="file">
                     <span asp-validation-for="ResumeFile" class="text-danger"></span>
                 </div>
+
+                @if (ViewData["ResumeNotFound"] != null)
+                {
+                    <p class="mt-2 text-danger">@ViewData["ResumeNotFound"]</p>
+                }
             }
             <div class="mt-2">
                 <button type="submit" class="btn w-100 btn-primary mt-3">Save Changes</button>

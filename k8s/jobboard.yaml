@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jobboard
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: DbJobboard
+  namespace: jobboard
+spec:
+  selector:
+    matchLabels:
+      app: DbJobboard
+  template:
+    metadata:
+      labels:
+        app: DbJobboard
+    spec:
+      containers:
+        - name: DbJobboard
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_SA_PASSWORD
+              value: "Pa$$w0rd!"
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 1433
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jobboardssql
+  namespace: jobboard
+spec:
+  selector:
+    app: DbJobboard
+  ports:
+    - port: 1433
+      targetPort: 1433
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: MVCJobboard
+  namespace: jobboard
+spec:
+  selector:
+    matchLabels:
+      app: MVCJobboard
+  template:
+    metadata:
+      labels:
+        app: MVCJobboard
+    spec:
+      containers:
+        - name: MVCJobboard
+          image: username/jobboardmvc:1.0
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          env:
+            - name: ConnectionStrings__DefaultConnection
+              value: "Server=jobboardssql.jobboard.svc.cluster.local;Database=JobBoardsDb;User Id=sa;Password=Pa$$w0rd!;Integrated Security=false;TrustServerCertificate=true;"
+          ports:
+            - containerPort: 5001

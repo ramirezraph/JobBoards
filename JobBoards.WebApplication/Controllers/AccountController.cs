@@ -102,6 +102,12 @@ public class AccountController : Controller
         {
             return RedirectToAction(controllerName: "Account", actionName: "Login");
         }
+
+        if (TempData.ContainsKey("ResumeNotFound"))
+        {
+            ViewData["ResumeNotFound"] = TempData["ResumeNotFound"];
+        }
+
         var viewModel = new ProfileViewModel
         {
             UserId = user.Id,

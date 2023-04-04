@@ -6,9 +6,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/JobBoards.WebApplication/bin/Debug/net7.0/JobBoards.WebApplication.dll",
+            "program": "${workspaceFolder}/JobBoards.Api/bin/Debug/net7.0/JobBoards.Api.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/JobBoards.WebApplication",
+            "cwd": "${workspaceFolder}/JobBoards.Api",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",

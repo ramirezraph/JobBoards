@@ -75,6 +75,12 @@ public class JobseekersController : Controller
             return BadRequest("No jobseeker profile was found.");
         }
 
+        if (jobSeekerProfile.ResumeId == null || jobSeekerProfile.ResumeId == Guid.Empty)
+        {
+            TempData["ResumeNotFound"] = "Upload a resume to apply.";
+            return RedirectToAction(controllerName: "Account", actionName: "Profile");
+        }
+
         // Check if an application already exists.
         var jobApplication = await _jobApplicationsRepository.GetJobSeekerApplicationToJobPostAsync(jobSeekerProfile.Id, jobPost.Id);
         if (jobApplication is not null)

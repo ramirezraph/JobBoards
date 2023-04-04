@@ -46,6 +46,7 @@ var app = builder.Build();
 {
     await DbInitializer.InitializeDatabase(app.Services);
 
+    app.UseExceptionHandler("/error");
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseHttpsRedirection();

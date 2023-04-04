@@ -1,0 +1,137 @@
+# Job Boards - Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jobboard
+
+# Job Boards - SQL Server
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobboardssql
+  namespace: jobboard
+spec:
+  selector:
+    matchLabels:
+      app: jobboardssql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jobboardssql
+    spec:
+      containers:
+        - name: jobboardssql
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          ports:
+            - containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_SA_PASSWORD
+              value: "Pa$$w0rd!"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jobboardssql
+  namespace: jobboard
+  labels:
+    app: jobboardssql
+spec:
+  ports:
+    - name: tcp
+      port: 1433
+      targetPort: 1433
+  selector:
+    app: jobboardssql
+  type: ClusterIP
+
+# Job Boards - Web API
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobboardsapi
+  namespace: jobboard
+spec:
+  selector:
+    matchLabels:
+      app: jobboardsapi
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jobboardsapi
+    spec:
+      containers:
+        - name: jobboardsapi
+          image: raphaelramirez/jobboards-api:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6001
+          env:
+            - name: ConnectionStrings__DefaultConnection
+              value: "Server=jobboardssql;Database=JobBoardsDb;User Id=sa;Password=Pa$$w0rd!;Integrated Security=false;TrustServerCertificate=true;"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jobboardsapi
+  namespace: jobboard
+  labels:
+    app: jobboardsapi
+spec:
+  ports:
+    - name: tcp
+      port: 6001
+      targetPort: 6001
+  selector:
+    app: jobboardsapi
+  type: ClusterIP
+
+# Job Boards - Web Application
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jobboardswebapp
+  namespace: jobboard
+spec:
+  selector:
+    matchLabels:
+      app: jobboardswebapp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jobboardswebapp
+    spec:
+      containers:
+        - name: jobboardswebapp
+          image: raphaelramirez/jobboards-mvc:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5001
+          env:
+            - name: ConnectionStrings__DefaultConnection
+              value: "Server=jobboardssql;Database=JobBoardsDb;User Id=sa;Password=Pa$$w0rd!;Integrated Security=false;TrustServerCertificate=true;"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jobboardswebapp
+  namespace: jobboard
+  labels:
+    app: jobboardswebapp
+spec:
+  ports:
+    - name: tcp
+      port: 5001
+      targetPort: 5001
+  selector:
+    app: jobboardswebapp
+  type: ClusterIP
+---
+

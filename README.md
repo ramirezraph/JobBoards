@@ -40,12 +40,12 @@ Firstly, make sure you have docker and kubernetes installed and running on your 
 
     To port-forward the web application:
     ```bash
-    kubectl port-forward svc/jobboardswebapp 5001:5001 -n jobboard
+    kubectl port-forward svc/jobboardswebapp <port>:5001 -n jobboard
     ```
 
     To port-forward the web api:
     ```bash
-    kubectl port-forward svc/jobboardsapi 6001:6001 -n jobboard
+    kubectl port-forward svc/jobboardsapi <port>:6001 -n jobboard
     ```
 
     Then, you can now access the web application or web api in your browser by going to `http://localhost:<port>`

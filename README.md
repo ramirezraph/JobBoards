@@ -19,7 +19,7 @@ We used Figma to design the user interface of the web application. Click the lin
 https://www.figma.com/file/x2tz6aYkjHnn4f6VTH527o/JobScout?node-id=139%3A170&t=z4EKNYEg3jP7USpk-1
 
 # Setup
-First, make sure you have docker and kubernetes installed and running on your computer. Once done, follow the step below.
+To run the applications, make sure you have docker and kubernetes installed and running on your computer. Once done, follow the step below.
 1. Clone the repository.
     ```bash
     git clone https://github.com/ramirezraph/JobBoards.git

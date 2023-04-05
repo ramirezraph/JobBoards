@@ -33,7 +33,7 @@ To run the applications, make sure you have docker and kubernetes installed and 
 3. Go to the `k8` directory and apply the kubernetes file.
     ```
     cd k8s
-    kubectl apply -f .\deployment.yaml
+    kubectl apply -f .\jobboards.yaml
     ```
 
 4. Check if all the services is running with this command:

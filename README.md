@@ -13,6 +13,11 @@ PJLI Connex is a web application developed with .NET technologies that offers a 
 - Prince Joshua M. Guintu
 - Raphael Isiah L. Ramirez
 
+# Wireframe
+
+We used Figma to design the user interface of the web application. Click the link below to view the figma project.
+https://www.figma.com/file/x2tz6aYkjHnn4f6VTH527o/JobScout?node-id=139%3A170&t=z4EKNYEg3jP7USpk-1
+
 # Setup
 First, make sure you have docker and kubernetes installed and running on your computer. Once done, follow the step below.
 1. Clone the repository.

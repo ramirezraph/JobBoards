@@ -10,7 +10,7 @@ A web application that enhances the job search experience for both job seekers a
 
 # Members
 - Joagne Ann F. Fernando
-- Prince Joshue M. Guintu
+- Prince Joshua M. Guintu
 - Raphael Isiah L. Ramirez
 
 # Setup

@@ -133,5 +133,3 @@ spec:
   selector:
     app: jobboardswebapp
   type: ClusterIP
----
-

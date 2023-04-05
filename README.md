@@ -1,5 +1,5 @@
 # JobBoards - PJLI Connex
-TalentConnex is a web application developed with .NET technologies that offers a variety of features which enhances the job posting and job search experience when looking for qualified candidates for PJLI job openings. It is designed to simplify the job search process by connecting job seekers with relevant job opportunities in PJLI. 
+PJLI Connex is a web application developed with .NET technologies that offers a variety of features which enhances the job posting and job search experience when looking for qualified candidates for PJLI job openings. It is designed to simplify the job search process by connecting job seekers with relevant job opportunities in PJLI. 
 
 ### Technologies:
 - C#, .NET 7

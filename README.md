@@ -48,6 +48,6 @@ To port-forward the web api:
 kubectl port-forward svc/jobboardsapi 6001:6001 -n jobboard
 ```
 
-Then, you can now access the web application or web api in you browser by going to `http://localhost:<port>`
+Then, you can now access the web application or web api in your browser by going to `http://localhost:<port>`
 
 # Screenshots

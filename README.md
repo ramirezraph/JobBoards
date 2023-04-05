@@ -1,5 +1,5 @@
 # JobBoards - PJLI Connex
-A user-friendly web application that enhances the job search experience for both job seekers and hiring managers!
+A web application that enhances the job search experience for both job seekers and hiring managers!
 
 ### Technologies:
 - C#, .NET 7

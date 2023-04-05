@@ -14,7 +14,7 @@ PJLI Connex is a web application developed with .NET technologies that offers a 
 - Raphael Isiah L. Ramirez
 
 # Setup
-Firstly, make sure you have docker and kubernetes installed and running on your computer. Once done, follow the step below.
+First, make sure you have docker and kubernetes installed and running on your computer. Once done, follow the step below.
 1. Clone the repository.
     ```bash
     git clone https://github.com/ramirezraph/JobBoards.git

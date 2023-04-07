@@ -10,4 +10,7 @@ public class ApplicationUser : IdentityUser
     public DateTime UpdatedAt { get; set; }
     public DateTime DeletedAt { get; set; }
     public ICollection<JobPost> JobPosts { get; set; } = new List<JobPost>();
+
+    public Guid JobSeekerId { get; set; }
+    public JobSeeker JobSeeker { get; set; } = default!;
 }

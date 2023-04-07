@@ -38,7 +38,8 @@ namespace JobBoards.Data.Persistence.Migrations
                 table: "JobSeekers",
                 column: "UserId",
                 principalTable: "AspNetUsers",
-                principalColumn: "Id");
+                principalColumn: "Id",
+                onDelete: ReferentialAction.SetNull);
         }
 
         /// <inheritdoc />

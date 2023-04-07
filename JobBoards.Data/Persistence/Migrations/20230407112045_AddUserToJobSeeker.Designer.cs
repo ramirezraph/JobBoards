@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobBoards.Data.Persistence.Migrations
 {
     [DbContext(typeof(JobBoardsDbContext))]
-    [Migration("20230407103707_AddUserToJobSeeker")]
+    [Migration("20230407112045_AddUserToJobSeeker")]
     partial class AddUserToJobSeeker
     {
         /// <inheritdoc />
@@ -526,7 +526,8 @@ namespace JobBoards.Data.Persistence.Migrations
                 {
                     b.HasOne("JobBoards.Data.Identity.ApplicationUser", "User")
                         .WithOne("JobSeeker")
-                        .HasForeignKey("JobBoards.Data.Entities.JobSeeker", "UserId");
+                        .HasForeignKey("JobBoards.Data.Entities.JobSeeker", "UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
                 });

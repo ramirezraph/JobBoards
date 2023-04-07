@@ -27,7 +27,8 @@ public class JobBoardsDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(au => au.JobSeeker)
             .WithOne(js => js.User)
             .HasForeignKey<JobSeeker>(js => js.UserId)
-            .IsRequired(false);
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
         modelBuilder.Entity<JobSeeker>()
             .HasOne(js => js.Resume)

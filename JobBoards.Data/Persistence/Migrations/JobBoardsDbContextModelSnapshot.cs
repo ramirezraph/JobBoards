@@ -523,7 +523,8 @@ namespace JobBoards.Data.Persistence.Migrations
                 {
                     b.HasOne("JobBoards.Data.Identity.ApplicationUser", "User")
                         .WithOne("JobSeeker")
-                        .HasForeignKey("JobBoards.Data.Entities.JobSeeker", "UserId");
+                        .HasForeignKey("JobBoards.Data.Entities.JobSeeker", "UserId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("User");
                 });

@@ -45,6 +45,8 @@ public class JobApplicationsRepository : IJobApplicationsRepository
                 .Where(ja => ja.JobPostId == postId)
                 .Include(ja => ja.JobSeeker)
                     .ThenInclude(js => js.Resume)
+                .Include(ja => ja.JobSeeker)
+                    .ThenInclude(js => js.User)
                 .ToListAsync();
     }
 

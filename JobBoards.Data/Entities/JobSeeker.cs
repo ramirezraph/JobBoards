@@ -6,6 +6,7 @@ namespace JobBoards.Data.Entities;
 public class JobSeeker : Entity<Guid>
 {
     public string UserId { get; set; }
+    public ApplicationUser User { get; set; } = default!;
     public Guid ResumeId { get; set; }
     public Resume Resume { get; set; } = default!;
     public ICollection<JobApplication> JobApplications { get; set; } = new List<JobApplication>();

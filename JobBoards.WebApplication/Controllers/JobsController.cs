@@ -287,7 +287,7 @@ public class JobsController : Controller
     [HttpGet]
     [Route("[controller]/Applications/{id:guid}")]
     [Authorize(Roles = "Admin, Employer")]
-    public async Task<IActionResult> ManageJobApplications(Guid id, string? status = null)
+    public async Task<IActionResult> ManageJobApplications(Guid id, string? search = null, string? status = null)
     {
         var jobPost = await _jobPostsRepository.GetByIdAsync(id);
 
@@ -298,6 +298,11 @@ public class JobsController : Controller
 
         var jobApplications = await _jobApplicationsRepository.GetAllByPostIdAsync(id);
 
+        if (!string.IsNullOrEmpty(search))
+        {
+            jobApplications = jobApplications.Where(ja => ja.JobSeeker.User.FullName.ToLower().Contains(search.ToLower())).ToList();
+        }
+
         if (!string.IsNullOrEmpty(status))
         {
             jobApplications = jobApplications.Where(a => a.Status.ToLower().Replace(" ", "") == status.ToLower().Replace(" ", "")).ToList();
@@ -306,10 +311,30 @@ public class JobsController : Controller
         var viewModel = new JobApplicationsViewModel
         {
             JobPost = jobPost,
-            JobApplications = jobApplications
+            JobApplications = jobApplications,
+            Filters = new()
+            {
+                PostId = jobPost.Id,
+                Search = search,
+                Status = status
+            }
         };
 
         return View(viewModel);
+    }
+
+    [HttpPost]
+    public IActionResult FilterJobApplications(JobApplicationsViewModel viewModel)
+    {
+        return RedirectToAction(
+            controllerName: "Jobs",
+            actionName: "ManageJobApplications",
+            routeValues: new
+            {
+                id = viewModel.Filters.PostId,
+                search = viewModel.Filters.Search,
+                status = viewModel.Filters.Status
+            });
     }
 
     [HttpGet]

@@ -46,6 +46,18 @@ public class DbInitializer : IDbInitializer
             var pendingMigrations = context.Database.GetPendingMigrations();
             if (pendingMigrations.Any())
             {
+                if (context.Database.GetAppliedMigrations().Any())
+                {
+                    // Database exists and has migrations, ask if the user wants to drop the database.
+                    Console.WriteLine("There are pending migrations. Do you want to drop the database and lose all data? (y/n)");
+                    var response = Console.ReadLine();
+
+                    if (response?.ToLower() == "y")
+                    {
+                        context.Database.EnsureDeleted();
+                    }
+                }
+
                 await context.Database.MigrateAsync();
 
                 var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();

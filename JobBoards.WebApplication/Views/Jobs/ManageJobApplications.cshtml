@@ -3,6 +3,7 @@
 
 @{
     var status = Context.Request.Query["status"].ToString();
+    var search = Context.Request.Query["search"].ToString();
 }
 
 <style>
@@ -53,13 +54,17 @@
 
         <div class="container mt-5">
             <div class="row justify-content-center">
-                <div class="col-12 col-md-8 mb-4">
-                    <form class="d-flex">
-                        <input type="text" class="form-control">
-                        <button class="ms-2 btn btn-outline-primary w-25" type="button">Search</button>
-                    </form>
+                <form asp-controller="Jobs" asp-action="FilterJobApplications" method="POST"
+                    class="col-12 col-md-8 mb-4">
+                    <input type="text" asp-for="Filters.PostId" readonly hidden>
+                    <input type="text" asp-for="Filters.Status" readonly hidden>
+                    <div class="d-flex">
+                        <input asp-for="Filters.Search" type="text" class="form-control">
+                        <button class="ms-2 btn btn-outline-primary w-25" type="submit">Search</button>
+                    </div>
                     <span class="text-black-50">Search for Applicant's Name</span>
-                </div>
+                </form>
+
                 <div class="col-12 col-md-8 row p-0 m-0 justify-content-between align-items-center">
                     <span class="text-black-50 col-12 col-md-4" style="font-size: 12px;">Showing
                         @Model.JobApplications.Count of
@@ -70,27 +75,30 @@
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
                             checked="@(string.IsNullOrEmpty(status))">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id">All</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search">All</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
                             checked="@(status == "submitted")">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id" asp-route-status="submitted">Submitted</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
+                            asp-route-status="submitted">Submitted</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
                             checked="@(status == "interview")">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id" asp-route-status="interview">Interview</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
+                            asp-route-status="interview">Interview</a>
 
                         <input type=" radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
                             checked="@(status == "shortlisted")">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id" asp-route-status="shortlisted">Shortlist</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
+                            asp-route-status="shortlisted">Shortlist</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off"
                             checked="@(status == "notsuitable")"><a class="btn btn-outline-primary"
                             asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@Model.JobPost.Id"
-                            asp-route-status="notsuitable">Not Suitable</a>
+                            asp-route-search="@search" asp-route-status="notsuitable">Not Suitable</a>
                     </div>
                 </div>
                 @if (Model.JobApplications.Any())

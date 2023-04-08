@@ -72,4 +72,15 @@ public class JobPostsRepository : IJobPostsRepository
         _dbContext.JobPosts.Update(jobPost);
         await _dbContext.SaveChangesAsync();
     }
+    public async Task DeleteAsync(Guid postId)
+    {
+        var post = await _dbContext.JobPosts.FindAsync(postId);
+        if (post != null)
+        {
+            _dbContext.JobPosts.Remove(post);
+            await _dbContext.SaveChangesAsync();
+        }
+    }
 }
+
+

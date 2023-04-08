@@ -283,6 +283,15 @@ public class JobsController : Controller
 
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = formValues.Id });
     }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        await _jobPostsRepository.DeleteAsync(id);
+        return RedirectToAction("Index");
+    }
+
+
 
     [HttpGet]
     [Route("[controller]/Applications/{id:guid}")]

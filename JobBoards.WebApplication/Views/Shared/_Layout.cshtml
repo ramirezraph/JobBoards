@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 
 <body>
@@ -22,7 +23,7 @@
                     aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between"ww
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" ww
                     id="navbarSupportedContent">
                     <ul class="navbar-nav">
                         <li class="nav-item">
@@ -56,6 +57,10 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        feather.replace()
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

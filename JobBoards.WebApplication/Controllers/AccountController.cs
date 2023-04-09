@@ -108,6 +108,11 @@ public class AccountController : Controller
             ViewData["ResumeNotFound"] = TempData["ResumeNotFound"];
         }
 
+        if (TempData.ContainsKey("ResumeDeleteFailed"))
+        {
+            ViewData["ResumeDeleteFailed"] = TempData["ResumeDeleteFailed"];
+        }
+
         var viewModel = new ProfileViewModel
         {
             UserId = user.Id,

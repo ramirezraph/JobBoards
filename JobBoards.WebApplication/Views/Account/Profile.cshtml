@@ -1,89 +1,92 @@
 @using JobBoards.WebApplication.ViewModels.Account
 @model ProfileViewModel
 
-<div class="container mt-5" style="width: 600px;">
-    <div class="card p-4 text-start">
-        <p class="text-secondary fs-3">My Profile</p>
-
-        <form asp-controller="Account" asp-action="Profile" method="POST" enctype="multipart/form-data">
-            <div hidden>
-                <input asp-for="UserId" class="form-control mt-2" />
-            </div>
-            <div class="mt-2">
-                <label asp-for="FullName"></label>
-                <input asp-for="FullName" class="form-control mt-2" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
-            <div class="mt-2">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control mt-2" readonly />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            @if (User.IsInRole("User"))
-            {
-                @if (Model.UserResume is not null)
-                {
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-7 col-xl-5">
+            <div class="card p-4 text-start">
+                <p class="text-secondary fs-3">My Profile</p>
+                <form asp-controller="Account" asp-action="Profile" method="POST" enctype="multipart/form-data">
+                    <div hidden>
+                        <input asp-for="UserId" class="form-control mt-2" />
+                    </div>
                     <div class="mt-2">
-                        <p class="form-label">
-                            Resume
-                        </p>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-outline-info">@Model.UserResume.FileName</button>
-                            <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="visually-hidden">Toggle Dropdown</span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a asp-controller="Jobseekers" asp-action="DownloadResume" asp-route-userId="@Model.UserId"
-                                        class="dropdown-item">Download</a>
-                                </li>
-                                <li>
-                                    <a asp-controller="Jobseekers" asp-action="RemoveResume" asp-route-userId="@Model.UserId"
-                                        class="dropdown-item text-danger">Remove</a>
-                                </li>
-                            </ul>
+                        <label asp-for="FullName"></label>
+                        <input asp-for="FullName" class="form-control mt-2" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="mt-2">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" class="form-control mt-2" readonly />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    @if (User.IsInRole("User"))
+                    {
+                        @if (Model.UserResume is not null)
+                        {
+                            <div class="mt-2">
+                                <p class="form-label">
+                                    Resume
+                                </p>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-info">@Model.UserResume.FileName</button>
+                                    <button type="button" class="btn btn-outline-info dropdown-toggle dropdown-toggle-split"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="visually-hidden">Toggle Dropdown</span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a asp-controller="Jobseekers" asp-action="DownloadResume" asp-route-userId="@Model.UserId"
+                                                class="dropdown-item">Download</a>
+                                        </li>
+                                        <li>
+                                            <a asp-controller="Jobseekers" asp-action="RemoveResume" asp-route-userId="@Model.UserId"
+                                                class="dropdown-item text-danger">Remove</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+                        <div class="mt-4">
+                            <label class="form-label">Add or update your resume</label>
+                            <input asp-for="ResumeFile" class="form-control" type="file">
+                            <span asp-validation-for="ResumeFile" class="text-danger"></span>
                         </div>
-                    </div>
-                }
-                <div class="mt-4">
-                    <label class="form-label">Add or update your resume</label>
-                    <input asp-for="ResumeFile" class="form-control" type="file">
-                    <span asp-validation-for="ResumeFile" class="text-danger"></span>
-                </div>
 
-                @if (ViewData["ResumeNotFound"] != null)
-                {
-                    <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
-                        @ViewData["ResumeNotFound"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                }
+                        @if (ViewData["ResumeNotFound"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                                @ViewData["ResumeNotFound"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
 
-                @if (ViewData["ResumeDeleteFailed"] != null)
-                {
-                    <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
-                        @ViewData["ResumeDeleteFailed"]
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        @if (ViewData["ResumeDeleteFailed"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                                @ViewData["ResumeDeleteFailed"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+                    }
+                    <div class="mt-2">
+                        <button type="submit" class="btn w-100 btn-primary mt-3">Save Changes</button>
                     </div>
-                }
-            }
-            <div class="mt-2">
-                <button type="submit" class="btn w-100 btn-primary mt-3">Save Changes</button>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.UpdateResultMessage))
+                    {
+                        <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
+                            @Model.UpdateResultMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                </form>
             </div>
-
-            @if (!string.IsNullOrWhiteSpace(Model.UpdateResultMessage))
-            {
-                <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
-                    @Model.UpdateResultMessage
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            }
-        </form>
-    </div>
-    <div class="p-4">
-        <a asp-controller="Account" asp-action="ChangePassword" class="btn w-100 btn-secondary mt-3">Change
-            Password</a>
-        <a href="#" class="btn w-100 btn-danger mt-2">Deactivate</a>
+            <div class="p-4">
+                <a asp-controller="Account" asp-action="ChangePassword" class="btn w-100 btn-secondary mt-3">Change
+                    Password</a>
+                <a href="#" class="btn w-100 btn-danger mt-2">Deactivate</a>
+            </div>
+        </div>
     </div>
 </div>

@@ -74,6 +74,7 @@ public class JobSeekersRepository : IJobSeekersRepository
     {
         return _dbContext.JobSeekers
             .Include(js => js.Resume)
+            .Include(js => js.JobApplications)
             .SingleOrDefaultAsync(js => js.UserId == userId);
     }
 }

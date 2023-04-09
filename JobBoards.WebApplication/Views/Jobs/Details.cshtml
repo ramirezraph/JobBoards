@@ -26,11 +26,11 @@
         color: #DC3545;
     }
 
-
-
+    /* Style for confirmation buttons */
     .confirm-popup-content p1 {
         color: red;
     }
+
     .confirm-popup {
         display: none;
         position: fixed;
@@ -40,7 +40,7 @@
         width: 100%;
         height: 100%;
         overflow: auto;
-        background-color: rgba(0,0,0,0.4);
+        background-color: rgba(0, 0, 0, 0.4);
     }
 
     .confirm-popup-content {
@@ -52,32 +52,29 @@
         text-align: center;
     }
 
-    /* Style for confirmation buttons */
     .confirm-buttons {
         display: flex;
         justify-content: center;
         margin-top: 20px;
     }
 
-        .confirm-buttons button {
-            margin: 0 10px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+    .confirm-buttons button {
+        margin: 0 10px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
 
-        .confirm-buttons .confirm {
-            background-color: #dc3545;
-            color: #fff;
-        }
+    .confirm-buttons .confirm {
+        background-color: #dc3545;
+        color: #fff;
+    }
 
-        .confirm-buttons .cancel {
-            background-color: #54595E;
-            color: #fff;
-        }
-
-
+    .confirm-buttons .cancel {
+        background-color: #54595E;
+        color: #fff;
+    }
 </style>
 
 
@@ -197,7 +194,8 @@
                     class="btn btn-primary btn-block w-100 mt-1">Edit</a>
                 <form id="delete-form" asp-controller="Jobs" asp-action="Delete" method="post">
                     <input type="hidden" name="id" value="@Model.JobPost.Id" />
-                    <button type="button" onclick="showConfirm()" class="btn btn-danger btn-block w-100 mt-1">Delete</button>
+                    <button type="button" onclick="showConfirm()"
+                        class="btn btn-danger btn-block w-100 mt-1">Delete</button>
                 </form>
 
                 <!-- Confirmation popup -->
@@ -211,23 +209,23 @@
                         </div>
                     </div>
                 </div>
-                <script>
-                    function showConfirm() {
-                        document.getElementById("confirm-popup").style.display = "block";
-                    }
-
-                    function hideConfirm() {
-                        document.getElementById("confirm-popup").style.display = "none";
-                    }
-
-                    function deletePost() {
-                        document.getElementById("delete-form").submit();
-                    }
-                </script>
-
-
             }
-
         </div>
     </div>
 </div>
+
+@section scripts {
+    <script>
+        function showConfirm() {
+            document.getElementById("confirm-popup").style.display = "block";
+        }
+
+        function hideConfirm() {
+            document.getElementById("confirm-popup").style.display = "none";
+        }
+
+        function deletePost() {
+            document.getElementById("delete-form").submit();
+        }
+    </script>
+}

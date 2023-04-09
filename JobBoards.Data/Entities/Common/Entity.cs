@@ -8,8 +8,9 @@ public abstract class Entity<TId> where TId : notnull
     {
         Id = id;
     }
-
+#pragma warning disable CS8618
     protected Entity()
     {
     }
+#pragma warning restore CS8618
 }

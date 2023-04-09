@@ -23,6 +23,11 @@ public class JobPostsRepository : IJobPostsRepository
         return await _dbContext.JobPosts.ToListAsync();
     }
 
+    public IQueryable<JobPost> GetAllQueryable()
+    {
+        return _dbContext.JobPosts;
+    }
+
     public async Task<JobPost?> GetByIdAsync(Guid id)
     {
         return await _dbContext.JobPosts

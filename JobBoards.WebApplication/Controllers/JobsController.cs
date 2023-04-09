@@ -81,7 +81,7 @@ public class JobsController : Controller
 
         if (maxSalary != null)
         {
-            jobPosts = jobPosts.Where(jp => jp.MaxSalary <= maxSalary).ToList();
+            jobPosts = jobPosts.Where(jp => jp.MinSalary <= maxSalary || jp.MaxSalary <= maxSalary).ToList();
         }
 
         var viewModel = new IndexViewModel

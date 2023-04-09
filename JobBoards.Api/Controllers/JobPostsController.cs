@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using JobBoards.Api.Common.Models;
 using JobBoards.Data.Contracts.JobLocation;
 using JobBoards.Data.Contracts.JobPost;
 using JobBoards.Data.Entities;
@@ -8,63 +9,67 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoards.Api.Controllers;
 
-    public class JobPostsController : ApiController
+public class JobPostsController : ApiController
+{
+    private readonly IJobPostsRepository _jobPostsRepository;
+    private readonly IMapper _mapper;
+
+    public JobPostsController(IJobPostsRepository jobPostsRepository, IMapper mapper)
     {
-        private readonly IJobPostsRepository _jobPostsRepository;
-        private readonly IMapper _mapper;
+        _jobPostsRepository = jobPostsRepository;
+        _mapper = mapper;
+    }
 
-        public JobPostsController(IJobPostsRepository jobPostsRepository, IMapper mapper)
+    [HttpGet]
+    public async Task<IActionResult> ListJobPosts(int? pageNumber, int? itemsPerPage)
+    {
+        IQueryable<JobPost> jobPosts = _jobPostsRepository.GetAllQueryable()
+                                            .OrderByDescending(jp => jp.CreatedAt);
+
+        var paginatedResult = await PaginatedResult<JobPost>.CreateAsync(jobPosts, pageNumber ?? 1, itemsPerPage ?? 3);
+
+        return Ok(paginatedResult);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetJobPostById(Guid id)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(id);
+        if (jobPost is null)
         {
-            _jobPostsRepository = jobPostsRepository;
-            _mapper = mapper;
+            return NotFound();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ListJobPosts()
+        return Ok(jobPost);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateJobPost(CreateJobPostRequest request)
+    {
+        if (!ModelState.IsValid)
         {
-            List<JobPost> jobPosts = await _jobPostsRepository.GetAllAsync();
-            return Ok(jobPosts);
+            return BadRequest(ModelState);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetJobPostById(Guid id)
-        {
-            var jobPost = await _jobPostsRepository.GetByIdAsync(id);
-            if (jobPost is null)
-            {
-                return NotFound();
-            }
+        var newjobPost = JobPost.CreateNew(request.Title, request.Description, request.JobLocationId, request.MinSalary, request.MaxSalary, request.IsActive, request.JobCategoryId, request.JobTypeId, request.Expiration, request.CreatedById);
+        await _jobPostsRepository.AddAsync(newjobPost);
 
-            return Ok(jobPost);
+        return CreatedAtAction(nameof(GetJobPostById), new { id = newjobPost.Id }, newjobPost);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteJobLocation(Guid id)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(id);
+        if (jobPost is null)
+        {
+            return NotFound();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateJobPost(CreateJobPostRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        await _jobPostsRepository.RemoveAsync(jobPost);
 
-            var newjobPost = JobPost.CreateNew(request.Title, request.Description, request.JobLocationId, request.MinSalary, request.MaxSalary, request.IsActive, request.JobCategoryId, request.JobTypeId, request.Expiration, request.CreatedById);
-            await _jobPostsRepository.AddAsync(newjobPost);
-
-            return CreatedAtAction(nameof(GetJobPostById), new { id = newjobPost.Id }, newjobPost);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteJobLocation(Guid id)
-        {
-            var jobPost = await _jobPostsRepository.GetByIdAsync(id);
-            if (jobPost is null)
-            {
-                return NotFound();
-            }
-
-            await _jobPostsRepository.RemoveAsync(jobPost);
-
-            return NoContent();
-        }
+        return NoContent();
+    }
 
     [HttpPost("{id}")]
     public async Task<IActionResult> UpdateJobPost(UpdateJobPostRequest request, Guid id)

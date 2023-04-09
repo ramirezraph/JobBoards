@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
-using JobBoards.Api.Common.Models;
-using JobBoards.Data.Contracts.JobLocation;
+using JobBoards.Data.Common.Models;
 using JobBoards.Data.Contracts.JobPost;
 using JobBoards.Data.Entities;
-using JobBoards.Data.Persistence.Repositories.JobLocations;
 using JobBoards.Data.Persistence.Repositories.JobPosts;
 using Microsoft.AspNetCore.Mvc;
 

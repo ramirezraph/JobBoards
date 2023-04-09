@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace JobBoards.Api.Common.Models;
+namespace JobBoards.Data.Common.Models;
 
 public class PaginatedResult<T>
 {

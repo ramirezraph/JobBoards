@@ -59,6 +59,12 @@ public class JobsController : Controller
     {
         var jobPosts = await _jobPostsRepository.GetAllAsync();
 
+        // Filter all Inactive
+        if (!User.IsInRole("Admin") && !User.IsInRole("Employer"))
+        {
+            jobPosts = jobPosts.Where(jp => jp.IsActive).ToList();
+        }
+
         if (!string.IsNullOrWhiteSpace(search))
         {
             jobPosts = jobPosts.Where(jp => jp.Title.ToLower().Contains(search.ToLower()) || jp.Description.ToLower().Contains(search.ToLower())).ToList();

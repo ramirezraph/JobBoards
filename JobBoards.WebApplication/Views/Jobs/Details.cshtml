@@ -86,9 +86,9 @@
                     <h2 class="card-title text-primary" style="font-size: 48px;">@Model.JobPost.Title</h2>
                     <h4 class="card-subtitle text-muted mb-4">@Model.JobPost.JobType.Name, PHP @Model.JobPost.MinSalary
                         - PHP @Model.JobPost.MaxSalary</h4>
-                    <p class="card-text">
-                        @Model.JobPost.Description
-                    </p>
+                    <div class="card-text">
+                        @Html.Raw(Model.JobPost.Description)
+                    </div>
                 </div>
             </div>
         </div>

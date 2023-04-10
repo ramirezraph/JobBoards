@@ -126,6 +126,7 @@ public class JobseekersController : Controller
     }
 
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> DownloadResume(string userId)
     {
         // Get the job seeker profile by ID
@@ -163,6 +164,7 @@ public class JobseekersController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = "User")]
     public async Task<IActionResult> RemoveResume(string userId)
     {
         // Get the job seeker profile by ID

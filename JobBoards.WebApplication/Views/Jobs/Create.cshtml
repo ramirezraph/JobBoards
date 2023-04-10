@@ -24,12 +24,12 @@
             <form asp-controller="Jobs" asp-action="Create" method="POST">
                 <div class="form-group mt-2">
                     <label asp-for="Form.Title">Job Title</label>
-                    <input asp-for="Form.Title" type="text" class="form-control" placeholder="Enter job title">
+                    <input asp-for="Form.Title" type="text" class="form-control mt-2" placeholder="Enter job title">
                     <span asp-validation-for="Form.Title" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-2">
                     <label for="jobType">Job Type</label>
-                    <select class="form-control" asp-for="Form.JobTypeId">
+                    <select class="form-control mt-2" asp-for="Form.JobTypeId">
                         <option selected>Select a Job Type</option>
                         @foreach (var jobType in Model.JobTypes)
                         {
@@ -40,7 +40,7 @@
                 </div>
                 <div class="form-group mt-2">
                     <label for="salary">Salary</label>
-                    <div class="input-group">
+                    <div class="input-group mt-2">
                         <div class="input-group-prepend">
                             <span class="input-group-text">₱</span>
                         </div>
@@ -60,7 +60,7 @@
                 </div>
                 <div class="form-group mt-2">
                     <label for="jobCategory">Job Category</label>
-                    <select class="form-select" asp-for="Form.JobCategoryId">
+                    <select class="form-select mt-2" asp-for="Form.JobCategoryId">
                         <option selected>Select a Job Category</option>
                         @foreach (var jobCategory in Model.JobCategories)
                         {
@@ -71,7 +71,7 @@
                 </div>
                 <div class="form-group mt-2">
                     <label for="jobLocation">Job Location</label>
-                    <select class="form-select" asp-for="Form.JobLocationId">
+                    <select class="form-select mt-2" asp-for="Form.JobLocationId">
                         <option selected>Select a Job Location</option>
                         @foreach (var jobLocation in Model.JobLocations)
                         {
@@ -80,8 +80,7 @@
                     </select>
                     <span asp-validation-for="Form.JobLocationId" class="text-danger"></span>
                 </div>
-                <div class="form-group mt-2">
-                    <label for="jobDescription">Job Description</label>
+                <div class="form-group mt-4">
                     <textarea class="form-control" id="jobDescription" asp-for="Form.Description" rows="5"></textarea>
                 </div>
                 <div class="form-group mt-2">
@@ -92,3 +91,21 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        tinymce.init({
+            selector: '#jobDescription',
+            plugins: [
+                'advlist', 'lists', 'link', 'image', 'emoticons', 'help'
+            ],
+            menu: {
+                title: { title: 'Job Description', items: 'code visualaid | searchreplace | emoticons' }
+            },
+            toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | ' +
+                'bullist numlist outdent indent | link image' +
+                'forecolor emoticons | help',
+            menubar: 'title',
+        });
+    </script>
+}

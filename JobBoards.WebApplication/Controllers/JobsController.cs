@@ -59,6 +59,12 @@ public class JobsController : Controller
     {
         var jobPosts = await _jobPostsRepository.GetAllAsync();
 
+        // Filter all Inactive
+        if (!User.IsInRole("Admin") && !User.IsInRole("Employer"))
+        {
+            jobPosts = jobPosts.Where(jp => jp.IsActive).ToList();
+        }
+
         if (!string.IsNullOrWhiteSpace(search))
         {
             jobPosts = jobPosts.Where(jp => jp.Title.ToLower().Contains(search.ToLower()) || jp.Description.ToLower().Contains(search.ToLower())).ToList();
@@ -345,6 +351,7 @@ public class JobsController : Controller
             });
     }
 
+    [Authorize(Roles = "Admin, Employer")]
     [HttpGet]
     public async Task<IActionResult> MakeShortlisted(Guid jobApplicationId)
     {
@@ -360,6 +367,7 @@ public class JobsController : Controller
         return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
     }
 
+    [Authorize(Roles = "Admin, Employer")]
     [HttpGet]
     public async Task<IActionResult> MakeInterview(Guid jobApplicationId)
     {
@@ -375,6 +383,7 @@ public class JobsController : Controller
         return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
     }
 
+    [Authorize(Roles = "Admin, Employer")]
     [HttpGet]
     public async Task<IActionResult> MakeNotSuitable(Guid jobApplicationId)
     {
@@ -388,5 +397,21 @@ public class JobsController : Controller
         await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Not Suitable");
 
         return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
+    }
+
+    [Authorize(Roles = "Admin, Employer")]
+    public async Task<IActionResult> ToggleJobPostIsActive(Guid jobPostId)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(jobPostId);
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        jobPost.IsActive = !jobPost.IsActive;
+
+        await _jobPostsRepository.UpdateAsync(jobPostId, jobPost);
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = jobPostId });
     }
 }

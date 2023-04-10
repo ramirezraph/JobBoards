@@ -41,6 +41,7 @@ public class JobPostsRepository : IJobPostsRepository
     public async Task<List<JobPost>> GetNewListingsAsync()
     {
         return await _dbContext.JobPosts
+            .Where(jp => jp.IsActive)
             .OrderByDescending(jp => jp.CreatedAt)
             .Take(3)
             .Include(jp => jp.JobType)

@@ -120,6 +120,23 @@
                             @Model.JobPost.CreatedAt
                         </div>
                     </div>
+                    @if (Model.HasWriteAccess)
+                    {
+                        <div class="row mt-2">
+                            <h6 class="col-4 d-inline">Status:</h6>
+                            <div class="col-8">
+                                @if (Model.JobPost.IsActive)
+                                {
+                                    <span class="text-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger">Inactive</span>
+                                }
+
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
 
@@ -189,7 +206,11 @@
 
             @if (Model.HasWriteAccess)
             {
-                <a href="#" class="btn btn-secondary btn-block w-100 mt-1">Deactivate Job Post</a>
+                <a asp-controller="Jobs" asp-action="ToggleJobPostIsActive" asp-route-jobPostId="@Model.JobPost.Id"
+                    class="btn btn-secondary btn-block w-100 mt-1">
+                    @(Model.JobPost.IsActive ? "Deactivate Job Post" : "Activate Job Post")
+                </a>
+
                 <a asp-controller="Jobs" asp-action="Update" asp-route-id="@Model.JobPost.Id"
                     class="btn btn-primary btn-block w-100 mt-1">Edit</a>
                 <form id="delete-form" asp-controller="Jobs" asp-action="Delete" method="post">

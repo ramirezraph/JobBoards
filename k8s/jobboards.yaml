@@ -89,7 +89,7 @@ spec:
       targetPort: 6001
   selector:
     app: jobboardsapi
-  type: ClusterIP
+  type: NodePort
 
 # Job Boards - Web Application
 ---
@@ -132,4 +132,4 @@ spec:
       targetPort: 5001
   selector:
     app: jobboardswebapp
-  type: ClusterIP
+  type: NodePort

@@ -30,9 +30,7 @@ public class UpdateJobPostRequest
     [Required]
     public DateTime Expiration { get; set; }
 
-    public string CreatedById { get; set; }
-
-    public UpdateJobPostRequest(string title, string description, Guid jobLocationId, double minSalary, double maxSalary, bool isActive, Guid jobCategoryId, Guid jobTypeId, DateTime expiration, string createdById)
+    public UpdateJobPostRequest(string title, string description, Guid jobLocationId, double minSalary, double maxSalary, bool isActive, Guid jobCategoryId, Guid jobTypeId, DateTime expiration)
     {
         Title = title;
         Description = description;
@@ -43,6 +41,5 @@ public class UpdateJobPostRequest
         JobCategoryId = jobCategoryId;
         JobTypeId = jobTypeId;
         Expiration = expiration;
-        CreatedById = createdById;
     }
 }

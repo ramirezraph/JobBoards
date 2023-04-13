@@ -29,9 +29,7 @@ public class CreateJobPostRequest
     [Required]
     public DateTime Expiration { get; set; }
 
-    public string CreatedById { get; set; }
-
-    public CreateJobPostRequest(string title, string description, Guid jobLocationId, double minSalary, double maxSalary, bool isActive, Guid jobCategoryId, Guid jobTypeId, DateTime expiration, string createdById)
+    public CreateJobPostRequest(string title, string description, Guid jobLocationId, double minSalary, double maxSalary, bool isActive, Guid jobCategoryId, Guid jobTypeId, DateTime expiration)
     {
         Title = title;
         Description = description;
@@ -42,6 +40,5 @@ public class CreateJobPostRequest
         JobCategoryId = jobCategoryId;
         JobTypeId = jobTypeId;
         Expiration = expiration;
-        CreatedById = createdById;
     }
 }

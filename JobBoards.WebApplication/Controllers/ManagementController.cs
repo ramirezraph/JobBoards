@@ -38,16 +38,52 @@ public class ManagementController : Controller
         return View(viewModel);
     }
 
-    public async Task<IActionResult> JobApplications()
+    public async Task<IActionResult> JobApplications(string? search, Guid? jobCategoryId, Guid? jobLocationId)
     {
         var jobPosts = await _jobPostsRepository.GetAllAsync();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            jobPosts = jobPosts.Where(jp => jp.Title.ToLower().Contains(search.ToLower())).ToList();
+        }
+
+        if (jobCategoryId != null && jobCategoryId != Guid.Empty)
+        {
+            jobPosts = jobPosts.Where(jp => jp.JobCategoryId == jobCategoryId).ToList();
+        }
+
+        if (jobLocationId != null && jobLocationId != Guid.Empty)
+        {
+            jobPosts = jobPosts.Where(jp => jp.JobLocationId == jobLocationId).ToList();
+        }
+
         var viewModel = new ManageJobApplicationsViewModel
         {
             JobPosts = jobPosts.OrderByDescending(jp => jp.CreatedAt).ToList(),
             JobCategories = await _jobCategoriesRepository.GetAllAsync(),
-            JobLocations = await _jobLocationsRepository.GetAllAsync()
+            JobLocations = await _jobLocationsRepository.GetAllAsync(),
+            Filters = new ManageJobApplicationsViewModel.FilterForm
+            {
+                JobTitle = search,
+                JobCategoryId = jobCategoryId,
+                JobLocationId = jobLocationId,
+            }
         };
 
         return View(viewModel);
+    }
+
+    [HttpPost]
+    public IActionResult RefineSearchResult(ManageJobApplicationsViewModel viewModel)
+    {
+        return RedirectToAction(
+            controllerName: "Management",
+            actionName: "JobApplications",
+            routeValues: new
+            {
+                search = viewModel.Filters.JobTitle,
+                jobCategoryId = viewModel.Filters.JobCategoryId,
+                jobLocationId = viewModel.Filters.JobLocationId
+            });
     }
 }

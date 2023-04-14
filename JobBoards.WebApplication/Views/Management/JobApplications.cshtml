@@ -1,6 +1,10 @@
 @using JobBoards.WebApplication.ViewModels.Management
 @model ManageJobApplicationsViewModel
 
+@{
+    var requestPath = ViewContext.HttpContext.Request.Path;
+}
+
 <style>
     .jobPostDetails {
         font-size: 13px;
@@ -115,7 +119,8 @@
                                     </div>
                                 </div>
                                 <div class="mt-4 d-flex">
-                                    <a asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@jobPost.Id"
+                                    <a asp-controller="Management" asp-action="ViewJobApplicants"
+                                asp-route-jobPostId="@jobPost.Id" asp-route-requestPath="@requestPath"
                                         class="btn btn-primary me-2">
                                         View Job Applicants
                                     </a>

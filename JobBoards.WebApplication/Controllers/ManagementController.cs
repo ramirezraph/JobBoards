@@ -38,7 +38,10 @@ public class ManagementController : Controller
         return View(viewModel);
     }
 
-    public async Task<IActionResult> JobApplications(string? search, Guid? jobCategoryId, Guid? jobLocationId)
+    public async Task<IActionResult> JobApplications(
+        string? search = null,
+        Guid? jobCategoryId = null,
+        Guid? jobLocationId = null)
     {
         var jobPosts = await _jobPostsRepository.GetAllAsync();
 
@@ -85,5 +88,13 @@ public class ManagementController : Controller
                 jobCategoryId = viewModel.Filters.JobCategoryId,
                 jobLocationId = viewModel.Filters.JobLocationId
             });
+    }
+
+    public IActionResult ViewJobApplicants(Guid jobPostId, string requestPath)
+    {
+        return RedirectToAction(
+            controllerName: "Jobs",
+            actionName: "ManageJobApplications",
+            routeValues: new { id = jobPostId, returnUrl = requestPath });
     }
 }

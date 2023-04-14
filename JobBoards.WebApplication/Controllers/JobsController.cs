@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
+using System.Web;
 
 namespace JobBoards.WebApplication.Controllers;
 
@@ -301,7 +302,11 @@ public class JobsController : Controller
     [HttpGet]
     [Route("[controller]/Applications/{id:guid}")]
     [Authorize(Roles = "Admin, Employer")]
-    public async Task<IActionResult> ManageJobApplications(Guid id, string? search = null, string? status = null)
+    public async Task<IActionResult> ManageJobApplications(
+        Guid id,
+        string? search = null,
+        string? status = null,
+        string? returnUrl = null)
     {
         var jobPost = await _jobPostsRepository.GetByIdAsync(id);
 
@@ -333,6 +338,11 @@ public class JobsController : Controller
                 Status = status
             }
         };
+
+        if (!string.IsNullOrWhiteSpace(returnUrl))
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+        }
 
         return View(viewModel);
     }
@@ -413,5 +423,21 @@ public class JobsController : Controller
         await _jobPostsRepository.UpdateAsync(jobPostId, jobPost);
 
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = jobPostId });
+    }
+
+    public IActionResult BackToList(string? returnUrl = null)
+    {
+        Console.WriteLine(returnUrl);
+
+        if (!string.IsNullOrEmpty(returnUrl))
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                var decodedUrl = HttpUtility.UrlDecode(returnUrl);
+                return LocalRedirect(decodedUrl);
+            }
+        }
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "Index");
     }
 }

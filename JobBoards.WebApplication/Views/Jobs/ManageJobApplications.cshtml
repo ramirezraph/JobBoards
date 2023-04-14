@@ -37,10 +37,11 @@
             @Model.JobPost.JobLocation.Country
         </p>
         <div class="w-100 text-center d-flex justify-content-center">
-            <a asp-controller="Jobs" asp-action="Index" class="btn me-3 btn-outline-dark">
-                Back to
-                List
+            <a asp-controller="Jobs" asp-action="BackToList" asp-route-returnUrl="@ViewData["ReturnUrl"]"
+                class="btn me-3 btn-outline-dark">
+                Back to List
             </a>
+
             <a asp-controller="Jobs" asp-action="Details" asp-route-id="@Model.JobPost.Id"
                 class="btn btn-outline-primary me-3" onclick="window.history.back()">
                 View Job Details

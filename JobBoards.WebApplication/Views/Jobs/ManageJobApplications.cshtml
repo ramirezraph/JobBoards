@@ -89,7 +89,7 @@
                             asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
                             asp-route-status="interview">Interview</a>
 
-                        <input type=" radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
                             checked="@(status == "shortlisted")">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
                             asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
@@ -99,6 +99,11 @@
                             checked="@(status == "notsuitable")"><a class="btn btn-outline-primary"
                             asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@Model.JobPost.Id"
                             asp-route-search="@search" asp-route-status="notsuitable">Not Suitable</a>
+
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off"
+                               checked="@(status == "withdrawn")"><a class="btn btn-outline-primary"
+                               asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@Model.JobPost.Id"
+                               asp-route-search="@search" asp-route-status="withdrawn">Withdrawn</a>
                     </div>
                 </div>
                 @if (Model.JobApplications.Any())

@@ -9,4 +9,5 @@ public interface IJobPostsRepository : IRepository<JobPost>
     Task<List<JobPost>> GetNewListingsAsync();
     Task DeleteAsync(Guid postId);
     IQueryable<JobPost> GetAllQueryable();
+    Task<int> GetCountAsync();
 }

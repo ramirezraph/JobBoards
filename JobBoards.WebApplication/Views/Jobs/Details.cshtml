@@ -117,9 +117,10 @@
                     <div class="row mt-2">
                         <h6 class="col-4 d-inline">Posted:</h6>
                         <div class="col-8">
-                            @Model.JobPost.CreatedAt
+                            @Model.JobPost.CreatedAt.ToString("MMMM dd, yyyy h:mm tt")
                         </div>
                     </div>
+
                     @if (Model.HasWriteAccess)
                     {
                         <div class="row mt-2">
@@ -178,9 +179,10 @@
                         <div class="row mt-3">
                             <h6 class="col-4 d-inline">Applied</h6>
                             <div class="col-8">
-                                @Model.JobApplication.CreatedAt
+                                @Model.JobApplication.CreatedAt.ToString("MMMM dd, yyyy h:mm tt")
                             </div>
                         </div>
+
                         @if (@Model.JobApplication.Status.ToLower() != "withdrawn")
                         {
                             <a asp-controller="Jobseekers" asp-action="WithdrawApplication"

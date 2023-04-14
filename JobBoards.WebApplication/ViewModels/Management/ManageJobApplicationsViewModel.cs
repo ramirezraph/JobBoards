@@ -12,8 +12,8 @@ public class ManageJobApplicationsViewModel
 
     public class FilterForm
     {
-        public string JobTitle { get; set; } = default!;
-        public Guid JobCategoryId { get; set; }
-        public Guid JobLocationId { get; set; }
+        public string? JobTitle { get; set; } = default!;
+        public Guid? JobCategoryId { get; set; }
+        public Guid? JobLocationId { get; set; }
     }
 }

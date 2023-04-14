@@ -20,7 +20,12 @@ public class JobPostsRepository : IJobPostsRepository
 
     public async Task<List<JobPost>> GetAllAsync()
     {
-        return await _dbContext.JobPosts.ToListAsync();
+        return await _dbContext.JobPosts
+            .Include(jp => jp.JobType)
+            .Include(jp => jp.JobCategory)
+            .Include(jp => jp.JobLocation)
+            .Include(jp => jp.JobApplications)
+            .ToListAsync();
     }
 
     public IQueryable<JobPost> GetAllQueryable()

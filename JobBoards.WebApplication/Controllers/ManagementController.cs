@@ -1,4 +1,6 @@
 using JobBoards.Data.Persistence.Repositories.JobApplications;
+using JobBoards.Data.Persistence.Repositories.JobCategories;
+using JobBoards.Data.Persistence.Repositories.JobLocations;
 using JobBoards.Data.Persistence.Repositories.JobPosts;
 using JobBoards.WebApplication.ViewModels.Management;
 using Microsoft.AspNetCore.Authorization;
@@ -11,11 +13,15 @@ public class ManagementController : Controller
 {
     private readonly IJobPostsRepository _jobPostsRepository;
     private readonly IJobApplicationsRepository _jobApplicationsRepository;
+    private readonly IJobCategoriesRepository _jobCategoriesRepository;
+    private readonly IJobLocationsRepository _jobLocationsRepository;
 
-    public ManagementController(IJobPostsRepository jobPostsRepository, IJobApplicationsRepository jobApplicationsRepository)
+    public ManagementController(IJobPostsRepository jobPostsRepository, IJobApplicationsRepository jobApplicationsRepository, IJobCategoriesRepository jobCategoriesRepository, IJobLocationsRepository jobLocationsRepository)
     {
         _jobPostsRepository = jobPostsRepository;
         _jobApplicationsRepository = jobApplicationsRepository;
+        _jobCategoriesRepository = jobCategoriesRepository;
+        _jobLocationsRepository = jobLocationsRepository;
     }
 
     public async Task<IActionResult> Dashboard()
@@ -32,8 +38,52 @@ public class ManagementController : Controller
         return View(viewModel);
     }
 
-    public IActionResult JobApplications()
+    public async Task<IActionResult> JobApplications(string? search, Guid? jobCategoryId, Guid? jobLocationId)
     {
-        return View();
+        var jobPosts = await _jobPostsRepository.GetAllAsync();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            jobPosts = jobPosts.Where(jp => jp.Title.ToLower().Contains(search.ToLower())).ToList();
+        }
+
+        if (jobCategoryId != null && jobCategoryId != Guid.Empty)
+        {
+            jobPosts = jobPosts.Where(jp => jp.JobCategoryId == jobCategoryId).ToList();
+        }
+
+        if (jobLocationId != null && jobLocationId != Guid.Empty)
+        {
+            jobPosts = jobPosts.Where(jp => jp.JobLocationId == jobLocationId).ToList();
+        }
+
+        var viewModel = new ManageJobApplicationsViewModel
+        {
+            JobPosts = jobPosts.OrderByDescending(jp => jp.CreatedAt).ToList(),
+            JobCategories = await _jobCategoriesRepository.GetAllAsync(),
+            JobLocations = await _jobLocationsRepository.GetAllAsync(),
+            Filters = new ManageJobApplicationsViewModel.FilterForm
+            {
+                JobTitle = search,
+                JobCategoryId = jobCategoryId,
+                JobLocationId = jobLocationId,
+            }
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    public IActionResult RefineSearchResult(ManageJobApplicationsViewModel viewModel)
+    {
+        return RedirectToAction(
+            controllerName: "Management",
+            actionName: "JobApplications",
+            routeValues: new
+            {
+                search = viewModel.Filters.JobTitle,
+                jobCategoryId = viewModel.Filters.JobCategoryId,
+                jobLocationId = viewModel.Filters.JobLocationId
+            });
     }
 }

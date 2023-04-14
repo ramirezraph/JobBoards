@@ -87,6 +87,11 @@ public class JobPostsRepository : IJobPostsRepository
             await _dbContext.SaveChangesAsync();
         }
     }
+
+    public async Task<int> GetCountAsync()
+    {
+        return await _dbContext.JobPosts.CountAsync();
+    }
 }
 
 

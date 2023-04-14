@@ -94,4 +94,27 @@ public class JobApplicationsRepository : IJobApplicationsRepository
             await _dbContext.SaveChangesAsync();
         }
     }
+
+    public async Task<List<JobApplication>> GetThreeRecentJobApplicationAsync()
+    {
+        return await _dbContext.JobApplications
+            .OrderByDescending(jp => jp.CreatedAt)
+            .Take(3)
+            .Include(ja => ja.JobSeeker)
+                .ThenInclude(js => js.User)
+            .Include(ja => ja.JobPost)
+            .ToListAsync();
+    }
+
+    public async Task<int> GetNumberOfJobApplicationsTodayAsync()
+    {
+        return await _dbContext.JobApplications
+            .Where(ja => ja.CreatedAt >= DateTime.Today && ja.CreatedAt < DateTime.Today.AddDays(1))
+            .CountAsync();
+    }
+
+    public async Task<int> GetCountAsync()
+    {
+        return await _dbContext.JobApplications.CountAsync();
+    }
 }

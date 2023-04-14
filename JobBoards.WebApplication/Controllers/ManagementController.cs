@@ -1,4 +1,6 @@
 using JobBoards.Data.Persistence.Repositories.JobApplications;
+using JobBoards.Data.Persistence.Repositories.JobCategories;
+using JobBoards.Data.Persistence.Repositories.JobLocations;
 using JobBoards.Data.Persistence.Repositories.JobPosts;
 using JobBoards.WebApplication.ViewModels.Management;
 using Microsoft.AspNetCore.Authorization;
@@ -11,11 +13,15 @@ public class ManagementController : Controller
 {
     private readonly IJobPostsRepository _jobPostsRepository;
     private readonly IJobApplicationsRepository _jobApplicationsRepository;
+    private readonly IJobCategoriesRepository _jobCategoriesRepository;
+    private readonly IJobLocationsRepository _jobLocationsRepository;
 
-    public ManagementController(IJobPostsRepository jobPostsRepository, IJobApplicationsRepository jobApplicationsRepository)
+    public ManagementController(IJobPostsRepository jobPostsRepository, IJobApplicationsRepository jobApplicationsRepository, IJobCategoriesRepository jobCategoriesRepository, IJobLocationsRepository jobLocationsRepository)
     {
         _jobPostsRepository = jobPostsRepository;
         _jobApplicationsRepository = jobApplicationsRepository;
+        _jobCategoriesRepository = jobCategoriesRepository;
+        _jobLocationsRepository = jobLocationsRepository;
     }
 
     public async Task<IActionResult> Dashboard()
@@ -32,8 +38,16 @@ public class ManagementController : Controller
         return View(viewModel);
     }
 
-    public IActionResult JobApplications()
+    public async Task<IActionResult> JobApplications()
     {
-        return View();
+        var jobPosts = await _jobPostsRepository.GetAllAsync();
+        var viewModel = new ManageJobApplicationsViewModel
+        {
+            JobPosts = jobPosts.OrderByDescending(jp => jp.CreatedAt).ToList(),
+            JobCategories = await _jobCategoriesRepository.GetAllAsync(),
+            JobLocations = await _jobLocationsRepository.GetAllAsync()
+        };
+
+        return View(viewModel);
     }
 }

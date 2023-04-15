@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoards.WebApplication.Controllers;
 
-public class JobseekersController : Controller
+public class JobseekersController : BaseController
 {
     private readonly IJobSeekersRepository _jobSeekersRepository;
     private readonly IJobPostsRepository _jobPostsRepository;

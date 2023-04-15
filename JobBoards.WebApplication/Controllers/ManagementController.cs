@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoards.WebApplication.Controllers;
 
 [Authorize(Roles = "Admin")]
-public class ManagementController : Controller
+public class ManagementController : BaseController
 {
     private readonly IJobPostsRepository _jobPostsRepository;
     private readonly IJobApplicationsRepository _jobApplicationsRepository;

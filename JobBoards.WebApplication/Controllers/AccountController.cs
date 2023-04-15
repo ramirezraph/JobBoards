@@ -1,6 +1,4 @@
-using System.Security.Cryptography;
 using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
 using JobBoards.Data.Identity;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using JobBoards.Data.Persistence.Repositories.Resumes;
@@ -11,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoards.WebApplication.Controllers;
 
-public class AccountController : Controller
+public class AccountController : BaseController
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -186,11 +184,11 @@ public class AccountController : Controller
         if (!result.Succeeded)
         {
             viewModel.UpdateResultMessage = "Profile update failed. Please try again.";
+
             return View(viewModel);
         }
 
         viewModel.UpdateResultMessage = "Profile updated successfully.";
-
 
         return View(viewModel);
     }

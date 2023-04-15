@@ -37,8 +37,39 @@
   <script>
     feather.replace()
   </script>
+
+  <script>
+    function showToast(title, message, type) {
+      $.ajax({
+        type: "GET",
+        url: "@Url.Action("DisplayToast", "Globals")" +
+          `?title=${title}&message=${message}&type=${type}`,
+        success: function (partialView) {
+          // Add the toast to the div container.
+          $("#notification").html(partialView);
+
+          // Get the toast element and create a bootstrap toast instance
+          const jobBoardsToast = document.getElementById('jobboards-toast')
+          const toast = bootstrap.Toast.getOrCreateInstance(jobBoardsToast)
+
+          // Show the toast
+          toast.show();
+        }
+      });
+    }
+  </script>
+
+  @if (ViewData["ShowToast"] != null)
+  {
+    <script>
+      $(function () {
+        const toast = @(Html.Raw(Json.Serialize(ViewData["ShowToast"])));
+        showToast(toast.title, toast.message, toast.type);
+      });
+    </script>
+  }
+
   @await RenderSectionAsync("Scripts", required: false)
-  @await RenderSectionAsync("Modals", required: false)
 </body>
 
 </html>

@@ -1,0 +1,24 @@
+@using JobBoards.WebApplication.ViewModels.Shared
+@model ToastViewModel
+
+<div class="toast-container position-static">
+    <div id="jobboards-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <div class="rounded me-2 bg-primary"></div>
+            <strong class="me-auto">@Model.Title</strong>
+            <small class="text-body-secondary">few seconds ago</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            @Model.Description
+        </div>
+    </div>
+</div>
+
+@section Modals {
+    <script>
+        $(document).ready(function () {
+            $('#jobboards-toast').toast('show');
+        });
+    </script>
+}

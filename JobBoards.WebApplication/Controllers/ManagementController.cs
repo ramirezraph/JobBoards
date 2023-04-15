@@ -97,4 +97,9 @@ public class ManagementController : Controller
             actionName: "ManageJobApplications",
             routeValues: new { id = jobPostId, returnUrl = requestPath });
     }
+
+    public IActionResult JobCategories()
+    {
+        return View();
+    }
 }

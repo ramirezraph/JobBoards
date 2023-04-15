@@ -16,7 +16,7 @@ using System.Web;
 
 namespace JobBoards.WebApplication.Controllers;
 
-public class JobsController : Controller
+public class JobsController : BaseController
 {
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;

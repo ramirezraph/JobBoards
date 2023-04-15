@@ -3,14 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoards.WebApplication.Controllers;
 
-public class GlobalsController : Controller
+public class GlobalsController : BaseController
 {
-    public IActionResult DisplayToast()
+    public IActionResult DisplayToast(string title, string message, string type)
     {
-        var viewModel = new ToastViewModel
+        var viewModel = new ToastNotification
         {
-            Title = "Notification Title",
-            Description = "Notification Description"
+            Title = title,
+            Message = message,
+            Type = type
         };
 
         return PartialView("~/Views/Shared/Toast/_Toast.cshtml", viewModel);

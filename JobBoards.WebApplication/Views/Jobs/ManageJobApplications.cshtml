@@ -76,35 +76,38 @@
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
                             checked="@(string.IsNullOrEmpty(status))">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search">All</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">All</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
                             checked="@(status == "submitted")">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
-                            asp-route-status="submitted">Submitted</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search" asp-route-status="submitted"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">Submitted</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
                             checked="@(status == "interview")">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
-                            asp-route-status="interview">Interview</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search" asp-route-status="interview"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">Interview</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
                             checked="@(status == "shortlisted")">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
-                            asp-route-status="shortlisted">Shortlist</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search" asp-route-status="shortlisted"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">Shortlist</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off"
                             checked="@(status == "notsuitable")"><a class="btn btn-outline-primary"
                             asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@Model.JobPost.Id"
-                            asp-route-search="@search" asp-route-status="notsuitable">Not Suitable</a>
+                            asp-route-search="@search" asp-route-status="notsuitable"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">Not Suitable</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off"
-                               checked="@(status == "withdrawn")"><a class="btn btn-outline-primary"
-                               asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@Model.JobPost.Id"
-                               asp-route-search="@search" asp-route-status="withdrawn">Withdrawn</a>
+                            checked="@(status == "withdrawn")"><a class="btn btn-outline-primary" asp-controller="Jobs"
+                            asp-action="ManageJobApplications" asp-route-id="@Model.JobPost.Id"
+                            asp-route-search="@search" asp-route-status="withdrawn"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">Withdrawn</a>
                     </div>
                 </div>
                 @if (Model.JobApplications.Any())

@@ -10,6 +10,7 @@ using JobBoards.WebApplication.ViewModels.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace JobBoards.WebApplication.Controllers;
 
@@ -81,14 +82,12 @@ public class JobseekersController : BaseController
 
         if (jobSeekerProfile.ResumeId == null || jobSeekerProfile.ResumeId == Guid.Empty)
         {
-            TempData["ResumeNotFound"] = "Upload a resume to apply.";
-
-            TempData["ShowToast"] = new ToastNotification
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
             {
                 Title = "Failed",
                 Message = "Unable to apply. Please upload a resume.",
                 Type = "danger"
-            };
+            });
 
             return RedirectToAction(controllerName: "Account", actionName: "Profile");
         }
@@ -98,6 +97,12 @@ public class JobseekersController : BaseController
         if (jobApplication is not null)
         {
             // Already applied.
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+            {
+                Title = "Apply Now",
+                Message = "You already have an application for this job.",
+                Type = "info"
+            });
             return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = postId });
         }
 
@@ -130,6 +135,13 @@ public class JobseekersController : BaseController
         }
 
         await _jobApplicationsRepository.WithdrawAsync(jobApplication.Id);
+
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Application withdrawn successfully.",
+            Type = "success"
+        });
 
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = jobApplication.JobPostId });
     }
@@ -189,14 +201,12 @@ public class JobseekersController : BaseController
         var jobApplications = await _jobApplicationsRepository.GetAllByJobSeekerIdAsync(jobSeekerProfile.Id);
         if (jobApplications.Any())
         {
-            TempData["ResumeDeleteFailed"] = "Unable to remove resume. The resume is in used.";
-
-            TempData["ShowToast"] = new ToastNotification
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
             {
                 Title = "Failed",
                 Message = "Unable to remove resume. The resume is in used.",
                 Type = "danger"
-            };
+            });
 
             return RedirectToAction(controllerName: "Account", actionName: "Profile");
         }
@@ -226,15 +236,12 @@ public class JobseekersController : BaseController
         }
         else
         {
-            // Deletion failed
-            TempData["ResumeDeleteFailed"] = "Resume delete failed. Please try again.";
-
-            TempData["ShowToast"] = new ToastNotification
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
             {
                 Title = "Failed",
                 Message = "Resume delete failed. Please try again.",
                 Type = "danger"
-            };
+            });
         }
 
         return RedirectToAction(controllerName: "Account", actionName: "Profile");

@@ -7,6 +7,7 @@ using JobBoards.WebApplication.ViewModels.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace JobBoards.WebApplication.Controllers;
 
@@ -102,33 +103,6 @@ public class AccountController : BaseController
             return RedirectToAction(controllerName: "Account", actionName: "Login");
         }
 
-        if (TempData.ContainsKey("ResumeNotFound"))
-        {
-            ViewData["ResumeNotFound"] = TempData["ResumeNotFound"];
-        }
-
-        if (TempData.ContainsKey("ResumeDeleteFailed"))
-        {
-            TempData["ShowToast"] = new ToastNotification
-            {
-                Title = "Failed",
-                Message = TempData["ResumeDeleteFailed"]?.ToString() ?? "Failed to remove resume.",
-                Type = "danger"
-            };
-
-            ViewData["ResumeDeleteFailed"] = TempData["ResumeDeleteFailed"];
-        }
-
-        if (TempData["PasswordChangedSuccess"] is bool success && success)
-        {
-            TempData["ShowToast"] = new ToastNotification
-            {
-                Title = "Success",
-                Message = "Password has been changed successfully.",
-                Type = "success"
-            };
-        }
-
         var viewModel = new ProfileViewModel
         {
             UserId = user.Id,
@@ -201,26 +175,22 @@ public class AccountController : BaseController
         var result = await _userManager.UpdateAsync(user);
         if (!result.Succeeded)
         {
-            viewModel.UpdateResultMessage = "Profile update failed. Please try again.";
-
-            TempData["ShowToast"] = new ToastNotification
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
             {
                 Title = "Failed",
                 Message = "Profile update failed. Please try again",
                 Type = "danger"
-            };
+            });
 
             return View(viewModel);
         }
 
-        viewModel.UpdateResultMessage = "Profile updated successfully.";
-
-        TempData["ShowToast"] = new ToastNotification
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
         {
             Title = "Success",
             Message = "Profile updated successfully.",
             Type = "success"
-        };
+        });
 
         return View(viewModel);
     }
@@ -265,7 +235,12 @@ public class AccountController : BaseController
 
         await _signInManager.RefreshSignInAsync(user);
 
-        TempData["PasswordChangedSuccess"] = true;
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Password has been changed successfully.",
+            Type = "success"
+        });
 
         return RedirectToAction(controllerName: "Account", actionName: "Profile");
     }

@@ -14,59 +14,16 @@
 
 <body>
   <header>
-    <nav
-      class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-cyan-600 p-3 border-bottom box-shadow mb-3">
-      <div class="container-fluid">
-        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PJLI Connex</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" ww id="navbarSupportedContent">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" asp-controller="Jobs" asp-action="Index">Job Listing</a>
-            </li>
-            @if (User.IsInRole("Admin"))
-            {
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                  aria-expanded="false">
-                  Management
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" asp-controller="Management" asp-action="Dashboard">Dashboard</a></li>
-                  <li><a class="dropdown-item" asp-controller="Management" asp-action="JobApplications">Job
-                      Applications</a></li>
-                  <li>
-                    <hr class="dropdown-divider">
-                  </li>
-                  <li><a class="dropdown-item" asp-controller="Management" asp-action="JobCategories">Job Categories</a>
-                  </li>
-                </ul>
-              </li>
-            }
-          </ul>
-          <partial name="_LoginPartial" />
-        </div>
-      </div>
-    </nav>
+    <partial name="_NavigationPartial" />
   </header>
+
   <div class="container">
     <main role="main" class="pb-3">
       @RenderBody()
     </main>
+    <div id="notification"></div>
   </div>
 
-  @* <footer class="border-top footer text-muted">
-  <div class="container">
-  &copy; 2023 - JobBoards.WebApplication - <a asp-area="" asp-controller="Home"
-  asp-action="Privacy">Privacy</a>
-  </div>
-  </footer> *@
   <script src="~/lib/jquery/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -80,6 +37,38 @@
   <script>
     feather.replace()
   </script>
+
+  <script>
+    function showToast(title, message, type) {
+      $.ajax({
+        type: "GET",
+        url: "@Url.Action("DisplayToast", "Globals")" +
+          `?title=${title}&message=${message}&type=${type}`,
+        success: function (partialView) {
+          // Add the toast to the div container.
+          $("#notification").html(partialView);
+
+          // Get the toast element and create a bootstrap toast instance
+          const jobBoardsToast = document.getElementById('jobboards-toast')
+          const toast = bootstrap.Toast.getOrCreateInstance(jobBoardsToast)
+
+          // Show the toast
+          toast.show();
+        }
+      });
+    }
+  </script>
+
+  @if (ViewData["ShowToast"] != null)
+  {
+    <script>
+      $(function () {
+        const toast = @(Html.Raw(Json.Serialize(ViewData["ShowToast"])));
+        showToast(toast.title, toast.message, toast.type);
+      });
+    </script>
+  }
+
   @await RenderSectionAsync("Scripts", required: false)
 </body>
 

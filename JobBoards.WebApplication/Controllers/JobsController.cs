@@ -13,10 +13,13 @@ using Microsoft.AspNetCore.Mvc;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using System.Web;
+using JobBoards.WebApplication.ViewModels.Shared;
+using JobBoards.WebApplication.Models;
+using Newtonsoft.Json;
 
 namespace JobBoards.WebApplication.Controllers;
 
-public class JobsController : Controller
+public class JobsController : BaseController
 {
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
@@ -228,6 +231,13 @@ public class JobsController : Controller
 
         await _jobPostsRepository.AddAsync(newJobPost);
 
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job post created successfully.",
+            Type = "success"
+        });
+
         return RedirectToAction(controllerName: "Jobs", actionName: "Index");
     }
 
@@ -288,6 +298,13 @@ public class JobsController : Controller
 
         await _jobPostsRepository.UpdateAsync(viewModel.Form.Id, updatedJobPost);
 
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job post updated successfully.",
+            Type = "success"
+        });
+
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = formValues.Id });
     }
 
@@ -296,7 +313,15 @@ public class JobsController : Controller
     public async Task<IActionResult> Delete(Guid id)
     {
         await _jobPostsRepository.DeleteAsync(id);
-        return RedirectToAction("Index");
+
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job post deleted successfully.",
+            Type = "success"
+        });
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "Index");
     }
 
     [HttpGet]
@@ -374,6 +399,13 @@ public class JobsController : Controller
 
         await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Shortlisted");
 
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = $"{jobApplication.JobSeeker.User.FullName}'s application has been set to Shortlisted.",
+            Type = "success"
+        });
+
         return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
     }
 
@@ -389,6 +421,13 @@ public class JobsController : Controller
         }
 
         await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Interview");
+
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = $"{jobApplication.JobSeeker.User.FullName}'s application has been set to Interview.",
+            Type = "success"
+        });
 
         return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
     }
@@ -406,6 +445,13 @@ public class JobsController : Controller
 
         await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Not Suitable");
 
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = $"{jobApplication.JobSeeker.User.FullName}'s application has been set to Not Suitable.",
+            Type = "success"
+        });
+
         return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
     }
 
@@ -421,6 +467,13 @@ public class JobsController : Controller
         jobPost.IsActive = !jobPost.IsActive;
 
         await _jobPostsRepository.UpdateAsync(jobPostId, jobPost);
+
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = $"Job post is now {(jobPost.IsActive ? "active" : "inactive")}.",
+            Type = "success"
+        });
 
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = jobPostId });
     }

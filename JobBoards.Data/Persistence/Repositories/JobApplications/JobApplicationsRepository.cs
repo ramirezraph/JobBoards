@@ -54,6 +54,7 @@ public class JobApplicationsRepository : IJobApplicationsRepository
     {
         return await _dbContext.JobApplications
                 .Include(ja => ja.JobSeeker)
+                    .ThenInclude(js => js.User)
                 .SingleOrDefaultAsync(ja => ja.Id == id);
     }
 

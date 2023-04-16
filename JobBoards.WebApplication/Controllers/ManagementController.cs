@@ -1,4 +1,5 @@
 using JobBoards.Data.Entities;
+using JobBoards.Data.Entities.Common;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobCategories;
 using JobBoards.Data.Persistence.Repositories.JobLocations;
@@ -101,11 +102,6 @@ public class ManagementController : Controller
             routeValues: new { id = jobPostId, returnUrl = requestPath });
     }
 
-    //public IActionResult JobCategories()
-    //{
-    //    return View();
-    //}
-
     public async Task<IActionResult> JobCategories()
     {
         var viewModel = new ManageJobCategoriesViewModel
@@ -167,9 +163,6 @@ public class ManagementController : Controller
         return View(viewModel);
     }
 
-
-    //    [HttpPost]
-    //public async Task<IActionResult> EditJobCategory([Bind("JobCategoriesForm")] ManageJobCategoriesViewModel viewModel)
     [HttpPost]
     public async Task<IActionResult> EditJobCategory(ManageJobCategoriesViewModel viewModel)
 
@@ -190,6 +183,20 @@ public class ManagementController : Controller
         await _jobCategoriesRepository.UpdateAsync(viewModel.JobCategoriesForm.JobCategoryId, updatedJobCategory);
 
         return RedirectToAction(controllerName: "Management", actionName: "JobCategories", routeValues: new { id = formValues.JobCategoryId });
+    }
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteJobCategory(Guid id)
+    {
+        var jobCategory = await _jobCategoriesRepository.GetByIdAsync(id);
+        if (jobCategory is null)
+        {
+            return NotFound();
+        }
+        await _jobCategoriesRepository.RemoveAsync(jobCategory);
+        return RedirectToAction("JobCategories");
     }
 
 }

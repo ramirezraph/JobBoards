@@ -1,6 +1,7 @@
 using JobBoards.WebApplication.ViewModels.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Newtonsoft.Json;
 
 namespace JobBoards.WebApplication.Controllers;
 
@@ -11,13 +12,25 @@ public class BaseController : Controller
         base.OnActionExecuted(filterContext);
 
         // Check if there is a toast message in TempData
-        if (TempData.ContainsKey("ShowToast") && TempData["ShowToast"] is ToastNotification toast)
+        if (TempData.ContainsKey("ShowToast"))
         {
-            // Assign the toast message to ViewData
-            ViewData["ShowToast"] = toast;
+            var toastData = JsonConvert.DeserializeObject<ToastNotification>(TempData["ShowToast"]?.ToString());
 
-            // Remove the toast message from TempData
-            TempData.Remove("ShowToast");
+            if (toastData is not null)
+            {
+                if (filterContext.Result is RedirectToActionResult)
+                {
+                    TempData.Keep("ShowToast");
+                }
+                else
+                {
+                    // Assign the toast message to ViewData
+                    ViewData["ShowToast"] = toastData;
+                    // Remove the toast message from TempData
+                    TempData.Remove("ShowToast");
+                }
+
+            }
         }
     }
 }

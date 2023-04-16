@@ -52,34 +52,10 @@
                             <input asp-for="ResumeFile" class="form-control" type="file">
                             <span asp-validation-for="ResumeFile" class="text-danger"></span>
                         </div>
-
-                        @if (ViewData["ResumeNotFound"] != null)
-                        {
-                            <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
-                                @ViewData["ResumeNotFound"]
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        }
-
-                        @if (ViewData["ResumeDeleteFailed"] != null)
-                        {
-                            <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
-                                @ViewData["ResumeDeleteFailed"]
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        }
                     }
                     <div class="mt-2">
                         <button type="submit" class="btn w-100 btn-primary mt-3">Save Changes</button>
                     </div>
-
-                    @if (!string.IsNullOrWhiteSpace(Model.UpdateResultMessage))
-                    {
-                        <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
-                            @Model.UpdateResultMessage
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    }
                 </form>
             </div>
             <div class="p-4">

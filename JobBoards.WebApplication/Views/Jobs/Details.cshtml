@@ -198,10 +198,33 @@
 
             @if (!Model.HasWriteAccess && !Model.WithApplication)
             {
+             
+
+                <!-- Add the anchor tag with a data-toggle attribute to trigger the modal -->
                 <a asp-controller="Jobseekers" asp-action="ApplyNow" asp-route-postId="@Model.JobPost.Id"
-                    class="btn btn-primary btn-block w-100 mt-2">
+                   class="btn btn-primary btn-block w-100 mt-2 confirm-apply-btn">
                     Apply Now
                 </a>
+
+                <div class="modal" tabindex="-1" role="dialog" id="confirmationModal">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirmation</h5>
+                                <button id="closeBtn" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to apply?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="confirmBtn" class="btn btn-success">Yes</button>
+                                <button id="noBtn" class="btn btn-danger" data-dismiss="modal">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
 
             @if (Model.HasWriteAccess)
@@ -248,5 +271,26 @@
         function deletePost() {
             document.getElementById("delete-form").submit();
         }
+        $(document).ready(function () {
+            // Attach click event handler to the "Yes" button in the modal
+            $('#confirmBtn').on('click', function () {
+                // Concatenate the attributes to construct the link
+                var url = '/Jobseekers/ApplyNow?postId=' + '@Model.JobPost.Id';
+                window.location.href = url;
+            });
+            $('#noBtn').on('click', function (e) {
+                e.preventDefault(); // prevent default link behavior
+                $('#confirmationModal').modal('hide');
+            });
+            $('#closeBtn').on('click', function (e) {
+                e.preventDefault(); // prevent default link behavior
+                $('#confirmationModal').modal('hide');
+            });
+            // Attach click event handler to the Apply Now button to show the modal
+            $('.confirm-apply-btn').on('click', function (e) {
+                e.preventDefault(); // prevent default link behavior
+                $('#confirmationModal').modal('show');
+            });
+        });
     </script>
 }

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using System.Web;
+using JobBoards.WebApplication.ViewModels.Shared;
 
 namespace JobBoards.WebApplication.Controllers;
 
@@ -108,6 +109,28 @@ public class JobsController : BaseController
             }
         };
 
+        if (TempData.ContainsKey("JobPostCreated") is bool createSuccess && createSuccess)
+        {
+            TempData.Clear();
+            TempData["ShowToast"] = new ToastNotification
+            {
+                Title = "Success",
+                Message = "Job post created successfully.",
+                Type = "success"
+            };
+        }
+
+        if (TempData.ContainsKey("JobPostDeleted") is bool deleteSuccess && deleteSuccess)
+        {
+            TempData.Clear();
+            TempData["ShowToast"] = new ToastNotification
+            {
+                Title = "Success",
+                Message = "Job post deleted successfully.",
+                Type = "success"
+            };
+        }
+
         return View(viewModel);
     }
 
@@ -176,6 +199,30 @@ public class JobsController : BaseController
             }
         }
 
+        if (TempData.ContainsKey("JobPostUpdated") is bool updateSuccess && updateSuccess)
+        {
+            TempData.Clear();
+            TempData["ShowToast"] = new ToastNotification
+            {
+                Title = "Success",
+                Message = "Job post updated successfully.",
+                Type = "success"
+            };
+        }
+
+        if (TempData.ContainsKey("ToggleIsActive") is bool toggleSuccess && toggleSuccess)
+        {
+            TempData.Clear();
+            TempData["ShowToast"] = new ToastNotification
+            {
+                Title = "Success",
+                Message = $"Job post is now {(jobPost.IsActive ? "active" : "inactive")}.",
+                Type = "success"
+            };
+        }
+
+
+
         return View(viewModel);
     }
 
@@ -227,6 +274,8 @@ public class JobsController : BaseController
         );
 
         await _jobPostsRepository.AddAsync(newJobPost);
+
+        TempData["JobPostCreated"] = true;
 
         return RedirectToAction(controllerName: "Jobs", actionName: "Index");
     }
@@ -288,6 +337,8 @@ public class JobsController : BaseController
 
         await _jobPostsRepository.UpdateAsync(viewModel.Form.Id, updatedJobPost);
 
+        TempData["JobPostUpdated"] = true;
+
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = formValues.Id });
     }
 
@@ -296,7 +347,10 @@ public class JobsController : BaseController
     public async Task<IActionResult> Delete(Guid id)
     {
         await _jobPostsRepository.DeleteAsync(id);
-        return RedirectToAction("Index");
+
+        TempData["JobPostDeleted"] = true;
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "Index");
     }
 
     [HttpGet]
@@ -421,6 +475,8 @@ public class JobsController : BaseController
         jobPost.IsActive = !jobPost.IsActive;
 
         await _jobPostsRepository.UpdateAsync(jobPostId, jobPost);
+
+        TempData["ToggleIsActive"] = true;
 
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = jobPostId });
     }

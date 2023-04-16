@@ -6,6 +6,7 @@ using JobBoards.Data.Persistence.Repositories.JobPosts;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using JobBoards.Data.Persistence.Repositories.Resumes;
 using JobBoards.WebApplication.ViewModels.Jobseekers;
+using JobBoards.WebApplication.ViewModels.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -81,6 +82,14 @@ public class JobseekersController : BaseController
         if (jobSeekerProfile.ResumeId == null || jobSeekerProfile.ResumeId == Guid.Empty)
         {
             TempData["ResumeNotFound"] = "Upload a resume to apply.";
+
+            TempData["ShowToast"] = new ToastNotification
+            {
+                Title = "Failed",
+                Message = "Unable to apply. Please upload a resume.",
+                Type = "danger"
+            };
+
             return RedirectToAction(controllerName: "Account", actionName: "Profile");
         }
 
@@ -182,6 +191,13 @@ public class JobseekersController : BaseController
         {
             TempData["ResumeDeleteFailed"] = "Unable to remove resume. The resume is in used.";
 
+            TempData["ShowToast"] = new ToastNotification
+            {
+                Title = "Failed",
+                Message = "Unable to remove resume. The resume is in used.",
+                Type = "danger"
+            };
+
             return RedirectToAction(controllerName: "Account", actionName: "Profile");
         }
 
@@ -212,6 +228,13 @@ public class JobseekersController : BaseController
         {
             // Deletion failed
             TempData["ResumeDeleteFailed"] = "Resume delete failed. Please try again.";
+
+            TempData["ShowToast"] = new ToastNotification
+            {
+                Title = "Failed",
+                Message = "Resume delete failed. Please try again.",
+                Type = "danger"
+            };
         }
 
         return RedirectToAction(controllerName: "Account", actionName: "Profile");

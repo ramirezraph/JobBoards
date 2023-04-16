@@ -3,6 +3,7 @@ using JobBoards.Data.Identity;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using JobBoards.Data.Persistence.Repositories.Resumes;
 using JobBoards.WebApplication.ViewModels.Account;
+using JobBoards.WebApplication.ViewModels.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -108,7 +109,24 @@ public class AccountController : BaseController
 
         if (TempData.ContainsKey("ResumeDeleteFailed"))
         {
+            TempData["ShowToast"] = new ToastNotification
+            {
+                Title = "Failed",
+                Message = TempData["ResumeDeleteFailed"]?.ToString() ?? "Failed to remove resume.",
+                Type = "danger"
+            };
+
             ViewData["ResumeDeleteFailed"] = TempData["ResumeDeleteFailed"];
+        }
+
+        if (TempData["PasswordChangedSuccess"] is bool success && success)
+        {
+            TempData["ShowToast"] = new ToastNotification
+            {
+                Title = "Success",
+                Message = "Password has been changed successfully.",
+                Type = "success"
+            };
         }
 
         var viewModel = new ProfileViewModel
@@ -185,10 +203,24 @@ public class AccountController : BaseController
         {
             viewModel.UpdateResultMessage = "Profile update failed. Please try again.";
 
+            TempData["ShowToast"] = new ToastNotification
+            {
+                Title = "Failed",
+                Message = "Profile update failed. Please try again",
+                Type = "danger"
+            };
+
             return View(viewModel);
         }
 
         viewModel.UpdateResultMessage = "Profile updated successfully.";
+
+        TempData["ShowToast"] = new ToastNotification
+        {
+            Title = "Success",
+            Message = "Profile updated successfully.",
+            Type = "success"
+        };
 
         return View(viewModel);
     }
@@ -232,7 +264,10 @@ public class AccountController : BaseController
         }
 
         await _signInManager.RefreshSignInAsync(user);
-        return RedirectToAction("Index", "Home");
+
+        TempData["PasswordChangedSuccess"] = true;
+
+        return RedirectToAction(controllerName: "Account", actionName: "Profile");
     }
 
 

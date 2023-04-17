@@ -180,7 +180,7 @@ public class JobseekersController : BaseController
         // Return the resume file as a FileStreamResult
         return new FileStreamResult(stream, "application/octet-stream")
         {
-            FileDownloadName = fileName
+            FileDownloadName = $"{jobSeekerProfile.User.FullName}-resume{Path.GetExtension(fileName)}"
         };
     }
 

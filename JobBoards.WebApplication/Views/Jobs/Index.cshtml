@@ -16,12 +16,10 @@
             jobLocationId = Model.Filters.JobLocationId,
             minSalary = Model.Filters.MinSalary,
             maxSalary = Model.Filters.MaxSalary,
-            activeJobTypeIds = Model.Filters.ActiveJobTypeIds
+            activeJobTypeIds = string.Join(",", Model.Filters.ActiveJobTypeIds)
         });
     }
 }
-
-
 
 <style>
     .line-clamp-2 {

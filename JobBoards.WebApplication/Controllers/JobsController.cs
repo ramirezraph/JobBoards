@@ -62,7 +62,7 @@ public class JobsController : BaseController
         Guid? jobLocationId = null,
         double? minSalary = null,
         double? maxSalary = null,
-        List<Guid>? activeJobTypeIds = null)
+        string? activeJobTypeIds = null)
     {
         IQueryable<JobPost> jobPosts = _jobPostsRepository.GetAllQueryable()
                                             .OrderByDescending(jp => jp.CreatedAt);
@@ -98,20 +98,24 @@ public class JobsController : BaseController
             jobPosts = jobPosts.Where(jp => jp.MinSalary <= maxSalary || jp.MaxSalary <= maxSalary);
         }
 
+        var activeJobTypes = !string.IsNullOrEmpty(activeJobTypeIds) ?
+            activeJobTypeIds.Split(',').Select(Guid.Parse).ToList() :
+            new List<Guid>();
+
         var jobTypes = await _jobTypesRepository.GetAllAsync();
         var jobTypesViewModels = jobTypes.ConvertAll(jt => new JobTypeCheckboxViewModel
         {
             JobTypeId = jt.Id,
             JobTypeName = jt.Name,
-            IsChecked = (activeJobTypeIds.Any() ? activeJobTypeIds.Contains(jt.Id) : true)
+            IsChecked = (activeJobTypes.Any() ? activeJobTypes.Contains(jt.Id) : true)
         });
 
-        if (activeJobTypeIds != null && activeJobTypeIds.Any())
+        if (activeJobTypeIds != null && activeJobTypes.Any())
         {
-            jobPosts = jobPosts.Where(jp => activeJobTypeIds.Contains(jp.JobTypeId));
+            jobPosts = jobPosts.Where(jp => activeJobTypes.Contains(jp.JobTypeId));
         }
 
-        var paginatedJobPosts = await PaginatedResult<JobPost>.CreateAsync(jobPosts, pageNumber ?? 1, 3);
+        var paginatedJobPosts = await PaginatedResult<JobPost>.CreateAsync(jobPosts, pageNumber ?? 1, 4);
 
         var viewModel = new IndexViewModel
         {
@@ -126,7 +130,8 @@ public class JobsController : BaseController
                 JobCategoryId = jobCategoryId,
                 JobLocationId = jobLocationId,
                 MinSalary = minSalary,
-                MaxSalary = maxSalary
+                MaxSalary = maxSalary,
+                ActiveJobTypeIds = activeJobTypes
             }
         };
 
@@ -156,7 +161,7 @@ public class JobsController : BaseController
                 jobLocationId = indexViewModel.Filters.JobLocationId,
                 minSalary = indexViewModel.Filters.MinSalary,
                 maxSalary = indexViewModel.Filters.MaxSalary,
-                activeJobTypeIds = activeJobTypeIds
+                activeJobTypeIds = string.Join(",", activeJobTypeIds ?? new())
             });
     }
 

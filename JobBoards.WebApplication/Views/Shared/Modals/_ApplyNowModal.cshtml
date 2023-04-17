@@ -1,0 +1,39 @@
+@using JobBoards.WebApplication.ViewModels.Shared
+@model ApplyNowModalViewModel
+
+<style>
+    .text-darkgray {
+        color: #54595E
+    }
+
+    .text-paragraph {
+        color: #68717A
+    }
+</style>
+
+<div class="modal fade" id="confirmApplyModal" tabindex="-1" aria-labelledby="confirmApplyModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <div class="d-flex justify-content-between">
+                    <h4 class="modal-title text-darkgray" id="confirmApplyModalLabel">Apply Now</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p class="mt-2 text-paragraph">
+                    You are applying for a <span class="text-info">@Model.JobPostTitle</span> position. Please confirm
+                    to continue.
+                </p>
+
+                <div class="d-flex mt-4">
+                    <a asp-controller="Jobseekers" asp-action="ApplyNow" asp-route-postId="@Model.JobPostId"
+                        class="btn btn-primary me-3">
+                        Confirm
+                    </a>
+
+                    <button type="button" class="btn" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

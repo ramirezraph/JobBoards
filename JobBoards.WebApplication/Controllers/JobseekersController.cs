@@ -58,6 +58,25 @@ public class JobseekersController : BaseController
     }
 
     [Authorize(Roles = "User")]
+    public async Task<IActionResult> DisplayApplyNowModal(Guid jobPostId)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(jobPostId);
+
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new ApplyNowModalViewModel
+        {
+            JobPostId = jobPost.Id,
+            JobPostTitle = jobPost.Title
+        };
+
+        return PartialView("~/Views/Shared/Modals/_ApplyNowModal.cshtml", viewModel);
+    }
+
+    [Authorize(Roles = "User")]
     public async Task<IActionResult> ApplyNow(Guid postId)
     {
         var jobPost = await _jobPostsRepository.GetByIdAsync(postId);

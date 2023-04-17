@@ -146,10 +146,8 @@
 
             @if (!Model.HasWriteAccess && !Model.WithApplication)
             {
-                <a asp-controller="Jobseekers" asp-action="ApplyNow" asp-route-postId="@Model.JobPost.Id"
-                    class="btn btn-primary btn-block w-100 mt-2">
-                    Apply Now
-                </a>
+                <button onclick="openApplyNowModal('@Model.JobPost.Id.ToString()')"
+                    class="btn btn-primary btn-block w-100 mt-2">Apply Now</button>
             }
 
             @if (Model.HasWriteAccess)
@@ -169,6 +167,7 @@
     </div>
     <div id="deletePostModalContainer"></div>
     <div id="withdrawModalContainer"></div>
+    <div id="applyNowModalContainer"></div>
 </div>
 
 @section Modals {
@@ -191,6 +190,17 @@
                 success: function (partialView) {
                     $('#withdrawModalContainer').html(partialView);
                     $('#confirmWithdrawApplicationModal').modal('show');
+                }
+            });
+        }
+
+        function openApplyNowModal(jobPostId) {
+            $.ajax({
+                url: '@Url.Action("DisplayApplyNowModal", "Jobseekers", new { jobPostId = "__id__" })'.replace('__id__', jobPostId),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#applyNowModalContainer').html(partialView);
+                    $('#confirmApplyModal').modal('show');
                 }
             });
         }

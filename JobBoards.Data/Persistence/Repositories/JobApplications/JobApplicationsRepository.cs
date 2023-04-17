@@ -36,6 +36,8 @@ public class JobApplicationsRepository : IJobApplicationsRepository
                     .ThenInclude(jp => jp.JobLocation)
                 .Include(ja => ja.JobSeeker)
                     .ThenInclude(js => js.Resume)
+                .OrderByDescending(ja => ja.UpdatedAt)
+                    .ThenByDescending(ja => ja.CreatedAt)
                 .ToListAsync();
     }
 
@@ -80,6 +82,8 @@ public class JobApplicationsRepository : IJobApplicationsRepository
         if (jobApplication is not null)
         {
             jobApplication.Status = "Withdrawn";
+            jobApplication.UpdatedAt = DateTime.UtcNow;
+
             _dbContext.JobApplications.Update(jobApplication);
             await _dbContext.SaveChangesAsync();
         }
@@ -91,6 +95,7 @@ public class JobApplicationsRepository : IJobApplicationsRepository
         if (jobApplication is not null)
         {
             jobApplication.Status = newStatus;
+            jobApplication.UpdatedAt = DateTime.UtcNow;
 
             _dbContext.JobApplications.Update(jobApplication);
             await _dbContext.SaveChangesAsync();

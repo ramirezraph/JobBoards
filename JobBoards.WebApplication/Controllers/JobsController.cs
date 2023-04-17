@@ -65,7 +65,8 @@ public class JobsController : BaseController
         string? activeJobTypeIds = null)
     {
         IQueryable<JobPost> jobPosts = _jobPostsRepository.GetAllQueryable()
-                                            .OrderByDescending(jp => jp.CreatedAt);
+                                            .OrderByDescending(jp => jp.UpdatedAt)
+                                                .ThenByDescending(jp => jp.CreatedAt);
 
         // Filter all Inactive
         if (!User.IsInRole("Admin") && !User.IsInRole("Employer"))
@@ -400,6 +401,8 @@ public class JobsController : BaseController
         }
 
         var jobApplications = await _jobApplicationsRepository.GetAllByPostIdAsync(id);
+        jobApplications = jobApplications.OrderByDescending(ja => ja.UpdatedAt)
+                                    .ThenByDescending(ja => ja.CreatedAt).ToList();
 
         if (!string.IsNullOrEmpty(search))
         {

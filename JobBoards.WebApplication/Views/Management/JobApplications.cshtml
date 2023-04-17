@@ -2,7 +2,18 @@
 @model ManageJobApplicationsViewModel
 
 @{
-    var requestPath = ViewContext.HttpContext.Request.Path;
+    var requestPath = ViewContext.HttpContext.Request.Path + ViewContext.HttpContext.Request.QueryString;
+
+    string? GetUrlActionForPage(int pageNumber)
+    {
+        return Url.Action("JobApplications", "Management", new
+        {
+            pageNumber = pageNumber,
+            search = Model.Filters.JobTitle,
+            jobCategoryId = Model.Filters.JobCategoryId,
+            jobLocationId = Model.Filters.JobLocationId
+        });
+    }
 }
 
 <style>
@@ -62,9 +73,9 @@
                 <div class="d-flex justify-content-between">
                     <div class="d-flex align-items-center">
                         <span class="fw-bold">Search Result</span>
-                        <span class="ms-2 text-black-50" style="font-size: 12px;">Showing @Model.JobPosts.Count of
-                            @Model.JobPosts.Count
-                            Jobs</span>
+                        <span class="ms-2 text-black-50" style="font-size: 12px;">
+                            Showing Page @Model.Pagination.CurrentPage of @Model.Pagination.TotalPages
+                        </span>
                     </div>
                     @if (User.IsInRole("Employer") || User.IsInRole("Admin"))
                     {
@@ -73,9 +84,9 @@
                         </a>
                     }
                 </div>
-                @if (Model.JobPosts.Any())
+                @if (Model.Pagination.Items.Any())
                 {
-                    @foreach (var jobPost in Model.JobPosts)
+                    @foreach (var jobPost in Model.Pagination.Items)
                     {
                         <div class="mt-3">
                             <div class="card p-3 text-start">
@@ -132,6 +143,24 @@
                             </div>
                         </div>
                     }
+
+                    <nav aria-label="Job Posts Pagination" class="mt-3">
+                        <ul class="pagination">
+                            <li class="page-item @(Model.Pagination.HasPreviousPage ? "" : "disabled")">
+                                <a class="page-link"
+                                    href="@GetUrlActionForPage(Model.Pagination.CurrentPage - 1)">Previous</a>
+                            </li>
+                            @for (int pageNumber = 1; pageNumber <= Model.Pagination.TotalPages; pageNumber++)
+                            {
+                                <li class="page-item @(Model.Pagination.CurrentPage == pageNumber ? "active" : "")">
+                                    <a class="page-link" href="@GetUrlActionForPage(pageNumber)">@pageNumber</a>
+                                </li>
+                            }
+                            <li class="page-item @(Model.Pagination.HasNextPage ? "" : "disabled")">
+                                <a class="page-link" href="@GetUrlActionForPage(Model.Pagination.CurrentPage + 1)">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
                 }
                 else
                 {

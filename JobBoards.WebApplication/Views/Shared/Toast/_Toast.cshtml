@@ -18,10 +18,10 @@
 HOW TO USE?
 To display a toast, use this code in your controller action.
 
-TempData["ShowToast"] = new ToastNotification
+TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
 {
-    Title = "Success",
-    Message = "Profile updated successfully.",
-    Type = "success"
-};
+Title = "<insert toast title>",
+Message = "<insert toast message here>",
+Type = "<insert toast type>"
+});
 *@

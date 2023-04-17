@@ -53,6 +53,7 @@ public class JobApplicationsRepository : IJobApplicationsRepository
     public async Task<JobApplication?> GetByIdAsync(Guid id)
     {
         return await _dbContext.JobApplications
+                .Include(ja => ja.JobPost)
                 .Include(ja => ja.JobSeeker)
                     .ThenInclude(js => js.User)
                 .SingleOrDefaultAsync(ja => ja.Id == id);

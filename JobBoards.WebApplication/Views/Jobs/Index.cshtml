@@ -127,10 +127,10 @@
                                     </a>
                                     @if (!Model.HasWriteAccess)
                                     {
-                                        <a asp-controller="Jobseekers" asp-action="ApplyNow" asp-route-postId="@jobPost.Id"
+                                        @* <a asp-controller="Jobseekers" asp-action="ApplyNow" asp-route-postId="@jobPost.Id"
                                             class="btn btn-primary">
                                             Apply Now
-                                        </a>
+                                        </a> *@
                                     }
                                     else
                                     {

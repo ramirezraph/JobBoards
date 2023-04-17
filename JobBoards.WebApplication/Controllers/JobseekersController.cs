@@ -58,6 +58,25 @@ public class JobseekersController : BaseController
     }
 
     [Authorize(Roles = "User")]
+    public async Task<IActionResult> DisplayApplyNowModal(Guid jobPostId)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(jobPostId);
+
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new ApplyNowModalViewModel
+        {
+            JobPostId = jobPost.Id,
+            JobPostTitle = jobPost.Title
+        };
+
+        return PartialView("~/Views/Shared/Modals/_ApplyNowModal.cshtml", viewModel);
+    }
+
+    [Authorize(Roles = "User")]
     public async Task<IActionResult> ApplyNow(Guid postId)
     {
         var jobPost = await _jobPostsRepository.GetByIdAsync(postId);
@@ -110,6 +129,26 @@ public class JobseekersController : BaseController
         await _jobApplicationsRepository.AddAsync(newJobApplication);
 
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = postId });
+    }
+
+    [Authorize(Roles = "User")]
+    public async Task<IActionResult> DisplayWithdrawConfirmationModal(Guid jobApplicationId)
+    {
+        var jobApplication = await _jobApplicationsRepository.GetByIdAsync(jobApplicationId);
+
+        if (jobApplication is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new WithdrawApplicationModalViewModel
+        {
+            ApplicationId = jobApplication.Id,
+            JobSeekerId = jobApplication.JobSeekerId,
+            JobPostTitle = jobApplication.JobPost.Title
+        };
+
+        return PartialView("~/Views/Shared/Modals/_WithdrawApplicationModal.cshtml", viewModel);
     }
 
     [Authorize(Roles = "User")]

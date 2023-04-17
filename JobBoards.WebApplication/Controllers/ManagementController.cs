@@ -199,4 +199,100 @@ public class ManagementController : BaseController
         return RedirectToAction("JobCategories");
     }
 
+    public async Task<IActionResult> JobLocations()
+    {
+        var viewModel = new ManageJobLocationsViewModel
+        {
+            JobLocations = await _jobLocationsRepository.GetAllAsync()
+        };
+        return View(viewModel);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> CreateJobLocation()
+    {
+        var viewModel = new ManageJobLocationsViewModel
+        {
+            JobLocations = await _jobLocationsRepository.GetAllAsync()
+        };
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CreateJobLocation(ManageJobLocationsViewModel.JobLocationForm form)
+    {
+        if (ModelState.IsValid)
+        {
+            var jobLocation = new JobLocation
+            {
+                City = form.City,
+                Country = form.Country
+            };
+            await _jobLocationsRepository.AddAsync(jobLocation);
+            return RedirectToAction(nameof(JobLocations));
+        }
+        else
+        {
+            var viewModel = new ManageJobLocationsViewModel
+            {
+                JobLocationsForm = form
+            };
+            return View(viewModel);
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditJobLocation(Guid id)
+    {
+        var jobLocation = await _jobLocationsRepository.GetByIdAsync(id);
+        if (jobLocation is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new ManageJobLocationsViewModel
+        {
+            JobLocationsForm = new ManageJobLocationsViewModel.JobLocationForm(jobLocation),
+            JobLocations = await _jobLocationsRepository.GetAllAsync()
+        };
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditJobLocation(ManageJobLocationsViewModel viewModel)
+
+    {
+        if (!ModelState.IsValid)
+        {
+            viewModel.JobLocations = await _jobLocationsRepository.GetAllAsync();
+            return View(viewModel);
+        }
+
+        var formValues = viewModel.JobLocationsForm;
+
+        var updatedJobLocation = JobLocation.CreateNew(
+                   formValues.City,
+                   formValues.Country
+               );
+
+        await _jobLocationsRepository.UpdateAsync(viewModel.JobLocationsForm.JobLocationId, updatedJobLocation);
+
+        return RedirectToAction(controllerName: "Management", actionName: "JobLocations", routeValues: new { id = formValues.JobLocationId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteJobLocation(Guid id)
+    {
+        var jobLocation = await _jobLocationsRepository.GetByIdAsync(id);
+        if (jobLocation is null)
+        {
+            return NotFound();
+        }
+        await _jobLocationsRepository.RemoveAsync(jobLocation);
+        return RedirectToAction("JobLocations");
+    }
+
 }

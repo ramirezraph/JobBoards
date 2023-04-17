@@ -175,7 +175,7 @@ public class JobsController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> Details(Guid id)
+    public async Task<IActionResult> Details(Guid id, string? returnUrl)
     {
         var jobPost = await _jobPostsRepository.GetByIdAsync(id);
 
@@ -207,6 +207,11 @@ public class JobsController : BaseController
                     viewModel.JobApplication = jobApplication;
                 }
             }
+        }
+
+        if (!string.IsNullOrWhiteSpace(returnUrl))
+        {
+            ViewData["ReturnUrl"] = returnUrl;
         }
 
         return View(viewModel);

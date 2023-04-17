@@ -142,7 +142,10 @@
                 </div>
             }
 
-            <a asp-controller="Jobs" asp-action="Index" class="btn btn-secondary btn-block w-100 mt-2">Back to List</a>
+            <a asp-controller="Jobs" asp-action="BackToList" asp-route-returnUrl="@ViewData["ReturnUrl"]"
+                class="btn btn-secondary btn-block w-100 mt-2">
+                Back to List
+            </a>
 
             @if (!Model.HasWriteAccess && !Model.WithApplication)
             {
@@ -202,9 +205,8 @@
                     $('#applyNowModalContainer').html(partialView);
                     $('#confirmApplyModal').modal('show');
                 },
-                error: function(xhr, status, error) {
-                    if (xhr.status === 401)
-                    {
+                error: function (xhr, status, error) {
+                    if (xhr.status === 401) {
                         window.location.replace('/Account/Login');
                     }
                 }

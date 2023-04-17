@@ -1,3 +1,65 @@
-<div class="container">
-    <span class="fw-bold">Manage Job Categories</span>
+@using JobBoards.WebApplication.ViewModels.Management
+@model ManageJobCategoriesViewModel
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+<style>
+    .tableData {
+        background-color: #FFF;
+        width: 33.33%;
+        text-align: center;
+        padding: 10px;
+        border: 1px solid black;
+    }
+
+    .tableHeader {
+        background-color: #000000;
+        width: 33.33%;
+        text-align: center;
+        padding: 10px;
+        color: #FFF;
+        border: 2px solid black;
+    }
+
+    table {
+        border-collapse: collapse;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+</style>
+
+<h2 class="text-center mb-4">List of Job Categories</h2>
+
+<div class="d-flex justify-content-end mb-3">
+    <a asp-action="CreateJobCategory" class="btn btn-primary">Create New</a>
 </div>
+
+<table class="table table-hover table-bordered text-center">
+    <thead>
+        <tr class="tableHeader">
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.JobCategories)
+        {
+            <tr class="tableData">
+                <td>@item.Name</td>
+                <td>@item.Description</td>
+                <td>
+                    <a asp-action="EditJobCategory" asp-route-id="@item.Id" class="btn btn-secondary"><i class="fas fa-edit"> </i>Edit</a>
+                    <a asp-action="DeleteJobCategory" asp-route-id="@item.Id" class="btn btn-danger"
+                       onclick="event.preventDefault(); if(confirm('Are you sure you want to delete?')){ document.getElementById('delete-jobcategory-form-@item.Id').submit(); }">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                    <form id="delete-jobcategory-form-@item.Id" action="@Url.Action("DeleteJobCategory", "Management")" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.Id" />
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

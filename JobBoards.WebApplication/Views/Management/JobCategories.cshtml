@@ -1,24 +1,24 @@
 @using JobBoards.WebApplication.ViewModels.Management
 @model ManageJobCategoriesViewModel
 
+@{
+    int counter = 1;
+}
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 
 <style>
     .tableData {
-        background-color: #FFF;
-        width: 33.33%;
-        text-align: center;
+        text-align: left;
+        vertical-align: middle;
         padding: 10px;
-        border: 1px solid black;
     }
 
     .tableHeader {
-        background-color: #000000;
-        width: 33.33%;
-        text-align: center;
+        text-align: left;
+        vertical-align: middle;
         padding: 10px;
-        color: #FFF;
-        border: 2px solid black;
+        color: #000;
     }
 
     table {
@@ -26,40 +26,80 @@
         border-radius: 10px;
         overflow: hidden;
     }
+
+    tbody tr:not(:last-child) {
+        border-bottom: 1px solid #ddd;
+    }
+
+    tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    td, th {
+        border: none;
+    }
+
+    .custom-btn {
+        background-color: transparent;
+        border-color: transparent;
+    }
+
+    .custom-btn i.fas.fa-edit {
+        color: #FFC107;
+    }
+
+    .custom-btn i.fas.fa-trash {
+        color: red;
+    }
+
+    .custom-btn:hover {
+        background-color: transparent; 
+        border-color: transparent; 
+    }
+
+    .custom-btn:hover {
+        background-color: rgba(0, 0, 0, 0.1); /* set the desired hover color here */
+        border-color: transparent;
+    }
 </style>
 
-<h2 class="text-center mb-4">List of Job Categories</h2>
+<h2 class="text-center text-muted mb-4">Manage Job Categories</h2>
 
-<div class="d-flex justify-content-end mb-3">
+<p class="align-content-end">
     <a asp-action="CreateJobCategory" class="btn btn-primary">Create New</a>
-</div>
+</p>
 
 <table class="table table-hover table-bordered text-center">
     <thead>
         <tr class="tableHeader">
+            <th>#</th>
             <th>Name</th>
             <th>Description</th>
-            <th>Actions</th>
+            <th style="text-align: center;">Actions</th>
+
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.JobCategories)
         {
             <tr class="tableData">
+                <td style="font-weight: bold;">@counter</td>
                 <td>@item.Name</td>
                 <td>@item.Description</td>
-                <td>
-                    <a asp-action="EditJobCategory" asp-route-id="@item.Id" class="btn btn-secondary"><i class="fas fa-edit"> </i>Edit</a>
-                    <a asp-action="DeleteJobCategory" asp-route-id="@item.Id" class="btn btn-danger"
+                <td style="text-align: center;">
+                    <a asp-action="EditJobCategory" asp-route-id="@item.Id" class="btn btn-secondary custom-btn"><i class="fas fa-edit"></i></a>
+                    <a asp-action="DeleteJobCategory" asp-route-id="@item.Id" class="btn btn-danger custom-btn"
                        onclick="event.preventDefault(); if(confirm('Are you sure you want to delete?')){ document.getElementById('delete-jobcategory-form-@item.Id').submit(); }">
-                        <i class="fas fa-trash"></i> Delete
+                        <i class="fas fa-trash"></i>
                     </a>
+
                     <form id="delete-jobcategory-form-@item.Id" action="@Url.Action("DeleteJobCategory", "Management")" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="id" value="@item.Id" />
                     </form>
                 </td>
             </tr>
+            counter++;
         }
     </tbody>
 </table>

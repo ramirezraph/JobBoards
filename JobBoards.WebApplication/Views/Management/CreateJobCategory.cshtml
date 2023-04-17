@@ -1,0 +1,59 @@
+﻿@using JobBoards.WebApplication.ViewModels.Management
+@model ManageJobCategoriesViewModel
+<style>
+    form label {
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 2rem;
+    }
+
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f5f5f5;
+    }
+
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 2rem;
+        text-shadow: 1px 1px #ccc;
+    }
+
+    .form-control {
+        border-radius: 3px;
+        box-shadow: none;
+        border: none;
+        border-bottom: 2px solid #ccc;
+    }
+
+    .form-control:focus {
+        box-shadow: none;
+        border-color: #428bca;
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="text-primary">Create Job Category</h2>
+    <form asp-action="CreateJobCategory" method="post">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="Name" class="form-control" placeholder="Enter Job Category Name" required>
+            <span asp-validation-for="JobCategoriesForm.Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="Description" class="form-control" placeholder="Enter Job Category Description" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a class="btn btn-secondary" asp-controller="Management" asp-action="JobCategories">Cancel</a>
+        </div>
+    </form>
+</div>
+

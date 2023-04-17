@@ -25,56 +25,6 @@
     .status-withdrawn {
         color: #DC3545;
     }
-
-    /* Style for confirmation buttons */
-    .confirm-popup-content p1 {
-        color: red;
-    }
-
-    .confirm-popup {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
-    }
-
-    .confirm-popup-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 50%;
-        text-align: center;
-    }
-
-    .confirm-buttons {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
-
-    .confirm-buttons button {
-        margin: 0 10px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .confirm-buttons .confirm {
-        background-color: #dc3545;
-        color: #fff;
-    }
-
-    .confirm-buttons .cancel {
-        background-color: #54595E;
-        color: #fff;
-    }
 </style>
 
 
@@ -117,9 +67,10 @@
                     <div class="row mt-2">
                         <h6 class="col-4 d-inline">Posted:</h6>
                         <div class="col-8">
-                            @Model.JobPost.CreatedAt
+                            @Model.JobPost.CreatedAt.ToString("MMMM dd, yyyy h:mm tt")
                         </div>
                     </div>
+
                     @if (Model.HasWriteAccess)
                     {
                         <div class="row mt-2">
@@ -178,17 +129,14 @@
                         <div class="row mt-3">
                             <h6 class="col-4 d-inline">Applied</h6>
                             <div class="col-8">
-                                @Model.JobApplication.CreatedAt
+                                @Model.JobApplication.CreatedAt.ToString("MMMM dd, yyyy h:mm tt")
                             </div>
                         </div>
+
                         @if (@Model.JobApplication.Status.ToLower() != "withdrawn")
                         {
-                            <a asp-controller="Jobseekers" asp-action="WithdrawApplication"
-                        asp-route-applicationId="@Model.JobApplication.Id"
-                        asp-route-jobseekerId="@Model.JobApplication.JobSeekerId"
-                                class="btn btn-danger btn-block w-100 mt-3">
-                                Withdraw
-                            </a>
+                            <button onclick="openWithdrawApplicationModal('@Model.JobApplication.Id')"
+                                class="btn btn-danger btn-block w-100 mt-3">Withdraw</button>
                         }
                     </div>
                 </div>
@@ -198,10 +146,8 @@
 
             @if (!Model.HasWriteAccess && !Model.WithApplication)
             {
-                <a asp-controller="Jobseekers" asp-action="ApplyNow" asp-route-postId="@Model.JobPost.Id"
-                    class="btn btn-primary btn-block w-100 mt-2">
-                    Apply Now
-                </a>
+                <button onclick="openApplyNowModal('@Model.JobPost.Id.ToString()')"
+                    class="btn btn-primary btn-block w-100 mt-2">Apply Now</button>
             }
 
             @if (Model.HasWriteAccess)
@@ -213,40 +159,50 @@
 
                 <a asp-controller="Jobs" asp-action="Update" asp-route-id="@Model.JobPost.Id"
                     class="btn btn-primary btn-block w-100 mt-1">Edit</a>
-                <form id="delete-form" asp-controller="Jobs" asp-action="Delete" method="post">
-                    <input type="hidden" name="id" value="@Model.JobPost.Id" />
-                    <button type="button" onclick="showConfirm()"
-                        class="btn btn-danger btn-block w-100 mt-1">Delete</button>
-                </form>
 
-                <!-- Confirmation popup -->
-                <div id="confirm-popup" class="confirm-popup">
-                    <div class="confirm-popup-content">
-                        <p><strong>Are you sure you want to delete this job post?</strong></p>
-                        <p1>This action cannot be undone. Please confirm to proceed</p1>
-                        <div class="confirm-buttons">
-                            <button class="confirm" onclick="deletePost()">I understand, please delete</button>
-                            <button class="cancel" onclick="hideConfirm()">Cancel</button>
-                        </div>
-                    </div>
-                </div>
+                <button onclick="openDeletePostModal('@Model.JobPost.Id.ToString()')"
+                    class="btn btn-danger btn-block w-100 mt-1">Delete</button>
             }
         </div>
     </div>
+    <div id="deletePostModalContainer"></div>
+    <div id="withdrawModalContainer"></div>
+    <div id="applyNowModalContainer"></div>
 </div>
 
-@section scripts {
+@section Modals {
     <script>
-        function showConfirm() {
-            document.getElementById("confirm-popup").style.display = "block";
+        function openDeletePostModal(jobPostId) {
+            $.ajax({
+                url: '@Url.Action("DisplayDeleteConfirmationModal", "Jobs", new { jobPostId = "__id__" })'.replace('__id__', jobPostId),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#deletePostModalContainer').html(partialView);
+                    $('#confirmDeleteJobPostModal').modal('show');
+                }
+            });
         }
 
-        function hideConfirm() {
-            document.getElementById("confirm-popup").style.display = "none";
+        function openWithdrawApplicationModal(applicationId) {
+            $.ajax({
+                url: '@Url.Action("DisplayWithdrawConfirmationModal", "Jobseekers", new { jobApplicationId = "__id__" })'.replace('__id__', applicationId),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#withdrawModalContainer').html(partialView);
+                    $('#confirmWithdrawApplicationModal').modal('show');
+                }
+            });
         }
 
-        function deletePost() {
-            document.getElementById("delete-form").submit();
+        function openApplyNowModal(jobPostId) {
+            $.ajax({
+                url: '@Url.Action("DisplayApplyNowModal", "Jobseekers", new { jobPostId = "__id__" })'.replace('__id__', jobPostId),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#applyNowModalContainer').html(partialView);
+                    $('#confirmApplyModal').modal('show');
+                }
+            });
         }
     </script>
 }

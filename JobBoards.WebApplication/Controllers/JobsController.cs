@@ -12,10 +12,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
+using System.Web;
+using JobBoards.WebApplication.ViewModels.Shared;
+using Newtonsoft.Json;
+using static JobBoards.WebApplication.ViewModels.Jobs.IndexViewModel;
 
 namespace JobBoards.WebApplication.Controllers;
 
-public class JobsController : Controller
+public class JobsController : BaseController
 {
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
@@ -55,7 +59,8 @@ public class JobsController : Controller
         Guid? jobCategoryId = null,
         Guid? jobLocationId = null,
         double? minSalary = null,
-        double? maxSalary = null)
+        double? maxSalary = null,
+        List<Guid>? activeJobTypeIds = null)
     {
         var jobPosts = await _jobPostsRepository.GetAllAsync();
 
@@ -90,12 +95,25 @@ public class JobsController : Controller
             jobPosts = jobPosts.Where(jp => jp.MinSalary <= maxSalary || jp.MaxSalary <= maxSalary).ToList();
         }
 
+        var jobTypes = await _jobTypesRepository.GetAllAsync();
+        var jobTypesViewModels = jobTypes.ConvertAll(jt => new JobTypeCheckboxViewModel
+        {
+            JobTypeId = jt.Id,
+            JobTypeName = jt.Name,
+            IsChecked = (activeJobTypeIds.Any() ? activeJobTypeIds.Contains(jt.Id) : true)
+        });
+
+        if (activeJobTypeIds != null && activeJobTypeIds.Any())
+        {
+            jobPosts = jobPosts.Where(jp => activeJobTypeIds.Contains(jp.JobTypeId)).ToList();
+        }
+
         var viewModel = new IndexViewModel
         {
             JobPosts = jobPosts.OrderByDescending(jp => jp.CreatedAt).ToList(),
             JobCategories = await _jobCategoriesRepository.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
-            JobTypes = await _jobTypesRepository.GetAllAsync(),
+            JobTypes = jobTypesViewModels,
             HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),
             Filters = new IndexViewModel.FilterForm
             {
@@ -113,6 +131,16 @@ public class JobsController : Controller
     [HttpPost]
     public IActionResult RefineSearchResult(IndexViewModel indexViewModel)
     {
+        List<Guid>? activeJobTypeIds = null;
+
+        if (indexViewModel.JobTypes.Any(t => t.IsChecked == false))
+        {
+            activeJobTypeIds = indexViewModel.JobTypes
+                    .Where(jt => jt.IsChecked)
+                    .Select(jt => jt.JobTypeId)
+                    .ToList();
+        }
+
         return RedirectToAction(
             controllerName: "Jobs",
             actionName: "Index",
@@ -122,7 +150,8 @@ public class JobsController : Controller
                 jobCategoryId = indexViewModel.Filters.JobCategoryId,
                 jobLocationId = indexViewModel.Filters.JobLocationId,
                 minSalary = indexViewModel.Filters.MinSalary,
-                maxSalary = indexViewModel.Filters.MaxSalary
+                maxSalary = indexViewModel.Filters.MaxSalary,
+                activeJobTypeIds = activeJobTypeIds
             });
     }
 
@@ -227,6 +256,13 @@ public class JobsController : Controller
 
         await _jobPostsRepository.AddAsync(newJobPost);
 
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job post created successfully.",
+            Type = "success"
+        });
+
         return RedirectToAction(controllerName: "Jobs", actionName: "Index");
     }
 
@@ -287,7 +323,33 @@ public class JobsController : Controller
 
         await _jobPostsRepository.UpdateAsync(viewModel.Form.Id, updatedJobPost);
 
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job post updated successfully.",
+            Type = "success"
+        });
+
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = formValues.Id });
+    }
+
+    public async Task<IActionResult> DisplayDeleteConfirmationModal(Guid jobPostId)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(jobPostId);
+
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new DeleteJobPostModalViewModel
+        {
+            JobPostId = jobPost.Id,
+            JobPost = jobPost,
+            NumberOfPendingJobApplications = jobPost.JobApplications.Count(ja => ja.Status.ToLower() != "withdrawn" && ja.Status.ToLower() != "not suitable")
+        };
+
+        return PartialView("~/Views/Shared/Modals/_DeleteJobPostModal.cshtml", viewModel);
     }
 
     [HttpPost]
@@ -295,13 +357,25 @@ public class JobsController : Controller
     public async Task<IActionResult> Delete(Guid id)
     {
         await _jobPostsRepository.DeleteAsync(id);
-        return RedirectToAction("Index");
+
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job post deleted successfully.",
+            Type = "success"
+        });
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "Index");
     }
 
     [HttpGet]
     [Route("[controller]/Applications/{id:guid}")]
     [Authorize(Roles = "Admin, Employer")]
-    public async Task<IActionResult> ManageJobApplications(Guid id, string? search = null, string? status = null)
+    public async Task<IActionResult> ManageJobApplications(
+        Guid id,
+        string? search = null,
+        string? status = null,
+        string? returnUrl = null)
     {
         var jobPost = await _jobPostsRepository.GetByIdAsync(id);
 
@@ -334,6 +408,11 @@ public class JobsController : Controller
             }
         };
 
+        if (!string.IsNullOrWhiteSpace(returnUrl))
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+        }
+
         return View(viewModel);
     }
 
@@ -352,8 +431,7 @@ public class JobsController : Controller
     }
 
     [Authorize(Roles = "Admin, Employer")]
-    [HttpGet]
-    public async Task<IActionResult> MakeShortlisted(Guid jobApplicationId)
+    public async Task<IActionResult> DisplayChangeApplicationStatusModal(Guid jobApplicationId, string status)
     {
         var jobApplication = await _jobApplicationsRepository.GetByIdAsync(jobApplicationId);
 
@@ -362,14 +440,24 @@ public class JobsController : Controller
             return NotFound();
         }
 
-        await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Shortlisted");
+        if (string.IsNullOrWhiteSpace(status))
+        {
+            return PartialView("~/Views/Shared/_EmptyPartialView.cshtml");
+        }
 
-        return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
+        var viewModel = new ChangeApplicationStatusModalViewModel
+        {
+            JobApplicationId = jobApplication.Id,
+            ApplicantName = jobApplication.JobSeeker.User.FullName,
+            NewStatus = status
+        };
+
+        return PartialView("~/Views/Shared/Modals/_ChangeApplicationStatusModal.cshtml", viewModel);
     }
 
     [Authorize(Roles = "Admin, Employer")]
     [HttpGet]
-    public async Task<IActionResult> MakeInterview(Guid jobApplicationId)
+    public async Task<IActionResult> UpdateJobApplicationStatus(Guid jobApplicationId, string newStatus)
     {
         var jobApplication = await _jobApplicationsRepository.GetByIdAsync(jobApplicationId);
 
@@ -378,23 +466,14 @@ public class JobsController : Controller
             return NotFound();
         }
 
-        await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Interview");
+        await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, newStatus);
 
-        return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
-    }
-
-    [Authorize(Roles = "Admin, Employer")]
-    [HttpGet]
-    public async Task<IActionResult> MakeNotSuitable(Guid jobApplicationId)
-    {
-        var jobApplication = await _jobApplicationsRepository.GetByIdAsync(jobApplicationId);
-
-        if (jobApplication is null)
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
         {
-            return NotFound();
-        }
-
-        await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Not Suitable");
+            Title = "Success",
+            Message = $"{jobApplication.JobSeeker.User.FullName}'s application has been set to {newStatus}.",
+            Type = "success"
+        });
 
         return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
     }
@@ -412,6 +491,29 @@ public class JobsController : Controller
 
         await _jobPostsRepository.UpdateAsync(jobPostId, jobPost);
 
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = $"Job post is now {(jobPost.IsActive ? "active" : "inactive")}.",
+            Type = "success"
+        });
+
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = jobPostId });
+    }
+
+    public IActionResult BackToList(string? returnUrl = null)
+    {
+        Console.WriteLine(returnUrl);
+
+        if (!string.IsNullOrEmpty(returnUrl))
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                var decodedUrl = HttpUtility.UrlDecode(returnUrl);
+                return LocalRedirect(decodedUrl);
+            }
+        }
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "Index");
     }
 }

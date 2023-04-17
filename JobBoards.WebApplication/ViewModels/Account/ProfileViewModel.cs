@@ -46,7 +46,5 @@ public class ProfileViewModel
     [DisplayName("Resume File")]
     public IFormFile? ResumeFile { get; set; }
 
-    public string? UpdateResultMessage { get; set; }
-
     public Resume? UserResume { get; set; }
 }

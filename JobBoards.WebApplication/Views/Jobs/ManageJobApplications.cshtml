@@ -37,10 +37,11 @@
             @Model.JobPost.JobLocation.Country
         </p>
         <div class="w-100 text-center d-flex justify-content-center">
-            <a asp-controller="Jobs" asp-action="Index" class="btn me-3 btn-outline-dark">
-                Back to
-                List
+            <a asp-controller="Jobs" asp-action="BackToList" asp-route-returnUrl="@ViewData["ReturnUrl"]"
+                class="btn me-3 btn-outline-dark">
+                Back to List
             </a>
+
             <a asp-controller="Jobs" asp-action="Details" asp-route-id="@Model.JobPost.Id"
                 class="btn btn-outline-primary me-3" onclick="window.history.back()">
                 View Job Details
@@ -75,30 +76,38 @@
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
                             checked="@(string.IsNullOrEmpty(status))">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search">All</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">All</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
                             checked="@(status == "submitted")">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
-                            asp-route-status="submitted">Submitted</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search" asp-route-status="submitted"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">Submitted</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"
                             checked="@(status == "interview")">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
-                            asp-route-status="interview">Interview</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search" asp-route-status="interview"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">Interview</a>
 
-                        <input type=" radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
                             checked="@(status == "shortlisted")">
                         <a class="btn btn-outline-primary" asp-controller="Jobs" asp-action="ManageJobApplications"
-                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search"
-                            asp-route-status="shortlisted">Shortlist</a>
+                            asp-route-id="@Model.JobPost.Id" asp-route-search="@search" asp-route-status="shortlisted"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">Shortlist</a>
 
                         <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off"
                             checked="@(status == "notsuitable")"><a class="btn btn-outline-primary"
                             asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@Model.JobPost.Id"
-                            asp-route-search="@search" asp-route-status="notsuitable">Not Suitable</a>
+                            asp-route-search="@search" asp-route-status="notsuitable"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">Not Suitable</a>
+
+                        <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off"
+                            checked="@(status == "withdrawn")"><a class="btn btn-outline-primary" asp-controller="Jobs"
+                            asp-action="ManageJobApplications" asp-route-id="@Model.JobPost.Id"
+                            asp-route-search="@search" asp-route-status="withdrawn"
+                            asp-route-returnUrl="@ViewData["ReturnUrl"]">Withdrawn</a>
                     </div>
                 </div>
                 @if (Model.JobApplications.Any())
@@ -124,9 +133,10 @@
                                 <div class="row mt-2">
                                     <span class="col-2" style="font-weight: 500;">Applied:</span>
                                     <div class="col-10">
-                                        @jobApplication.CreatedAt
+                                        @jobApplication.CreatedAt.ToString("MMMM dd, yyyy h:mm tt")
                                     </div>
                                 </div>
+
                                 <div class="row mt-2">
                                     <span class="col-2" style="font-weight: 500;">Status:</span>
                                     <div class="col-10 status-@(
@@ -137,18 +147,16 @@
                                 @if (jobApplication.Status.ToLower() != "withdrawn")
                                 {
                                     <div class="d-flex mt-3 p-0">
-                                        <a asp-controller="Jobs" asp-action="MakeInterview"
-                                asp-route-jobApplicationId="@jobApplication.Id" class="btn p-0 m-0 me-4">
-                                            INTERVIEW
-                                        </a>
-                                        <a asp-controller="Jobs" asp-action="MakeShortlisted"
-                                asp-route-jobApplicationId="@jobApplication.Id" class="btn p-0 m-0 me-4">
-                                            SHORTLIST
-                                        </a>
-                                        <a asp-controller="Jobs" asp-action="MakeNotSuitable"
-                                asp-route-jobApplicationId="@jobApplication.Id" class="btn p-0 m-0 me-4">
-                                            NOT SUITABLE
-                                        </a>
+                                        <button
+                                            onclick="openChangeApplicationStatusModal('@jobApplication.Id.ToString()', 'Interview')"
+                                            class="btn p-0 m-0 me-4">INTERVIEW</button>
+                                        <button
+                                            onclick="openChangeApplicationStatusModal('@jobApplication.Id.ToString()', 'Shortlisted')"
+                                            class="btn p-0 m-0 me-4">SHORTLIST</button>
+
+                                        <button
+                                            onclick="openChangeApplicationStatusModal('@jobApplication.Id.ToString()', 'Not Suitable')"
+                                            class="btn p-0 m-0 me-4">NOT SUITABLE</button>
                                     </div>
                                 }
                             </div>
@@ -164,4 +172,20 @@
             </div>
         </div>
     </div>
+    <div id="updateStatusModalContainer"></div>
 </div>
+
+@section Modals {
+    <script>
+        function openChangeApplicationStatusModal(jobApplicationId, newStatus) {
+            $.ajax({
+                url: "@Html.Raw(Url.Action("DisplayChangeApplicationStatusModal", "Jobs", new { jobApplicationId = "__id__", status = "__newStatus__" }))".replace('__id__', jobApplicationId).replace('__newStatus__', newStatus),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#updateStatusModalContainer').html(partialView);
+                    $('#confirmUpdateStatusModal').modal('show');
+                }
+            });
+        }
+    </script>
+}

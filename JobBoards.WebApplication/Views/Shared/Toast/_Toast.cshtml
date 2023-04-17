@@ -1,0 +1,27 @@
+@using JobBoards.WebApplication.ViewModels.Shared
+@model ToastNotification
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="jobboards-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong
+                class="me-auto @(Model.Type == "default" ? "text-black" : $"text-{Model.Type}")">@Model.Title</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            @Model.Message
+        </div>
+    </div>
+</div>
+
+@*
+HOW TO USE?
+To display a toast, use this code in your controller action.
+
+TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+{
+Title = "<insert toast title>",
+Message = "<insert toast message here>",
+Type = "<insert toast type>"
+});
+*@

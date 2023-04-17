@@ -1,4 +1,5 @@
 @using JobBoards.WebApplication.ViewModels.Jobseekers
+@using JobBoards.WebApplication.Utils
 @model JobApplicationsViewModel
 
 <style>
@@ -58,6 +59,11 @@
                                 <div class="col-10 status-@(
                                 jobApplication.Status.ToLower().Replace(" ", ""))">
                                     @jobApplication.Status
+                                    @if (@jobApplication.UpdatedAt.HasValue && jobApplication.Status.ToLower() != "withdrawn")
+                                    {
+                                        <span style="font-size: 12px; color: #54595E;">(updated
+                                            @jobApplication.UpdatedAt.Value.FormatDateToRelative())</span>
+                                    }
                                 </div>
                             </div>
                             <div>

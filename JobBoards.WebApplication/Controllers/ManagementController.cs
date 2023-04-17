@@ -1,3 +1,4 @@
+using JobBoards.Data.Common.Models;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Entities.Common;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
@@ -43,30 +44,35 @@ public class ManagementController : BaseController
     }
 
     public async Task<IActionResult> JobApplications(
+        int? pageNumber = null,
         string? search = null,
         Guid? jobCategoryId = null,
         Guid? jobLocationId = null)
     {
-        var jobPosts = await _jobPostsRepository.GetAllAsync();
+        IQueryable<JobPost> jobPosts = _jobPostsRepository.GetAllQueryable()
+                                            .OrderByDescending(jp => jp.UpdatedAt)
+                                                .ThenByDescending(jp => jp.CreatedAt);
 
         if (!string.IsNullOrWhiteSpace(search))
         {
-            jobPosts = jobPosts.Where(jp => jp.Title.ToLower().Contains(search.ToLower())).ToList();
+            jobPosts = jobPosts.Where(jp => jp.Title.ToLower().Contains(search.ToLower()));
         }
 
         if (jobCategoryId != null && jobCategoryId != Guid.Empty)
         {
-            jobPosts = jobPosts.Where(jp => jp.JobCategoryId == jobCategoryId).ToList();
+            jobPosts = jobPosts.Where(jp => jp.JobCategoryId == jobCategoryId);
         }
 
         if (jobLocationId != null && jobLocationId != Guid.Empty)
         {
-            jobPosts = jobPosts.Where(jp => jp.JobLocationId == jobLocationId).ToList();
+            jobPosts = jobPosts.Where(jp => jp.JobLocationId == jobLocationId);
         }
+
+        var paginatedJobPosts = await PaginatedResult<JobPost>.CreateAsync(jobPosts, pageNumber ?? 1, 4);
 
         var viewModel = new ManageJobApplicationsViewModel
         {
-            JobPosts = jobPosts.OrderByDescending(jp => jp.CreatedAt).ToList(),
+            Pagination = paginatedJobPosts,
             JobCategories = await _jobCategoriesRepository.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
             Filters = new ManageJobApplicationsViewModel.FilterForm

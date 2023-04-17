@@ -128,6 +128,13 @@ public class JobseekersController : BaseController
         var newJobApplication = JobApplication.CreateNew(jobPost.Id, jobSeekerProfile.Id, "Submitted");
         await _jobApplicationsRepository.AddAsync(newJobApplication);
 
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = $"Your application to {jobPost.Title} has been submitted.",
+            Type = "success"
+        });
+
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = postId });
     }
 

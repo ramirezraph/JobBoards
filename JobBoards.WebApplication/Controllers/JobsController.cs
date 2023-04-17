@@ -16,6 +16,7 @@ using System.Web;
 using JobBoards.WebApplication.ViewModels.Shared;
 using Newtonsoft.Json;
 using static JobBoards.WebApplication.ViewModels.Jobs.IndexViewModel;
+using JobBoards.Data.Common.Models;
 
 namespace JobBoards.WebApplication.Controllers;
 
@@ -55,62 +56,70 @@ public class JobsController : BaseController
 
     [HttpGet]
     public async Task<IActionResult> Index(
+        int? pageNumber = null,
         string? search = null,
         Guid? jobCategoryId = null,
         Guid? jobLocationId = null,
         double? minSalary = null,
         double? maxSalary = null,
-        List<Guid>? activeJobTypeIds = null)
+        string? activeJobTypeIds = null)
     {
-        var jobPosts = await _jobPostsRepository.GetAllAsync();
+        IQueryable<JobPost> jobPosts = _jobPostsRepository.GetAllQueryable()
+                                            .OrderByDescending(jp => jp.CreatedAt);
 
         // Filter all Inactive
         if (!User.IsInRole("Admin") && !User.IsInRole("Employer"))
         {
-            jobPosts = jobPosts.Where(jp => jp.IsActive).ToList();
+            jobPosts = jobPosts.Where(jp => jp.IsActive);
         }
 
         if (!string.IsNullOrWhiteSpace(search))
         {
-            jobPosts = jobPosts.Where(jp => jp.Title.ToLower().Contains(search.ToLower()) || jp.Description.ToLower().Contains(search.ToLower())).ToList();
+            jobPosts = jobPosts.Where(jp => jp.Title.ToLower().Contains(search.ToLower()) || jp.Description.ToLower().Contains(search.ToLower()));
         }
 
         if (jobCategoryId != null && jobCategoryId != Guid.Empty)
         {
-            jobPosts = jobPosts.Where(jp => jp.JobCategoryId == jobCategoryId).ToList();
+            jobPosts = jobPosts.Where(jp => jp.JobCategoryId == jobCategoryId);
         }
 
         if (jobLocationId != null && jobLocationId != Guid.Empty)
         {
-            jobPosts = jobPosts.Where(jp => jp.JobLocationId == jobLocationId).ToList();
+            jobPosts = jobPosts.Where(jp => jp.JobLocationId == jobLocationId);
         }
 
         if (minSalary != null)
         {
-            jobPosts = jobPosts.Where(jp => jp.MinSalary >= minSalary || jp.MaxSalary >= minSalary).ToList();
+            jobPosts = jobPosts.Where(jp => jp.MinSalary >= minSalary || jp.MaxSalary >= minSalary);
         }
 
         if (maxSalary != null)
         {
-            jobPosts = jobPosts.Where(jp => jp.MinSalary <= maxSalary || jp.MaxSalary <= maxSalary).ToList();
+            jobPosts = jobPosts.Where(jp => jp.MinSalary <= maxSalary || jp.MaxSalary <= maxSalary);
         }
+
+        var activeJobTypes = !string.IsNullOrEmpty(activeJobTypeIds) ?
+            activeJobTypeIds.Split(',').Select(Guid.Parse).ToList() :
+            new List<Guid>();
 
         var jobTypes = await _jobTypesRepository.GetAllAsync();
         var jobTypesViewModels = jobTypes.ConvertAll(jt => new JobTypeCheckboxViewModel
         {
             JobTypeId = jt.Id,
             JobTypeName = jt.Name,
-            IsChecked = (activeJobTypeIds.Any() ? activeJobTypeIds.Contains(jt.Id) : true)
+            IsChecked = (activeJobTypes.Any() ? activeJobTypes.Contains(jt.Id) : true)
         });
 
-        if (activeJobTypeIds != null && activeJobTypeIds.Any())
+        if (activeJobTypeIds != null && activeJobTypes.Any())
         {
-            jobPosts = jobPosts.Where(jp => activeJobTypeIds.Contains(jp.JobTypeId)).ToList();
+            jobPosts = jobPosts.Where(jp => activeJobTypes.Contains(jp.JobTypeId));
         }
+
+        var paginatedJobPosts = await PaginatedResult<JobPost>.CreateAsync(jobPosts, pageNumber ?? 1, 4);
 
         var viewModel = new IndexViewModel
         {
-            JobPosts = jobPosts.OrderByDescending(jp => jp.CreatedAt).ToList(),
+            Pagination = paginatedJobPosts,
             JobCategories = await _jobCategoriesRepository.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
             JobTypes = jobTypesViewModels,
@@ -121,7 +130,8 @@ public class JobsController : BaseController
                 JobCategoryId = jobCategoryId,
                 JobLocationId = jobLocationId,
                 MinSalary = minSalary,
-                MaxSalary = maxSalary
+                MaxSalary = maxSalary,
+                ActiveJobTypeIds = activeJobTypes
             }
         };
 
@@ -151,7 +161,7 @@ public class JobsController : BaseController
                 jobLocationId = indexViewModel.Filters.JobLocationId,
                 minSalary = indexViewModel.Filters.MinSalary,
                 maxSalary = indexViewModel.Filters.MaxSalary,
-                activeJobTypeIds = activeJobTypeIds
+                activeJobTypeIds = string.Join(",", activeJobTypeIds ?? new())
             });
     }
 
@@ -170,7 +180,7 @@ public class JobsController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> Details(Guid id)
+    public async Task<IActionResult> Details(Guid id, string? returnUrl)
     {
         var jobPost = await _jobPostsRepository.GetByIdAsync(id);
 
@@ -202,6 +212,11 @@ public class JobsController : BaseController
                     viewModel.JobApplication = jobApplication;
                 }
             }
+        }
+
+        if (!string.IsNullOrWhiteSpace(returnUrl))
+        {
+            ViewData["ReturnUrl"] = returnUrl;
         }
 
         return View(viewModel);
@@ -263,7 +278,7 @@ public class JobsController : BaseController
             Type = "success"
         });
 
-        return RedirectToAction(controllerName: "Jobs", actionName: "Index");
+        return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = newJobPost.Id });
     }
 
     [HttpGet]

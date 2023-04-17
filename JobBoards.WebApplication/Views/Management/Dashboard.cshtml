@@ -1,6 +1,10 @@
 @using JobBoards.WebApplication.ViewModels.Management;
 @model DashboardViewModel
 
+@{
+    var requestPath = ViewContext.HttpContext.Request.Path;
+}
+
 <style>
     .stat {
         min-width: 174px;
@@ -51,7 +55,8 @@
                             <div class="d-flex justify-content-between align-items-center mt-4">
                                 <a asp-controller="Jobs" asp-action="ManageJobApplications"
                             asp-route-id="@jobApplication.JobPostId"
-                            asp-route-search="@jobApplication.JobSeeker.User.FullName" class="link-primary m-0"
+                            asp-route-search="@jobApplication.JobSeeker.User.FullName"
+                            asp-route-returnUrl="@requestPath" class="link-primary m-0"
                                     style="font-weight: 500; text-decoration: none;;">
                                     View Application
                                 </a>
@@ -82,7 +87,7 @@
                 @foreach (var jobPost in Model.RecentJobPosts)
                 {
                     <div class="col-md-4 mb-3 mb-md-0">
-                        <a asp-controller="Jobs" asp-action="Details" asp-route-id="@jobPost.Id"
+                        <a asp-controller="Jobs" asp-action="Details" asp-route-id="@jobPost.Id" asp-route-returnUrl="@requestPath"
                             class="btn text-start rounded p-4 bg-white border border-gray-300 d-flex flex-column justify-content-between h-100">
                             <div class="d-flex flex-column">
                                 <h5 class="text-gray-900 font-semibold">

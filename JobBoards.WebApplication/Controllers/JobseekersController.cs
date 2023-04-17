@@ -113,6 +113,26 @@ public class JobseekersController : BaseController
     }
 
     [Authorize(Roles = "User")]
+    public async Task<IActionResult> DisplayWithdrawConfirmationModal(Guid jobApplicationId)
+    {
+        var jobApplication = await _jobApplicationsRepository.GetByIdAsync(jobApplicationId);
+
+        if (jobApplication is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new WithdrawApplicationModalViewModel
+        {
+            ApplicationId = jobApplication.Id,
+            JobSeekerId = jobApplication.JobSeekerId,
+            JobPostTitle = jobApplication.JobPost.Title
+        };
+
+        return PartialView("~/Views/Shared/Modals/_WithdrawApplicationModal.cshtml", viewModel);
+    }
+
+    [Authorize(Roles = "User")]
     public async Task<IActionResult> WithdrawApplication(Guid applicationId, Guid jobseekerId)
     {
         var jobApplication = await _jobApplicationsRepository.GetByIdAsync(applicationId);

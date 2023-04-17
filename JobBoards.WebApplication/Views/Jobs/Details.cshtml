@@ -135,12 +135,8 @@
 
                         @if (@Model.JobApplication.Status.ToLower() != "withdrawn")
                         {
-                            <a asp-controller="Jobseekers" asp-action="WithdrawApplication"
-                        asp-route-applicationId="@Model.JobApplication.Id"
-                        asp-route-jobseekerId="@Model.JobApplication.JobSeekerId"
-                                class="btn btn-danger btn-block w-100 mt-3">
-                                Withdraw
-                            </a>
+                            <button onclick="openWithdrawApplicationModal('@Model.JobApplication.Id')"
+                                class="btn btn-danger btn-block w-100 mt-3">Withdraw</button>
                         }
                     </div>
                 </div>
@@ -172,6 +168,7 @@
         </div>
     </div>
     <div id="deletePostModalContainer"></div>
+    <div id="withdrawModalContainer"></div>
 </div>
 
 @section Modals {
@@ -183,6 +180,17 @@
                 success: function (partialView) {
                     $('#deletePostModalContainer').html(partialView);
                     $('#confirmDeleteJobPostModal').modal('show');
+                }
+            });
+        }
+
+        function openWithdrawApplicationModal(applicationId) {
+            $.ajax({
+                url: '@Url.Action("DisplayWithdrawConfirmationModal", "Jobseekers", new { jobApplicationId = "__id__" })'.replace('__id__', applicationId),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#withdrawModalContainer').html(partialView);
+                    $('#confirmWithdrawApplicationModal').modal('show');
                 }
             });
         }

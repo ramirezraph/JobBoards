@@ -65,11 +65,14 @@
 
                 <div class="mt-2">
                     <label class="form-label text-black-50">Employment Type</label>
-                    @foreach (var jobType in Model.JobTypes)
+                    @for (int i = 0; i < Model.JobTypes.Count(); i++)
                     {
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" checked disabled>
-                            <option value="@jobType.Id">@jobType.Name</option>
+                            <input type="checkbox" class="form-check-input" asp-for="@Model.JobTypes[i].IsChecked">
+                            <option value="@Model.JobTypes[i].JobTypeName">@Model.JobTypes[i].JobTypeName</option>
+
+                            <input type="hidden" asp-for="@Model.JobTypes[i].JobTypeId" />
+                            <input type="hidden" asp-for="@Model.JobTypes[i].JobTypeName" />
                         </div>
                     }
                 </div>

@@ -16,6 +16,7 @@ using System.Web;
 using JobBoards.WebApplication.ViewModels.Shared;
 using JobBoards.WebApplication.Models;
 using Newtonsoft.Json;
+using static JobBoards.WebApplication.ViewModels.Jobs.IndexViewModel;
 
 namespace JobBoards.WebApplication.Controllers;
 
@@ -59,7 +60,8 @@ public class JobsController : BaseController
         Guid? jobCategoryId = null,
         Guid? jobLocationId = null,
         double? minSalary = null,
-        double? maxSalary = null)
+        double? maxSalary = null,
+        List<Guid>? activeJobTypeIds = null)
     {
         var jobPosts = await _jobPostsRepository.GetAllAsync();
 
@@ -94,12 +96,25 @@ public class JobsController : BaseController
             jobPosts = jobPosts.Where(jp => jp.MinSalary <= maxSalary || jp.MaxSalary <= maxSalary).ToList();
         }
 
+        var jobTypes = await _jobTypesRepository.GetAllAsync();
+        var jobTypesViewModels = jobTypes.ConvertAll(jt => new JobTypeCheckboxViewModel
+        {
+            JobTypeId = jt.Id,
+            JobTypeName = jt.Name,
+            IsChecked = (activeJobTypeIds.Any() ? activeJobTypeIds.Contains(jt.Id) : true)
+        });
+
+        if (activeJobTypeIds != null && activeJobTypeIds.Any())
+        {
+            jobPosts = jobPosts.Where(jp => activeJobTypeIds.Contains(jp.JobTypeId)).ToList();
+        }
+
         var viewModel = new IndexViewModel
         {
             JobPosts = jobPosts.OrderByDescending(jp => jp.CreatedAt).ToList(),
             JobCategories = await _jobCategoriesRepository.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
-            JobTypes = await _jobTypesRepository.GetAllAsync(),
+            JobTypes = jobTypesViewModels,
             HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),
             Filters = new IndexViewModel.FilterForm
             {
@@ -117,6 +132,16 @@ public class JobsController : BaseController
     [HttpPost]
     public IActionResult RefineSearchResult(IndexViewModel indexViewModel)
     {
+        List<Guid>? activeJobTypeIds = null;
+
+        if (indexViewModel.JobTypes.Any(t => t.IsChecked == false))
+        {
+            activeJobTypeIds = indexViewModel.JobTypes
+                    .Where(jt => jt.IsChecked)
+                    .Select(jt => jt.JobTypeId)
+                    .ToList();
+        }
+
         return RedirectToAction(
             controllerName: "Jobs",
             actionName: "Index",
@@ -126,7 +151,8 @@ public class JobsController : BaseController
                 jobCategoryId = indexViewModel.Filters.JobCategoryId,
                 jobLocationId = indexViewModel.Filters.JobLocationId,
                 minSalary = indexViewModel.Filters.MinSalary,
-                maxSalary = indexViewModel.Filters.MaxSalary
+                maxSalary = indexViewModel.Filters.MaxSalary,
+                activeJobTypeIds = activeJobTypeIds
             });
     }
 

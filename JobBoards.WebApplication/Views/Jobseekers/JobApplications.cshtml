@@ -67,11 +67,8 @@
                                 </a>
                                 @if (@jobApplication.Status.ToLower() != "withdrawn")
                                 {
-                                    <a asp-controller="Jobseekers" asp-action="WithdrawApplication"
-                            asp-route-applicationId="@jobApplication.Id"
-                            asp-route-jobseekerId="@jobApplication.JobSeekerId" class="btn btn-danger mt-3">
-                                        Withdraw
-                                    </a>
+                                    <button onclick="openWithdrawApplicationModal('@jobApplication.Id')"
+                                        class="btn btn-danger mt-3">Withdraw</button>
                                 }
                             </div>
                         </div>
@@ -89,3 +86,19 @@
     </div>
 </div>
 
+<div id="withdrawModalContainer"></div>
+
+@section Modals {
+    <script>
+        function openWithdrawApplicationModal(applicationId) {
+            $.ajax({
+                url: '@Url.Action("DisplayWithdrawConfirmationModal", "Jobseekers", new { jobApplicationId = "__id__" })'.replace('__id__', applicationId),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#withdrawModalContainer').html(partialView);
+                    $('#confirmWithdrawApplicationModal').modal('show');
+                }
+            });
+        }
+    </script>
+}

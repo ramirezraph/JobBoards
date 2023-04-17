@@ -14,7 +14,6 @@ using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using System.Web;
 using JobBoards.WebApplication.ViewModels.Shared;
-using JobBoards.WebApplication.Models;
 using Newtonsoft.Json;
 using static JobBoards.WebApplication.ViewModels.Jobs.IndexViewModel;
 
@@ -432,8 +431,7 @@ public class JobsController : BaseController
     }
 
     [Authorize(Roles = "Admin, Employer")]
-    [HttpGet]
-    public async Task<IActionResult> MakeShortlisted(Guid jobApplicationId)
+    public async Task<IActionResult> DisplayChangeApplicationStatusModal(Guid jobApplicationId, string status)
     {
         var jobApplication = await _jobApplicationsRepository.GetByIdAsync(jobApplicationId);
 
@@ -442,21 +440,24 @@ public class JobsController : BaseController
             return NotFound();
         }
 
-        await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Shortlisted");
-
-        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        if (string.IsNullOrWhiteSpace(status))
         {
-            Title = "Success",
-            Message = $"{jobApplication.JobSeeker.User.FullName}'s application has been set to Shortlisted.",
-            Type = "success"
-        });
+            return PartialView("~/Views/Shared/_EmptyPartialView.cshtml");
+        }
 
-        return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
+        var viewModel = new ChangeApplicationStatusModalViewModel
+        {
+            JobApplicationId = jobApplication.Id,
+            ApplicantName = jobApplication.JobSeeker.User.FullName,
+            NewStatus = status
+        };
+
+        return PartialView("~/Views/Shared/Modals/_ChangeApplicationStatusModal.cshtml", viewModel);
     }
 
     [Authorize(Roles = "Admin, Employer")]
     [HttpGet]
-    public async Task<IActionResult> MakeInterview(Guid jobApplicationId)
+    public async Task<IActionResult> UpdateJobApplicationStatus(Guid jobApplicationId, string newStatus)
     {
         var jobApplication = await _jobApplicationsRepository.GetByIdAsync(jobApplicationId);
 
@@ -465,35 +466,12 @@ public class JobsController : BaseController
             return NotFound();
         }
 
-        await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Interview");
+        await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, newStatus);
 
         TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
         {
             Title = "Success",
-            Message = $"{jobApplication.JobSeeker.User.FullName}'s application has been set to Interview.",
-            Type = "success"
-        });
-
-        return RedirectToAction(controllerName: "Jobs", actionName: "ManageJobApplications", routeValues: new { id = jobApplication.JobPostId });
-    }
-
-    [Authorize(Roles = "Admin, Employer")]
-    [HttpGet]
-    public async Task<IActionResult> MakeNotSuitable(Guid jobApplicationId)
-    {
-        var jobApplication = await _jobApplicationsRepository.GetByIdAsync(jobApplicationId);
-
-        if (jobApplication is null)
-        {
-            return NotFound();
-        }
-
-        await _jobApplicationsRepository.UpdateStatusAsync(jobApplicationId, "Not Suitable");
-
-        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
-        {
-            Title = "Success",
-            Message = $"{jobApplication.JobSeeker.User.FullName}'s application has been set to Not Suitable.",
+            Message = $"{jobApplication.JobSeeker.User.FullName}'s application has been set to {newStatus}.",
             Type = "success"
         });
 

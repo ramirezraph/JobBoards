@@ -147,18 +147,16 @@
                                 @if (jobApplication.Status.ToLower() != "withdrawn")
                                 {
                                     <div class="d-flex mt-3 p-0">
-                                        <a asp-controller="Jobs" asp-action="MakeInterview"
-                                asp-route-jobApplicationId="@jobApplication.Id" class="btn p-0 m-0 me-4">
-                                            INTERVIEW
-                                        </a>
-                                        <a asp-controller="Jobs" asp-action="MakeShortlisted"
-                                asp-route-jobApplicationId="@jobApplication.Id" class="btn p-0 m-0 me-4">
-                                            SHORTLIST
-                                        </a>
-                                        <a asp-controller="Jobs" asp-action="MakeNotSuitable"
-                                asp-route-jobApplicationId="@jobApplication.Id" class="btn p-0 m-0 me-4">
-                                            NOT SUITABLE
-                                        </a>
+                                        <button
+                                            onclick="openChangeApplicationStatusModal('@jobApplication.Id.ToString()', 'Interview')"
+                                            class="btn p-0 m-0 me-4">INTERVIEW</button>
+                                        <button
+                                            onclick="openChangeApplicationStatusModal('@jobApplication.Id.ToString()', 'Shortlisted')"
+                                            class="btn p-0 m-0 me-4">SHORTLIST</button>
+
+                                        <button
+                                            onclick="openChangeApplicationStatusModal('@jobApplication.Id.ToString()', 'Not Suitable')"
+                                            class="btn p-0 m-0 me-4">NOT SUITABLE</button>
                                     </div>
                                 }
                             </div>
@@ -174,4 +172,20 @@
             </div>
         </div>
     </div>
+    <div id="updateStatusModalContainer"></div>
 </div>
+
+@section Modals {
+    <script>
+        function openChangeApplicationStatusModal(jobApplicationId, newStatus) {
+            $.ajax({
+                url: "@Html.Raw(Url.Action("DisplayChangeApplicationStatusModal", "Jobs", new { jobApplicationId = "__id__", status = "__newStatus__" }))".replace('__id__', jobApplicationId).replace('__newStatus__', newStatus),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#updateStatusModalContainer').html(partialView);
+                    $('#confirmUpdateStatusModal').modal('show');
+                }
+            });
+        }
+    </script>
+}

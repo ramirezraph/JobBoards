@@ -1,0 +1,67 @@
+﻿@using JobBoards.WebApplication.ViewModels.Management
+@model ManageJobLocationsViewModel
+
+@{
+    ViewData["Title"] = "Edit Job Location";
+}
+
+<style>
+    form label {
+        font-weight: bold;
+    }
+
+    .form-group {
+        margin-bottom: 2rem;
+    }
+
+    .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f5f5f5;
+    }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            text-shadow: 1px 1px #ccc;
+        }
+
+    .form-control {
+        border-radius: 3px;
+        box-shadow: none;
+        border: none;
+        border-bottom: 2px solid #ccc;
+    }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #428bca;
+        }
+</style>
+
+<div class="form-container">
+    <h2 class="text-primary">Edit Job Location</h2>
+    <form asp-controller="Management" asp-action="EditJobLocation" method="POST">
+        <div class="form-group mt-2" hidden>
+            <input asp-for="JobLocationsForm.JobLocationId" type="text" class="form-control" readonly>
+        </div>
+        <div class="form-group mt-2">
+            <label asp-for="JobLocationsForm.City">Job Location City</label>
+            <input asp-for="JobLocationsForm.City" type="text" class="form-control mt-2" placeholder="Enter job Location City">
+            <span asp-validation-for="JobLocationsForm.City" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-2">
+            <label asp-for="JobLocationsForm.Country">Job Location Country</label>
+            <textarea input asp-for="JobLocationsForm.Country" type="text" class="form-control mt-2" placeholder="Enter job Location Country" rows="4"></textarea>
+            <span asp-validation-for="JobLocationsForm.Country" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-2">
+            <button type="submit" class="btn btn-primary mt-2 w-25">Save Changes</button>
+            <a class="btn btn-secondary mt-2" asp-controller="Management" asp-action="JobLocations" asp-route-id="@Model.JobLocationsForm.JobLocationId">Cancel</a>
+        </div>
+    </form>
+</div>

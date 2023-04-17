@@ -201,6 +201,12 @@
                 success: function (partialView) {
                     $('#applyNowModalContainer').html(partialView);
                     $('#confirmApplyModal').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status === 401)
+                    {
+                        window.location.replace('/Account/Login');
+                    }
                 }
             });
         }

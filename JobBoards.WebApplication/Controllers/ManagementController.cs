@@ -6,8 +6,10 @@ using JobBoards.Data.Persistence.Repositories.JobLocations;
 using JobBoards.Data.Persistence.Repositories.JobPosts;
 using JobBoards.WebApplication.ViewModels.Jobs;
 using JobBoards.WebApplication.ViewModels.Management;
+using JobBoards.WebApplication.ViewModels.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace JobBoards.WebApplication.Controllers;
@@ -133,6 +135,14 @@ public class ManagementController : BaseController
                 Description = form.Description
             };
             await _jobCategoriesRepository.AddAsync(jobCategory);
+
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+            {
+                Title = "Success",
+                Message = "Job Category created successfully.",
+                Type = "success"
+            });
+
             return RedirectToAction(nameof(JobCategories));
         }
         else
@@ -182,7 +192,14 @@ public class ManagementController : BaseController
 
         await _jobCategoriesRepository.UpdateAsync(viewModel.JobCategoriesForm.JobCategoryId, updatedJobCategory);
 
-        return RedirectToAction(controllerName: "Management", actionName: "JobCategories", routeValues: new { id = formValues.JobCategoryId });
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job Category updated successfully.",
+            Type = "success"
+        });
+
+        return RedirectToAction(controllerName: "Management", actionName: "JobCategories");
     }
 
 
@@ -196,6 +213,14 @@ public class ManagementController : BaseController
             return NotFound();
         }
         await _jobCategoriesRepository.RemoveAsync(jobCategory);
+
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job Category deleted successfully.",
+            Type = "success"
+        });
+
         return RedirectToAction("JobCategories");
     }
 
@@ -230,6 +255,14 @@ public class ManagementController : BaseController
                 Country = form.Country
             };
             await _jobLocationsRepository.AddAsync(jobLocation);
+
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+            {
+                Title = "Success",
+                Message = "Job Location created successfully.",
+                Type = "success"
+            });
+
             return RedirectToAction(nameof(JobLocations));
         }
         else
@@ -238,6 +271,7 @@ public class ManagementController : BaseController
             {
                 JobLocationsForm = form
             };
+
             return View(viewModel);
         }
     }
@@ -278,8 +312,15 @@ public class ManagementController : BaseController
                );
 
         await _jobLocationsRepository.UpdateAsync(viewModel.JobLocationsForm.JobLocationId, updatedJobLocation);
+        
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job Location updated successfully.",
+            Type = "success"
+        });
 
-        return RedirectToAction(controllerName: "Management", actionName: "JobLocations", routeValues: new { id = formValues.JobLocationId });
+        return RedirectToAction(controllerName: "Management", actionName: "JobLocations");
     }
 
     [HttpPost]
@@ -292,6 +333,14 @@ public class ManagementController : BaseController
             return NotFound();
         }
         await _jobLocationsRepository.RemoveAsync(jobLocation);
+        
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job Location deleted successfully.",
+            Type = "success"
+        });
+
         return RedirectToAction("JobLocations");
     }
 

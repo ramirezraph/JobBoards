@@ -334,6 +334,25 @@ public class JobsController : BaseController
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = formValues.Id });
     }
 
+    public async Task<IActionResult> DisplayDeleteConfirmationModal(Guid jobPostId)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(jobPostId);
+
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new DeleteJobPostModalViewModel
+        {
+            JobPostId = jobPost.Id,
+            JobPost = jobPost,
+            NumberOfPendingJobApplications = jobPost.JobApplications.Count(ja => ja.Status.ToLower() != "withdrawn" && ja.Status.ToLower() != "not suitable")
+        };
+
+        return PartialView("~/Views/Shared/Modals/_DeleteJobPostModal.cshtml", viewModel);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(Guid id)

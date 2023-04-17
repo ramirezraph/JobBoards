@@ -30,7 +30,11 @@ public class JobPostsRepository : IJobPostsRepository
 
     public IQueryable<JobPost> GetAllQueryable()
     {
-        return _dbContext.JobPosts;
+        return _dbContext.JobPosts
+            .Include(jp => jp.JobType)
+            .Include(jp => jp.JobCategory)
+            .Include(jp => jp.JobLocation)
+            .Include(jp => jp.JobApplications);
     }
 
     public async Task<JobPost?> GetByIdAsync(Guid id)

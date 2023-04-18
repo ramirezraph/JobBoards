@@ -35,7 +35,8 @@
         border-bottom: none;
     }
 
-    td, th {
+    td,
+    th {
         border: none;
     }
 
@@ -53,12 +54,13 @@
     }
 
     .custom-btn:hover {
-        background-color: transparent; 
-        border-color: transparent; 
+        background-color: transparent;
+        border-color: transparent;
     }
 
     .custom-btn:hover {
-        background-color: rgba(0, 0, 0, 0.1); /* set the desired hover color here */
+        background-color: rgba(0, 0, 0, 0.1);
+        /* set the desired hover color here */
         border-color: transparent;
     }
 </style>
@@ -87,19 +89,30 @@
                 <td>@item.Name</td>
                 <td>@item.Description</td>
                 <td style="text-align: center;">
-                    <a asp-action="EditJobCategory" asp-route-id="@item.Id" class="btn btn-secondary custom-btn"><i class="fas fa-edit"></i></a>
-                    <a asp-action="DeleteJobCategory" asp-route-id="@item.Id" class="btn btn-danger custom-btn"
-                       onclick="event.preventDefault(); if(confirm('Are you sure you want to delete?')){ document.getElementById('delete-jobcategory-form-@item.Id').submit(); }">
-                        <i class="fas fa-trash"></i>
-                    </a>
+                    <a asp-action="EditJobCategory" asp-route-id="@item.Id" class="btn btn-secondary custom-btn"><i
+                            class="fas fa-edit"></i></a>
 
-                    <form id="delete-jobcategory-form-@item.Id" action="@Url.Action("DeleteJobCategory", "Management")" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@item.Id" />
-                    </form>
+                    <button onclick="openDeleteJobCategoryModal('@item.Id.ToString()')" class="btn btn-danger custom-btn"><i
+                            class="fas fa-trash"></i></button>
                 </td>
             </tr>
             counter++;
         }
     </tbody>
 </table>
+<div id="deleteJobCategoryModalContainer"></div>
+
+@section Modals {
+    <script>
+        function openDeleteJobCategoryModal(jobCategoryId) {
+            $.ajax({
+                url: '@Url.Action("DisplayDeleteJobCategoryConfirmationModal", "Management", new { jobCategoryId = "__id__" })'.replace('__id__', jobCategoryId),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#deleteJobCategoryModalContainer').html(partialView);
+                    $('#confirmDeleteJobCategoryModal').modal('show');
+                }
+            });
+        }
+    </script>
+}

@@ -138,7 +138,7 @@
                                 </div>
                                 <div class="mt-3 d-flex">
                                     <a asp-controller="Jobs" asp-action="Details" asp-route-id="@jobPost.Id"
-                                asp-route-returnUrl="@requestPath" class="btn btn-secondary me-2">
+                                asp-route-returnUrl="@requestPath" class="btn btn-primary me-2">
                                         View Details
                                     </a>
                                     @if (!Model.HasWriteAccess)
@@ -151,7 +151,7 @@
                                     else
                                     {
                                         <a asp-controller="Jobs" asp-action="ManageJobApplications" asp-route-id="@jobPost.Id"
-                                            class="btn btn-secondary">
+                                            class="btn btn-outline-primary">
                                             Manage Applications
                                         </a>
                                     }

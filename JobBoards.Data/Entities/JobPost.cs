@@ -80,7 +80,7 @@ public class JobPost : Entity<Guid>
             expiration,
             createdById,
             DateTime.UtcNow,
-            null,
+            DateTime.UtcNow,
             null);
     }
 

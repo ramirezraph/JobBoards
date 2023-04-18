@@ -110,7 +110,7 @@ spec:
     spec:
       containers:
         - name: jobboardswebapp
-          image: raphaelramirez/jobboards-mvc:1.3.0
+          image: raphaelramirez/jobboards-mvc:1.4.0
           imagePullPolicy: Always
           ports:
             - containerPort: 5001

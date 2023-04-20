@@ -43,7 +43,7 @@ public class JobSeekersRepository : IJobSeekersRepository
         var jobseeker = await _dbContext.JobSeekers.FindAsync(id);
         if (jobseeker is null)
         {
-            throw new Exception("Trying to update job location that doesn't exists.");
+            throw new Exception("Trying to update resume that doesn't exists.");
         }
 
         // Remove the old resume
@@ -77,5 +77,12 @@ public class JobSeekersRepository : IJobSeekersRepository
             .Include(js => js.User)
             .Include(js => js.JobApplications)
             .SingleOrDefaultAsync(js => js.UserId == userId);
+    }
+
+    public async Task<Resume?> GetResumeByUserIdAsync(string userId)
+    {
+        var jobseeker = await GetJobSeekerProfileByUserId(userId);
+
+        return jobseeker?.Resume;
     }
 }

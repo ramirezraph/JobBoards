@@ -1,0 +1,11 @@
+@host=http://localhost:5153/api
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMzM0MjkyZi00OWFhLTRmYzQtYWIwOS1lZmJhODNkZThlODUiLCJuYW1lIjoiUmFwaGFlbCBSYW1pcmV6IiwianRpIjoiNGJjYjM4YTMtZjBlMi00ODJiLTlkZDEtODIxNzdjNDgxMTYzIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTY4MjAwODYzMCwiaXNzIjoiSm9iQm9hcmRzIiwiYXVkIjoiSm9iQm9hcmRzIn0.mvSVXAv5hpbgu8X5wDKNe8Nk-nQbc4iGy3ajibu712U
+
+POST {{host}}/Jobseekers/Resume
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "uri": "https://pjlijbstorage.blob.core.windows.net/resumes/2f9dd476-64ac-4d6b-8da6-b14f3789c6b5.pdf",
+  "fileName": "raphaelisiahramirez-resume.pdf"
+}

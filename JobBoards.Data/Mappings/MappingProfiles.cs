@@ -14,8 +14,9 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
-        // Authentication
+        // Account
         CreateMap<ApplicationUser, AuthenticationResponse>().ReverseMap();
+        CreateMap<ApplicationUser, GetProfileResponse>().ReverseMap();
 
         // Job Category
         CreateMap<JobCategory, CreateJobCategoryRequest>().ReverseMap();

@@ -70,11 +70,7 @@ public class AccountController : ApiController
         var result = await _userManager.CreateAsync(newUser, request.Password);
         if (!result.Succeeded)
         {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(error.Code, error.Description);
-            }
-            return ValidationProblem(ModelState);
+            return IdentityValidationProblem(result);
         }
 
         await _userManager.AddToRoleAsync(newUser, "User");
@@ -86,7 +82,47 @@ public class AccountController : ApiController
         return Ok(dto);
     }
 
-    [Authorize]
+    [HttpGet("profile")]
+    public async Task<IActionResult> GetProfile()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+
+        return Ok(_mapper.Map<GetProfileResponse>(user));
+    }
+
+    [HttpPost("profile")]
+    public async Task<IActionResult> UpdateProfile(UpdateProfileRequest request)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        user.FullName = request.FullName;
+
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+        {
+            return IdentityValidationProblem(result);
+        }
+
+        return Ok(_mapper.Map<GetProfileResponse>(user));
+    }
+
     [HttpPost("changepassword")]
     public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
     {
@@ -118,5 +154,14 @@ public class AccountController : ApiController
         dto.Token = await _jwtTokenGenerator.GenerateToken(user);
 
         return Ok(dto);
+    }
+
+    private IActionResult IdentityValidationProblem(IdentityResult result)
+    {
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(error.Code, error.Description);
+        }
+        return ValidationProblem(ModelState);
     }
 }

@@ -1,47 +1,122 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using AutoMapper;
 using JobBoards.Data.Authentication;
 using JobBoards.Data.Contracts.Account;
 using JobBoards.Data.Identity;
+using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoards.Api.Controllers;
 
-[AllowAnonymous]
 public class AccountController : ApiController
 {
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
-    public AccountController(IJwtTokenGenerator jwtTokenGenerator, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+    private readonly IMapper _mapper;
+    private readonly IJobSeekersRepository _jobSeekersRepository;
+    public AccountController(IJwtTokenGenerator jwtTokenGenerator, SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IMapper mapper, IJobSeekersRepository jobSeekersRepository)
     {
         _jwtTokenGenerator = jwtTokenGenerator;
         _signInManager = signInManager;
         _userManager = userManager;
+        _mapper = mapper;
+        _jobSeekersRepository = jobSeekersRepository;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Login(LoginRequest loginRequest)
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginRequest request)
+    {
+        var user = await _userManager.FindByEmailAsync(request.Email);
+
+        if (user is null)
+        {
+            return Unauthorized("Invalid credentials");
+        }
+
+        var loginResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
+        if (!loginResult.Succeeded)
+        {
+            return Unauthorized("Invalid credentials");
+        }
+
+        var dto = _mapper.Map<AuthenticationResponse>(user);
+        dto.Token = await _jwtTokenGenerator.GenerateToken(user);
+
+        return Ok(dto);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(RegisterRequest request)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var loginResult = await _signInManager.PasswordSignInAsync(loginRequest.Email, loginRequest.Password, false, false);
-        if (!loginResult.Succeeded)
+        var newUser = new ApplicationUser
         {
-            return Unauthorized("Invalid credentials");
+            UserName = request.Email,
+            FullName = request.FullName,
+            Email = request.Email,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        var result = await _userManager.CreateAsync(newUser, request.Password);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(error.Code, error.Description);
+            }
+            return ValidationProblem(ModelState);
         }
 
-        var user = await _userManager.FindByEmailAsync(loginRequest.Email);
+        await _userManager.AddToRoleAsync(newUser, "User");
+        await _jobSeekersRepository.RegisterUserAsJobSeeker(newUser.Id);
 
-        if (user is null)
-        {
-            return NotFound("User not found.");
-        }
+        var dto = _mapper.Map<AuthenticationResponse>(newUser);
+        dto.Token = await _jwtTokenGenerator.GenerateToken(newUser);
 
-        return Ok(await _jwtTokenGenerator.GenerateToken(user));
+        return Ok(dto);
     }
 
+    [Authorize]
+    [HttpPost("changepassword")]
+    public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+
+        var changePasswordResult = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
+        if (!changePasswordResult.Succeeded)
+        {
+            foreach (var error in changePasswordResult.Errors)
+            {
+                ModelState.AddModelError(error.Code, error.Description);
+            }
+
+            return ValidationProblem(ModelState);
+        }
+
+        var dto = _mapper.Map<AuthenticationResponse>(user);
+        dto.Token = await _jwtTokenGenerator.GenerateToken(user);
+
+        return Ok(dto);
+    }
 }

@@ -35,7 +35,8 @@
         border-bottom: none;
     }
 
-    td, th {
+    td,
+    th {
         border: none;
     }
 
@@ -44,23 +45,24 @@
         border-color: transparent;
     }
 
-        .custom-btn i.fas.fa-edit {
-            color: #FFC107;
-        }
+    .custom-btn i.fas.fa-edit {
+        color: #FFC107;
+    }
 
-        .custom-btn i.fas.fa-trash {
-            color: red;
-        }
+    .custom-btn i.fas.fa-trash {
+        color: red;
+    }
 
-        .custom-btn:hover {
-            background-color: transparent;
-            border-color: transparent;
-        }
+    .custom-btn:hover {
+        background-color: transparent;
+        border-color: transparent;
+    }
 
-        .custom-btn:hover {
-            background-color: rgba(0, 0, 0, 0.1); /* set the desired hover color here */
-            border-color: transparent;
-        }
+    .custom-btn:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        /* set the desired hover color here */
+        border-color: transparent;
+    }
 </style>
 
 <h2 class="text-center text-muted mb-4">Manage Job Locations</h2>
@@ -87,19 +89,29 @@
                 <td>@item.City</td>
                 <td>@item.Country</td>
                 <td style="text-align: center;">
-                    <a asp-action="EditJobLocation" asp-route-id="@item.Id" class="btn btn-secondary custom-btn"><i class="fas fa-edit"></i></a>
-                    <a asp-action="DeleteJobLocation" asp-route-id="@item.Id" class="btn btn-danger custom-btn"
-                       onclick="event.preventDefault(); if(confirm('Are you sure you want to delete?')){ document.getElementById('delete-joblocation-form-@item.Id').submit(); }">
-                        <i class="fas fa-trash"></i>
-                    </a>
-
-                    <form id="delete-joblocation-form-@item.Id" action="@Url.Action("DeleteJobLocation", "Management")" method="post">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="id" value="@item.Id" />
-                    </form>
+                    <a asp-action="EditJobLocation" asp-route-id="@item.Id" class="btn btn-secondary custom-btn"><i
+                            class="fas fa-edit"></i></a>
+                    <button onclick="openDeleteJobLocationModal('@item.Id.ToString()')" class="btn btn-danger custom-btn"><i
+                            class="fas fa-trash"></i></button>
                 </td>
             </tr>
             counter++;
         }
     </tbody>
 </table>
+<div id="deleteJobLocationModalContainer"></div>
+
+@section Modals {
+    <script>
+        function openDeleteJobLocationModal(jobLocationId) {
+            $.ajax({
+                url: '@Url.Action("DisplayDeleteJobLocationConfirmationModal", "Management", new { jobLocationId = "__id__" })'.replace('__id__', jobLocationId),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#deleteJobLocationModalContainer').html(partialView);
+                    $('#confirmDeleteJobLocationModal').modal('show');
+                }
+            });
+        }
+    </script>
+}

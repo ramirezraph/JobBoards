@@ -1,0 +1,47 @@
+@using JobBoards.WebApplication.ViewModels.Shared
+@model DeleteJobCategoryModalViewModel
+
+<style>
+    .text-darkgray {
+        color: #54595E
+    }
+
+    .text-paragraph {
+        color: #68717A
+    }
+</style>
+
+<div class="modal fade" id="confirmDeleteJobCategoryModal" tabindex="-1" aria-labelledby="deleteJobCategoryModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <div class="d-flex justify-content-between">
+                    <h4 class="modal-title text-darkgray" id="deleteJobCategoryModalLabel">Delete Job Category</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p class="mt-2 text-paragraph">
+                    Are you sure you want to delete <span class="text-info">@Model.JobCategory.Name</span>?
+                </p>
+
+                <div class="d-flex flex-column">
+                    @if (Model.NumberOfJobPostsWithCategory > 0)
+                    {
+                        <span class="text-danger mb-2">* There are @Model.NumberOfJobPostsWithCategory job posts with this
+                            category that will be affected.</span>
+                    }
+                    <span class="text-danger">* This action is potentially destructive and cannot be undone.</span>
+                </div>
+
+                <div class="d-flex mt-4">
+                    <form asp-controller="Management" asp-action="DeleteJobCategory" method="post">
+                        <input type="hidden" name="id" value="@Model.JobCategory.Id" readonly />
+                        <button type="submit" class="btn btn-danger me-3">Yes, I understand the consequence</button>
+                    </form>
+
+                    <button type="button" class="btn" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

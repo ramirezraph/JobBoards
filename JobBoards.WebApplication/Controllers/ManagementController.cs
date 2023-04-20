@@ -208,6 +208,26 @@ public class ManagementController : BaseController
         return RedirectToAction(controllerName: "Management", actionName: "JobCategories");
     }
 
+    public async Task<IActionResult> DisplayDeleteJobCategoryConfirmationModal(Guid jobCategoryId)
+    {
+        var jobCategory = await _jobCategoriesRepository.GetByIdAsync(jobCategoryId);
+
+        if (jobCategory is null)
+        {
+            return NotFound();
+        }
+
+        var jobPosts = await _jobPostsRepository.GetAllAsync();
+
+        var viewModel = new DeleteJobCategoryModalViewModel
+        {
+            JobCategory = jobCategory,
+            NumberOfJobPostsWithCategory = jobPosts.Count(jp => jp.JobCategoryId == jobCategory.Id)
+        };
+
+        return PartialView("~/Views/Shared/Modals/_DeleteJobCategoryModal.cshtml", viewModel);
+    }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -318,7 +338,7 @@ public class ManagementController : BaseController
                );
 
         await _jobLocationsRepository.UpdateAsync(viewModel.JobLocationsForm.JobLocationId, updatedJobLocation);
-        
+
         TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
         {
             Title = "Success",
@@ -327,6 +347,26 @@ public class ManagementController : BaseController
         });
 
         return RedirectToAction(controllerName: "Management", actionName: "JobLocations");
+    }
+
+    public async Task<IActionResult> DisplayDeleteJobLocationConfirmationModal(Guid jobLocationId)
+    {
+        var jobLocation = await _jobLocationsRepository.GetByIdAsync(jobLocationId);
+
+        if (jobLocation is null)
+        {
+            return NotFound();
+        }
+
+        var jobPosts = await _jobPostsRepository.GetAllAsync();
+
+        var viewModel = new DeleteJobLocationModalViewModel
+        {
+            JobLocation = jobLocation,
+            NumberOfJobPostsWithLocation = jobPosts.Count(jp => jp.JobLocationId == jobLocation.Id)
+        };
+
+        return PartialView("~/Views/Shared/Modals/_DeleteJobLocationModal.cshtml", viewModel);
     }
 
     [HttpPost]
@@ -339,7 +379,7 @@ public class ManagementController : BaseController
             return NotFound();
         }
         await _jobLocationsRepository.RemoveAsync(jobLocation);
-        
+
         TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
         {
             Title = "Success",

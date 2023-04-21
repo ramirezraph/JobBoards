@@ -7,6 +7,7 @@ using JobBoards.Data.Persistence.Repositories.JobCategories;
 using JobBoards.Data.Persistence.Repositories.JobLocations;
 using JobBoards.Data.Persistence.Repositories.JobPosts;
 using JobBoards.Data.Persistence.Repositories.JobTypes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,17 +32,85 @@ public class JobPostsController : ApiController
         _userManager = userManager;
     }
 
+    [AllowAnonymous]
     [HttpGet]
-    public async Task<IActionResult> ListJobPosts(int? pageNumber, int? itemsPerPage)
+    public async Task<IActionResult> ListJobPosts(
+        int? pageNumber,
+        int? itemsPerPage,
+        string? search = null,
+        Guid? jobCategoryId = null,
+        Guid? jobLocationId = null,
+        double? minSalary = null,
+        double? maxSalary = null,
+        string? activeJobTypeIds = null)
     {
         IQueryable<JobPost> jobPosts = _jobPostsRepository.GetAllQueryable()
                                             .OrderByDescending(jp => jp.CreatedAt);
 
-        var paginatedResult = await PaginatedResult<JobPost>.CreateAsync(jobPosts, pageNumber ?? 1, itemsPerPage ?? 3);
+        // Filter all Inactive
+        if (!User.IsInRole("Admin") && !User.IsInRole("Employer"))
+        {
+            jobPosts = jobPosts.Where(jp => jp.IsActive);
+        }
 
-        return Ok(paginatedResult);
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            jobPosts = jobPosts.Where(jp => jp.Title.ToLower().Contains(search.ToLower()) || jp.Description.ToLower().Contains(search.ToLower()));
+        }
+
+        if (jobCategoryId != null && jobCategoryId != Guid.Empty)
+        {
+            jobPosts = jobPosts.Where(jp => jp.JobCategoryId == jobCategoryId);
+        }
+
+        if (jobLocationId != null && jobLocationId != Guid.Empty)
+        {
+            jobPosts = jobPosts.Where(jp => jp.JobLocationId == jobLocationId);
+        }
+
+        if (minSalary != null)
+        {
+            jobPosts = jobPosts.Where(jp => jp.MinSalary >= minSalary || jp.MaxSalary >= minSalary);
+        }
+
+        if (maxSalary != null)
+        {
+            jobPosts = jobPosts.Where(jp => jp.MinSalary <= maxSalary || jp.MaxSalary <= maxSalary);
+        }
+
+        List<Guid> activeJobTypes = !string.IsNullOrEmpty(activeJobTypeIds) ?
+            activeJobTypeIds.Split(',').Select(Guid.Parse).ToList() :
+            new List<Guid>();
+
+        if (activeJobTypeIds != null && activeJobTypes.Any())
+        {
+            jobPosts = jobPosts.Where(jp => activeJobTypes.Contains(jp.JobTypeId));
+        }
+
+        var paginatedJobPosts = await PaginatedResult<JobPost>.CreateAsync(jobPosts, pageNumber ?? 1, itemsPerPage ?? 4);
+
+        var paginatedJobPostsDto = new PaginatedResult<JobPostResponse>(
+                    items: _mapper.Map<List<JobPostResponse>>(paginatedJobPosts.Items),
+                    paginatedJobPosts.CurrentPage,
+                    paginatedJobPosts.ItemsPerPage,
+                    paginatedJobPosts.TotalPages,
+                    paginatedJobPosts.HasPreviousPage,
+                    paginatedJobPosts.HasNextPage);
+
+        return Ok(paginatedJobPostsDto);
     }
 
+    [AllowAnonymous]
+    [HttpGet("newlistings")]
+    public async Task<IActionResult> NewListings()
+    {
+        var newListings = await _jobPostsRepository.GetNewListingsAsync();
+
+        var newListingsDto = _mapper.Map<List<JobPostResponse>>(newListings);
+        return Ok(newListingsDto);
+    }
+
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetJobPostById(Guid id)
     {
@@ -51,7 +120,9 @@ public class JobPostsController : ApiController
             return NotFound();
         }
 
-        return Ok(jobPost);
+        var jobPostsDto = _mapper.Map<JobPostResponse>(jobPost);
+
+        return Ok(jobPostsDto);
     }
 
     [HttpPost]

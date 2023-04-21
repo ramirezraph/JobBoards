@@ -4,7 +4,7 @@ POST {{host}}/Account/login
 Content-Type: application/json
 
 {
-    "email": "raphael@email.com",
-	"password": "Pass123$"
+    "email": "admin@pjli.com",
+	"password": "Pa$$w0rd!"
 }
 

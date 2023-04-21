@@ -36,6 +36,20 @@ public class MappingProfiles : Profile
         CreateMap<Resume, ResumeResponse>().ReverseMap();
 
         // Job Post
+        CreateMap<JobPost, JobPostResponse>()
+            .ForPath(dest => dest.JobLocation.Id, opt => opt.MapFrom(src => src.JobLocationId))
+            .ForPath(dest => dest.JobLocation.City, opt => opt.MapFrom(src => src.JobLocation.City))
+            .ForPath(dest => dest.JobLocation.County, opt => opt.MapFrom(src => src.JobLocation.Country))
+            .ForPath(dest => dest.JobCategory.Id, opt => opt.MapFrom(src => src.JobCategoryId))
+            .ForPath(dest => dest.JobCategory.Name, opt => opt.MapFrom(src => src.JobCategory.Name))
+            .ForPath(dest => dest.JobCategory.Description, opt => opt.MapFrom(src => src.JobCategory.Description))
+            .ForPath(dest => dest.JobType.Id, opt => opt.MapFrom(src => src.JobTypeId))
+            .ForPath(dest => dest.JobType.Name, opt => opt.MapFrom(src => src.JobType.Name))
+            .ForPath(dest => dest.JobType.Description, opt => opt.MapFrom(src => src.JobType.Description))
+            .ForPath(dest => dest.CreatedBy.Id, opt => opt.MapFrom(src => src.CreatedById))
+            .ForPath(dest => dest.CreatedBy.Name, opt => opt.MapFrom(src => src.CreatedBy.FullName))
+            .ReverseMap();
+
         CreateMap<JobPost, UpdateJobPostRequest>().ReverseMap();
         CreateMap<JobPost, CreateJobPostRequest>().ReverseMap();
     }

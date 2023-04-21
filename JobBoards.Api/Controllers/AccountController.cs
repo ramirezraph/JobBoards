@@ -142,12 +142,7 @@ public class AccountController : ApiController
         var changePasswordResult = await _userManager.ChangePasswordAsync(user, request.OldPassword, request.NewPassword);
         if (!changePasswordResult.Succeeded)
         {
-            foreach (var error in changePasswordResult.Errors)
-            {
-                ModelState.AddModelError(error.Code, error.Description);
-            }
-
-            return ValidationProblem(ModelState);
+            return IdentityValidationProblem(changePasswordResult);
         }
 
         var dto = _mapper.Map<AuthenticationResponse>(user);

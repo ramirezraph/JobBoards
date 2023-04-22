@@ -1,0 +1,20 @@
+@host=http://localhost:5153/api
+
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZmYzODZlMi05NDQyLTRlMWYtYTU3My00NjE4MTY0OTlhMGQiLCJuYW1lIjoiQWRtaW5pc3RyYXRvciIsImp0aSI6IjM5YjU4Y2NhLTgwNDctNGQzMC04NzM0LTMzZTcyZDFhYjA5ZiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiZXhwIjoxNjgyMTc2NTYwLCJpc3MiOiJKb2JCb2FyZHMiLCJhdWQiOiJKb2JCb2FyZHMifQ.Idpr7f410_LYDqSOVxwfUiUxetGPcxmFxZbiHguWZYM
+@id=9220e684-64d7-42a0-b738-8038e6d91289
+
+PUT {{host}}/JobPosts/{{id}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Test Job Post 1 - Edited again!",
+  "description": "This is a test job post. You should delete this after.",
+  "jobLocationId": "d7566a11-bb07-4893-910f-272195e1e449",
+  "minSalary": 25000,
+  "maxSalary": 35000,
+  "isActive": true,
+  "jobCategoryId": "36ade802-6310-49b9-9d83-658eaaf078e3",
+  "jobTypeId": "82a30680-09c9-48e3-a70c-1ae85c379dda",
+  "expiration": "2023-04-22T14:13:59.258Z"
+}

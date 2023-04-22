@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using JobBoards.Data;
 using JobBoards.Data.Persistence.Initialization;
 using Microsoft.OpenApi.Models;
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
         .AddDbInitializer();
 
     builder.Services.AddControllers();
+
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(opt =>
     {

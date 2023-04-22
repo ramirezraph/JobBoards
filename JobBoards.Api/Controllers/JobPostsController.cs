@@ -125,30 +125,34 @@ public class JobPostsController : ApiController
         return Ok(jobPostsDto);
     }
 
+    [Authorize(Roles = "Admin,Employer")]
     [HttpPost]
     public async Task<IActionResult> CreateJobPost(CreateJobPostRequest request)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var jobLocation = await _jobLocationsRepository.GetByIdAsync(request.JobLocationId);
         if (jobLocation is null)
         {
-            ModelState.AddModelError("Job Location", "Job location cannot be found.");
+            ModelState.AddModelError(nameof(request.JobLocationId), "No job location was found with the given Id.");
+            return ValidationProblem(ModelState);
         }
 
         var jobCategory = await _jobCategoriesRepository.GetByIdAsync(request.JobCategoryId);
         if (jobCategory is null)
         {
-            ModelState.AddModelError("Job Category", "Job category cannot be found.");
+            ModelState.AddModelError(nameof(request.JobCategoryId), "No job category was found with the given Id.");
+            return ValidationProblem(ModelState);
         }
 
         var jobType = await _jobTypesRepository.GetByIdAsync(request.JobTypeId);
         if (jobType is null)
         {
-            ModelState.AddModelError("Job Type", "Job type cannot be found.");
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
+            ModelState.AddModelError(nameof(request.JobTypeId), "No job type was found with the given Id.");
+            return ValidationProblem(ModelState);
         }
 
         var user = await _userManager.GetUserAsync(User);
@@ -171,9 +175,12 @@ public class JobPostsController : ApiController
 
         await _jobPostsRepository.AddAsync(newjobPost);
 
-        return CreatedAtAction(nameof(GetJobPostById), new { id = newjobPost.Id }, newjobPost);
+        var jobPostsDto = _mapper.Map<JobPostResponse>(newjobPost);
+
+        return CreatedAtAction(nameof(GetJobPostById), new { id = newjobPost.Id }, jobPostsDto);
     }
 
+    [Authorize(Roles = "Admin,Employer")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteJobLocation(Guid id)
     {
@@ -188,7 +195,8 @@ public class JobPostsController : ApiController
         return NoContent();
     }
 
-    [HttpPost("{id}")]
+    [Authorize(Roles = "Admin, Employer")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateJobPost(UpdateJobPostRequest request, Guid id)
     {
         var jobPost = await _jobPostsRepository.GetByIdAsync(id);
@@ -197,27 +205,30 @@ public class JobPostsController : ApiController
             return NotFound();
         }
 
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var jobLocation = await _jobLocationsRepository.GetByIdAsync(request.JobLocationId);
         if (jobLocation is null)
         {
-            ModelState.AddModelError("Job Location", "Job location cannot be found.");
+            ModelState.AddModelError(nameof(request.JobLocationId), "No job location was found with the given Id.");
+            return ValidationProblem(ModelState);
         }
 
         var jobCategory = await _jobCategoriesRepository.GetByIdAsync(request.JobCategoryId);
         if (jobCategory is null)
         {
-            ModelState.AddModelError("Job Category", "Job category cannot be found.");
+            ModelState.AddModelError(nameof(request.JobCategoryId), "No job category was found with the given Id.");
+            return ValidationProblem(ModelState);
         }
 
         var jobType = await _jobTypesRepository.GetByIdAsync(request.JobTypeId);
         if (jobType is null)
         {
-            ModelState.AddModelError("Job Type", "Job type cannot be found.");
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
+            ModelState.AddModelError(nameof(request.JobTypeId), "No job type was found with the given Id.");
+            return ValidationProblem(ModelState);
         }
 
         var user = await _userManager.GetUserAsync(User);
@@ -230,7 +241,9 @@ public class JobPostsController : ApiController
 
         await _jobPostsRepository.UpdateAsync(jobPost.Id, updatedJobPost);
 
-        return Ok();
+        var jobPostDto = _mapper.Map<JobPostResponse>(await _jobPostsRepository.GetByIdAsync(id));
+
+        return Ok(jobPostDto);
     }
 }
 

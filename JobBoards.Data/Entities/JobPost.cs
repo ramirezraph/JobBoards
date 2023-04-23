@@ -1,5 +1,6 @@
 using JobBoards.Data.Entities.Common;
 using JobBoards.Data.Identity;
+using Newtonsoft.Json;
 
 namespace JobBoards.Data.Entities;
 
@@ -22,6 +23,8 @@ public class JobPost : Entity<Guid>
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public DateTime? DeletedAt { get; set; }
+
+    [JsonIgnore]
     public ICollection<JobApplication> JobApplications { get; set; } = new List<JobApplication>();
 
     private JobPost(

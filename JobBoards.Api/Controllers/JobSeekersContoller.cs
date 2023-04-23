@@ -34,16 +34,12 @@ public class JobSeekersController : ApiController
     public async Task<IActionResult> GetResume()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _userManager.FindByIdAsync(userId ?? "");
-
-        Console.WriteLine("JobseekerId = " + user.JobSeekerId);
-
-        if (user == null)
+        if (userId is null)
         {
             return Unauthorized();
         }
 
-        var resume = await _jobSeekersRepository.GetResumeByUserIdAsync(user.Id);
+        var resume = await _jobSeekersRepository.GetResumeByUserIdAsync(userId);
         if (resume is null)
         {
             return NotFound();
@@ -58,7 +54,7 @@ public class JobSeekersController : ApiController
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var jobseekerProfile = await _jobSeekersRepository.GetJobSeekerProfileByUserId(userId ?? "");
 
-        if (jobseekerProfile == null)
+        if (jobseekerProfile is null)
         {
             return NotFound("JobSeeker profile not found.");
         }
@@ -91,7 +87,7 @@ public class JobSeekersController : ApiController
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var jobSeekerProfile = await _jobSeekersRepository.GetJobSeekerProfileByUserId(userId ?? "");
 
-        if (jobSeekerProfile == null)
+        if (jobSeekerProfile is null)
         {
             return NotFound("JobSeeker profile not found.");
         }

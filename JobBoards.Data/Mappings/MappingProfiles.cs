@@ -52,5 +52,22 @@ public class MappingProfiles : Profile
 
         CreateMap<JobPost, UpdateJobPostRequest>().ReverseMap();
         CreateMap<JobPost, CreateJobPostRequest>().ReverseMap();
+
+        // Job Application
+        CreateMap<JobApplication, JobApplicationResponse>()
+            .ForPath(dest => dest.JobPost.Id, opt => opt.MapFrom(src => src.JobPostId))
+            .ForPath(dest => dest.JobPost.Location, opt => opt.MapFrom(src => $"{src.JobPost.JobLocation.City}, {src.JobPost.JobLocation.Country}"))
+            .ForPath(dest => dest.JobPost.Title, opt => opt.MapFrom(src => src.JobPost.Title))
+            .ForPath(dest => dest.JobPost.Category, opt => opt.MapFrom(src => src.JobPost.JobCategory.Name))
+            .ForPath(dest => dest.JobPost.Type, opt => opt.MapFrom(src => src.JobPost.JobType.Name))
+            .ForPath(dest => dest.JobPost.MinSalary, opt => opt.MapFrom(src => src.JobPost.MinSalary))
+            .ForPath(dest => dest.JobPost.MaxSalary, opt => opt.MapFrom(src => src.JobPost.MaxSalary))
+            .ForPath(dest => dest.Resume.Id, opt => opt.MapFrom(src => src.JobSeeker.ResumeId))
+            .ForPath(dest => dest.Resume.FileName, opt => opt.MapFrom(src => src.JobSeeker.Resume.FileName))
+            .ForPath(dest => dest.Resume.Uri, opt => opt.MapFrom(src => src.JobSeeker.Resume.Uri))
+            .ForPath(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+            .ForPath(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+            .ForPath(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
     }
+
 }

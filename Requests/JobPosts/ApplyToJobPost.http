@@ -1,0 +1,8 @@
+@host=http://localhost:5153/api
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwNDc4Y2M2OS1kNGQ1LTQzOWQtOWFkYi05ZTYzY2I1YTY3ZjciLCJuYW1lIjoiUmFwaGFlbCBSYW1pcmV6IiwianRpIjoiODI2NmEzNjgtODViNy00ZjJiLTg2YTctYTFmODNjNTRlZDMwIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTY4MjI0MjQ1OSwiaXNzIjoiSm9iQm9hcmRzIiwiYXVkIjoiSm9iQm9hcmRzIn0.TTi_6WNMNsQXmWla0j3lVqLvkchLC9xY3f4vKuLOxTA
+@jobPostId=a2546e22-3884-4af6-845d-997aa31244c5
+
+
+POST  {{host}}/JobPosts/{{jobPostId}}/apply
+Content-Type: application/json
+Authorization: Bearer {{token}}

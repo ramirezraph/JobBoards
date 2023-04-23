@@ -1,11 +1,15 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using JobBoards.Data.Common.Models;
 using JobBoards.Data.Contracts.JobPost;
+using JobBoards.Data.Contracts.JobSeekers;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Identity;
+using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobCategories;
 using JobBoards.Data.Persistence.Repositories.JobLocations;
 using JobBoards.Data.Persistence.Repositories.JobPosts;
+using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using JobBoards.Data.Persistence.Repositories.JobTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,10 +23,12 @@ public class JobPostsController : ApiController
     private readonly IJobTypesRepository _jobTypesRepository;
     private readonly IJobLocationsRepository _jobLocationsRepository;
     private readonly IJobCategoriesRepository _jobCategoriesRepository;
+    private readonly IJobSeekersRepository _jobSeekersRepository;
+    private readonly IJobApplicationsRepository _jobApplicationsRepository;
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public JobPostsController(IJobPostsRepository jobPostsRepository, IMapper mapper, IJobTypesRepository jobTypesRepository, IJobLocationsRepository jobLocationsRepository, IJobCategoriesRepository jobCategoriesRepository, UserManager<ApplicationUser> userManager)
+    public JobPostsController(IJobPostsRepository jobPostsRepository, IMapper mapper, IJobTypesRepository jobTypesRepository, IJobLocationsRepository jobLocationsRepository, IJobCategoriesRepository jobCategoriesRepository, UserManager<ApplicationUser> userManager, IJobSeekersRepository jobSeekersRepository, IJobApplicationsRepository jobApplicationsRepository)
     {
         _jobPostsRepository = jobPostsRepository;
         _mapper = mapper;
@@ -30,6 +36,8 @@ public class JobPostsController : ApiController
         _jobLocationsRepository = jobLocationsRepository;
         _jobCategoriesRepository = jobCategoriesRepository;
         _userManager = userManager;
+        _jobSeekersRepository = jobSeekersRepository;
+        _jobApplicationsRepository = jobApplicationsRepository;
     }
 
     [AllowAnonymous]
@@ -155,8 +163,8 @@ public class JobPostsController : ApiController
             return ValidationProblem(ModelState);
         }
 
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null)
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
         {
             return Unauthorized();
         }
@@ -171,7 +179,7 @@ public class JobPostsController : ApiController
             request.JobCategoryId,
             request.JobTypeId,
             request.Expiration,
-            user.Id);
+            userId);
 
         await _jobPostsRepository.AddAsync(newjobPost);
 
@@ -231,8 +239,8 @@ public class JobPostsController : ApiController
             return ValidationProblem(ModelState);
         }
 
-        var user = await _userManager.GetUserAsync(User);
-        if (user is null)
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
         {
             return Unauthorized();
         }
@@ -244,6 +252,100 @@ public class JobPostsController : ApiController
         var jobPostDto = _mapper.Map<JobPostResponse>(await _jobPostsRepository.GetByIdAsync(id));
 
         return Ok(jobPostDto);
+    }
+
+    [Authorize(Roles = "User")]
+    [HttpPost("{jobPostId}/apply")]
+    public async Task<IActionResult> Apply(Guid jobPostId)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(jobPostId);
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var jobSeekerProfile = await _jobSeekersRepository.GetJobSeekerProfileByUserId(userId);
+        if (jobSeekerProfile is null)
+        {
+            return NotFound("No jobseeker profile was found.");
+        }
+
+        if (jobSeekerProfile.ResumeId == null || jobSeekerProfile.ResumeId == Guid.Empty)
+        {
+            ModelState.AddModelError("User", "User unable to apply. No resume was found.");
+            return ValidationProblem(ModelState);
+        }
+
+        // Check if an application already exists.
+        var jobApplication = await _jobApplicationsRepository.GetJobSeekerApplicationToJobPostAsync(jobSeekerProfile.Id, jobPost.Id);
+        if (jobApplication is not null)
+        {
+            ModelState.AddModelError("User", "User unable to apply. Application was already submitted.");
+            return ValidationProblem(ModelState);
+        }
+
+        var newJobApplication = JobApplication.CreateNew(jobPost.Id, jobSeekerProfile.Id, "Submitted");
+        await _jobApplicationsRepository.AddAsync(newJobApplication);
+
+        return Ok();
+    }
+
+    [Authorize(Roles = "User")]
+    [HttpPost("{jobPostId}/withdraw")]
+    public async Task<IActionResult> Withdraw(Guid jobPostId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var jobSeekerProfile = await _jobSeekersRepository.GetJobSeekerProfileByUserId(userId);
+
+        if (jobSeekerProfile is null)
+        {
+            return NotFound("No jobseeker profile was found.");
+        }
+
+        var jobApplication = await _jobApplicationsRepository.GetJobSeekerApplicationToJobPostAsync(jobSeekerProfile.Id, jobPostId);
+        if (jobApplication is null)
+        {
+            return NotFound("No job application was found.");
+        }
+
+        await _jobApplicationsRepository.WithdrawAsync(jobApplication.Id);
+        return Ok();
+    }
+
+    [HttpGet("{jobPostid}/myapplication")]
+    public async Task<IActionResult> GetMyApplication(Guid jobPostId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var jobSeekerProfile = await _jobSeekersRepository.GetJobSeekerProfileByUserId(userId);
+
+        if (jobSeekerProfile is null)
+        {
+            return NotFound("No jobseeker profile was found.");
+        }
+
+        var jobApplication = await _jobApplicationsRepository.GetJobSeekerApplicationToJobPostAsync(jobSeekerProfile.Id, jobPostId);
+        if (jobApplication is null)
+        {
+            return NotFound("No job application was found.");
+        }
+
+        return Ok(_mapper.Map<JobApplicationResponse>(jobApplication));
     }
 }
 

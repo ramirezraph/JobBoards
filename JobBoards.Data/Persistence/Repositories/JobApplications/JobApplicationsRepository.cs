@@ -67,6 +67,11 @@ public class JobApplicationsRepository : IJobApplicationsRepository
                  .Include(ja => ja.JobSeeker)
                     .ThenInclude(js => js.Resume)
                  .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobType)
+                 .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobLocation)
+                 .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobCategory)
                  .SingleOrDefaultAsync(ja => ja.JobPostId == postId && ja.JobSeekerId == jobSeekerId);
     }
 

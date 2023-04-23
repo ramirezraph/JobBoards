@@ -1,4 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AutoMapper;
 using JobBoards.Data.Authentication;
@@ -32,7 +31,6 @@ public class AccountController : ApiController
     public async Task<IActionResult> Login(LoginRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
-
         if (user is null)
         {
             return Unauthorized("Invalid credentials");
@@ -86,9 +84,8 @@ public class AccountController : ApiController
     public async Task<IActionResult> GetProfile()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _userManager.FindByIdAsync(userId);
-
-        if (user == null)
+        var user = await _userManager.FindByIdAsync(userId ?? "");
+        if (user is null)
         {
             return Unauthorized();
         }
@@ -102,7 +99,7 @@ public class AccountController : ApiController
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await _userManager.FindByIdAsync(userId);
 
-        if (user == null)
+        if (user is null)
         {
             return Unauthorized();
         }
@@ -132,9 +129,8 @@ public class AccountController : ApiController
         }
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _userManager.FindByIdAsync(userId);
-
-        if (user == null)
+        var user = await _userManager.FindByIdAsync(userId ?? "");
+        if (user is null)
         {
             return Unauthorized();
         }

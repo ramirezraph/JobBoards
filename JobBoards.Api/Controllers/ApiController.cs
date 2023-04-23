@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobBoards.Api.Controllers;
 
 [ApiController]
-[Authorize(Roles = "Admin")]
+[Authorize]
 [Route("api/[controller]")]
 public class ApiController : ControllerBase
 {

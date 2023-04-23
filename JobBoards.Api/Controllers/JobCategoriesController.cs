@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoards.Api.Controllers;
 
+[Authorize(Roles = "Admin,Employer")]
 public class JobCategoriesController : ApiController
 {
     private readonly IJobCategoriesRepository _jobCategoriesRepository;
@@ -18,6 +19,7 @@ public class JobCategoriesController : ApiController
         _mapper = mapper;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> ListJobCategories()
     {
@@ -25,6 +27,7 @@ public class JobCategoriesController : ApiController
         return Ok(jobCategories);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetJobCategoryById(Guid id)
     {

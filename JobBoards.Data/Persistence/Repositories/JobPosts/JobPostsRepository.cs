@@ -24,6 +24,7 @@ public class JobPostsRepository : IJobPostsRepository
             .Include(jp => jp.JobType)
             .Include(jp => jp.JobCategory)
             .Include(jp => jp.JobLocation)
+            .Include(jp => jp.CreatedBy)
             .Include(jp => jp.JobApplications)
             .ToListAsync();
     }
@@ -34,6 +35,7 @@ public class JobPostsRepository : IJobPostsRepository
             .Include(jp => jp.JobType)
             .Include(jp => jp.JobCategory)
             .Include(jp => jp.JobLocation)
+            .Include(jp => jp.CreatedBy)
             .Include(jp => jp.JobApplications);
     }
 
@@ -43,6 +45,7 @@ public class JobPostsRepository : IJobPostsRepository
             .Include(jp => jp.JobType)
             .Include(jp => jp.JobCategory)
             .Include(jp => jp.JobLocation)
+            .Include(jp => jp.CreatedBy)
             .Include(jp => jp.JobApplications)
             .SingleOrDefaultAsync(jp => jp.Id == id);
     }
@@ -56,6 +59,7 @@ public class JobPostsRepository : IJobPostsRepository
             .Include(jp => jp.JobType)
             .Include(jp => jp.JobCategory)
             .Include(jp => jp.JobLocation)
+            .Include(jp => jp.CreatedBy)
             .Include(jp => jp.JobApplications)
             .ToListAsync();
     }

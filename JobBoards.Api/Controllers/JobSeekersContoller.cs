@@ -6,11 +6,13 @@ using JobBoards.Data.Identity;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using JobBoards.Data.Persistence.Repositories.Resumes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoards.Api.Controllers;
 
+[Authorize(Roles = "User")]
 public class JobSeekersController : ApiController
 {
     private readonly IMapper _mapper;
@@ -128,5 +130,27 @@ public class JobSeekersController : ApiController
         }
 
         return NoContent();
+    }
+
+    [HttpGet("jobapplications")]
+    public async Task<IActionResult> GetAllJobApplications()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
+        {
+            return Unauthorized();
+        }
+
+        var jobSeekerProfile = await _jobSeekersRepository.GetJobSeekerProfileByUserId(userId);
+
+        if (jobSeekerProfile is null)
+        {
+            return NotFound("No jobseeker profile was found.");
+        }
+
+        var jobApplications = await _jobApplicationsRepository.GetAllByJobSeekerIdAsync(jobSeekerProfile.Id);
+        var jobApplicationDto = _mapper.Map<List<JobApplicationResponse>>(jobApplications);
+
+        return Ok(jobApplicationDto);
     }
 }

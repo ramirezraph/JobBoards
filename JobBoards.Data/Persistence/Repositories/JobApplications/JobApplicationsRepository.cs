@@ -21,7 +21,18 @@ public class JobApplicationsRepository : IJobApplicationsRepository
 
     public async Task<List<JobApplication>> GetAllAsync()
     {
-        return await _dbContext.JobApplications.ToListAsync();
+        return await _dbContext.JobApplications
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobType)
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobCategory)
+                .Include(ja => ja.JobPost)
+                    .ThenInclude(jp => jp.JobLocation)
+                .Include(ja => ja.JobSeeker)
+                    .ThenInclude(js => js.Resume)
+                .OrderByDescending(ja => ja.UpdatedAt)
+                    .ThenByDescending(ja => ja.CreatedAt)
+                .ToListAsync();
     }
 
     public async Task<List<JobApplication>> GetAllByJobSeekerIdAsync(Guid jobSeekerId)

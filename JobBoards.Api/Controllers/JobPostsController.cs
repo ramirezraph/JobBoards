@@ -278,22 +278,22 @@ public class JobPostsController : ApiController
 
         if (jobSeekerProfile.ResumeId == null || jobSeekerProfile.ResumeId == Guid.Empty)
         {
-            ModelState.AddModelError("User", "User unable to apply. No resume was found.");
-            return ValidationProblem(ModelState);
+            return Conflict("User unable to apply. No resume was found.");
         }
 
         // Check if an application already exists.
         var jobApplication = await _jobApplicationsRepository.GetJobSeekerApplicationToJobPostAsync(jobSeekerProfile.Id, jobPost.Id);
         if (jobApplication is not null)
         {
-            ModelState.AddModelError("User", "User unable to apply. Application was already submitted.");
-            return ValidationProblem(ModelState);
+            return Conflict("User unable to apply. Application was already submitted.");
         }
 
         var newJobApplication = JobApplication.CreateNew(jobPost.Id, jobSeekerProfile.Id, "Submitted");
         await _jobApplicationsRepository.AddAsync(newJobApplication);
 
-        return Ok();
+        var newJobApplicationDto = _mapper.Map<JobApplicationResponse>(newJobApplication);
+
+        return Ok(newJobApplicationDto);
     }
 
     [Authorize(Roles = "User")]
@@ -320,9 +320,11 @@ public class JobPostsController : ApiController
         }
 
         await _jobApplicationsRepository.WithdrawAsync(jobApplication.Id);
-        return Ok();
+
+        return NoContent();
     }
 
+    [Authorize(Roles = "User")]
     [HttpGet("{jobPostid}/myapplication")]
     public async Task<IActionResult> GetMyApplication(Guid jobPostId)
     {
@@ -346,6 +348,56 @@ public class JobPostsController : ApiController
         }
 
         return Ok(_mapper.Map<JobApplicationResponse>(jobApplication));
+    }
+
+    [Authorize(Roles = "Admin, Employer")]
+    [HttpPost("{jobPostid}/toggleactive")]
+    public async Task<IActionResult> ToggleActive(Guid jobPostId)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(jobPostId);
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        jobPost.IsActive = !jobPost.IsActive;
+
+        await _jobPostsRepository.UpdateAsync(jobPostId, jobPost);
+
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Admin, Employer")]
+    [HttpGet("{jobPostid}/jobapplications")]
+    public async Task<IActionResult> GetJobApplicationsByJobPostId(
+        Guid jobPostid,
+        string? search = null,
+        string? status = null)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(jobPostid);
+
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        var jobApplications = await _jobApplicationsRepository.GetAllByPostIdAsync(jobPostid);
+        jobApplications = jobApplications.OrderByDescending(ja => ja.UpdatedAt)
+                                    .ThenByDescending(ja => ja.CreatedAt).ToList();
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            jobApplications = jobApplications.Where(ja => ja.JobSeeker.User.FullName.ToLower().Contains(search.ToLower())).ToList();
+        }
+
+        if (!string.IsNullOrEmpty(status))
+        {
+            jobApplications = jobApplications.Where(a => a.Status.ToLower().Replace(" ", "") == status.ToLower().Replace(" ", "")).ToList();
+        }
+
+        var jobApplicationsDto = _mapper.Map<List<BasicJobApplicationResponse>>(jobApplications);
+
+        return Ok(jobApplicationsDto);
     }
 }
 

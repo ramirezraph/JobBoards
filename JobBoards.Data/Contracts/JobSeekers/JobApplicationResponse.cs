@@ -2,6 +2,7 @@ namespace JobBoards.Data.Contracts.JobSeekers;
 
 public class JobApplicationResponse
 {
+    public Guid Id { get; set; }
     public JobApplicationJobPostResponse JobPost { get; set; } = default!;
     public ResumeResponse Resume { get; set; } = default!;
     public string Status { get; set; } = default!;

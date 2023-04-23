@@ -64,10 +64,12 @@ public class MappingProfiles : Profile
             .ForPath(dest => dest.JobPost.MaxSalary, opt => opt.MapFrom(src => src.JobPost.MaxSalary))
             .ForPath(dest => dest.Resume.Id, opt => opt.MapFrom(src => src.JobSeeker.ResumeId))
             .ForPath(dest => dest.Resume.FileName, opt => opt.MapFrom(src => src.JobSeeker.Resume.FileName))
-            .ForPath(dest => dest.Resume.Uri, opt => opt.MapFrom(src => src.JobSeeker.Resume.Uri))
-            .ForPath(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-            .ForPath(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
-            .ForPath(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt));
+            .ForPath(dest => dest.Resume.Uri, opt => opt.MapFrom(src => src.JobSeeker.Resume.Uri));
+
+        CreateMap<JobApplication, BasicJobApplicationResponse>()
+            .ForPath(dest => dest.Resume.Id, opt => opt.MapFrom(src => src.JobSeeker.ResumeId))
+            .ForPath(dest => dest.Resume.FileName, opt => opt.MapFrom(src => src.JobSeeker.Resume.FileName))
+            .ForPath(dest => dest.Resume.Uri, opt => opt.MapFrom(src => src.JobSeeker.Resume.Uri));
     }
 
 }

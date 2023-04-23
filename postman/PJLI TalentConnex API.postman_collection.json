@@ -1,0 +1,918 @@
+{
+	"info": {
+		"_postman_id": "d055d8e0-c9c7-4be5-a8fd-8984e13579ed",
+		"name": "PJLI TalentConnex API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23972021"
+	},
+	"item": [
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "get-profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Account/Profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Account",
+								"Profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.collectionVariables.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"admin@pjli.com\",\r\n\t\"password\": \"Pa$$w0rd!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Account/Login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Account",
+								"Login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login-as-jobseeker",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.collectionVariables.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"raphael@email.com\",\r\n\t\"password\": \"Pass123$\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Account/Login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Account",
+								"Login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-profile",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\": \"Raphael Ramirez\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Account/Profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Account",
+								"Profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change-password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"oldPassword\": \"Pass123$\",\r\n    \"newPassword\": \"Pass123^\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Account/ChangePassword",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Account",
+								"ChangePassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"pm.collectionVariables.set(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\": \"John Doe\",\r\n    \"email\": \"john@email.com\",\r\n\t\"password\": \"Pass123$\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Account/Register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Account",
+								"Register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Job Category",
+			"item": [
+				{
+					"name": "get-all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobCategories",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobCategories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-by-id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobCategories/14876c15-ca23-45e8-b257-38e0bca7fcad",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobCategories",
+								"14876c15-ca23-45e8-b257-38e0bca7fcad"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-new",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Test Category\",\r\n\t\"description\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/JobCategories",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobCategories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobCategories/14876c15-ca23-45e8-b257-38e0bca7fcad",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobCategories",
+								"14876c15-ca23-45e8-b257-38e0bca7fcad"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Job Type",
+			"item": [
+				{
+					"name": "get-all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobTypes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobTypes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-by-id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobTypes/14876c15-ca23-45e8-b257-38e0bca7fcad",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobTypes",
+								"14876c15-ca23-45e8-b257-38e0bca7fcad"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-new",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Test Type\",\r\n\t\"description\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/JobTypes",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobTypes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobTypes/14876c15-ca23-45e8-b257-38e0bca7fcad",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobTypes",
+								"14876c15-ca23-45e8-b257-38e0bca7fcad"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Job Location",
+			"item": [
+				{
+					"name": "get-all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobLocations",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobLocations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-by-id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobLocations/14876c15-ca23-45e8-b257-38e0bca7fcad",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobLocations",
+								"14876c15-ca23-45e8-b257-38e0bca7fcad"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-new",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"city\": \"Cebu\",\r\n   \"country\": \"Philippines\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/JobLocations",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobLocations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobLocations/14876c15-ca23-45e8-b257-38e0bca7fcad",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobLocations",
+								"14876c15-ca23-45e8-b257-38e0bca7fcad"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Jobseeker",
+			"item": [
+				{
+					"name": "get-resume",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Jobseekers/Resume",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Jobseekers",
+								"Resume"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "my-job-applications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Jobseekers/JobApplications",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Jobseekers",
+								"JobApplications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add-resume",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"uri\": \"https://pjlijbstorage.blob.core.windows.net/resumes/2f9dd476-64ac-4d6b-8da6-b14f3789c6b5.pdf\",\r\n  \"fileName\": \"raphaelisiahramirez-resume.pdf\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Jobseekers/Resume",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Jobseekers",
+								"Resume"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-resume",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Jobseekers/Resume",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Jobseekers",
+								"Resume"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Job Post",
+			"item": [
+				{
+					"name": "get-all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobPosts",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobPosts"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "itemsPerPage",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "jobCategoryId",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "jobLocationId",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "minSalary",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "maxSalary",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "activeJobTypeIds",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-by-id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobPosts/07958b3b-3fdc-4ab7-b993-7b2696a2cd39",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobPosts",
+								"07958b3b-3fdc-4ab7-b993-7b2696a2cd39"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-new-listings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobPosts/NewListings",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobPosts",
+								"NewListings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-my-application",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobPosts/3bbe49c9-7fcd-44e2-a110-2be350336f50/MyApplication",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobPosts",
+								"3bbe49c9-7fcd-44e2-a110-2be350336f50",
+								"MyApplication"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-applications",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobPosts/3bbe49c9-7fcd-44e2-a110-2be350336f50/JobApplications",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobPosts",
+								"3bbe49c9-7fcd-44e2-a110-2be350336f50",
+								"JobApplications"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "submitted",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create-new",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Test Job Post 4\",\r\n  \"description\": \"This is a test job post. You should delete this after.\",\r\n  \"jobLocationId\": \"7ddfb071-9072-434b-8a9b-10de2c857507\",\r\n  \"minSalary\": 25000,\r\n  \"maxSalary\": 35000,\r\n  \"isActive\": true,\r\n  \"jobCategoryId\": \"14876c15-ca23-45e8-b257-38e0bca7fcad\",\r\n  \"jobTypeId\": \"2a5e33bd-2ec4-4373-a0fd-553fe70d5aa2\",\r\n  \"expiration\": \"2023-04-22T14:13:59.258Z\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/JobPosts",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobPosts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "apply",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobPosts/3bbe49c9-7fcd-44e2-a110-2be350336f50/apply",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobPosts",
+								"3bbe49c9-7fcd-44e2-a110-2be350336f50",
+								"apply"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "withdraw",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobPosts/07958b3b-3fdc-4ab7-b993-7b2696a2cd39/withdraw",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobPosts",
+								"07958b3b-3fdc-4ab7-b993-7b2696a2cd39",
+								"withdraw"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "toggle-active",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobPosts/07958b3b-3fdc-4ab7-b993-7b2696a2cd39/toggleactive",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobPosts",
+								"07958b3b-3fdc-4ab7-b993-7b2696a2cd39",
+								"toggleactive"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobPosts/07958b3b-3fdc-4ab7-b993-7b2696a2cd39",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobPosts",
+								"07958b3b-3fdc-4ab7-b993-7b2696a2cd39"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Test Job Post 2\",\r\n  \"description\": \"<p>Hello there, this is a test job post.</p>\",\r\n  \"jobLocationId\": \"8107cd19-b180-429b-a238-227581b19f71\",\r\n  \"minSalary\": 35000,\r\n  \"maxSalary\": 45000,\r\n  \"isActive\": true,\r\n  \"jobCategoryId\": \"a6193116-08a8-448c-9d74-c8465a06d9c1\",\r\n  \"jobTypeId\": \"2a5e33bd-2ec4-4373-a0fd-553fe70d5aa2\",\r\n  \"expiration\": \"2024-04-23T14:20:32.6190475\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/JobPosts/07958b3b-3fdc-4ab7-b993-7b2696a2cd39",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobPosts",
+								"07958b3b-3fdc-4ab7-b993-7b2696a2cd39"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Job Application",
+			"item": [
+				{
+					"name": "get-all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/JobApplications",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobApplications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-status",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"newStatus\": \"Interview\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/JobApplications/b3f737f4-a4d0-4e58-b5fa-6e7ae0116ca6/status",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"JobApplications",
+								"b3f737f4-a4d0-4e58-b5fa-6e7ae0116ca6",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:5153/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

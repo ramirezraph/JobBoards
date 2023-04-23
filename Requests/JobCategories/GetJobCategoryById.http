@@ -1,4 +1,6 @@
 @host = http://localhost:5153/api
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzMzM0MjkyZi00OWFhLTRmYzQtYWIwOS1lZmJhODNkZThlODUiLCJuYW1lIjoiUmFwaGFlbCBSYW1pcmV6IiwianRpIjoiMDUwZTJjOGQtOWNhNi00MzJlLTkzZjctOGRjMDAzMzkzMGNlIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTY4MjAwNTgwMSwiaXNzIjoiSm9iQm9hcmRzIiwiYXVkIjoiSm9iQm9hcmRzIn0.D7bbWFHkg5PfTJFXitkDsHbT0HVmhXyZ8FBzayLhRjY
 @jobCategoryId = 15489087-af4b-46d0-881d-00f6cd9387bf
 
 GET {{host}}/jobCategories/{{jobCategoryId}}
+Authorization: Bearer {{token}}

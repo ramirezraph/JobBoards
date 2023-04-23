@@ -11,7 +11,30 @@ public class PaginatedResult<T>
     public bool HasPreviousPage { get; private set; }
     public bool HasNextPage { get; private set; }
 
-    public static async Task<PaginatedResult<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize)
+    public PaginatedResult(
+        List<T> items,
+        int currentPage,
+        int itemsPerPage,
+        int totalPages,
+        bool hasPreviousPage,
+        bool hasNextPage)
+    {
+        Items = items;
+        CurrentPage = currentPage;
+        ItemsPerPage = itemsPerPage;
+        TotalPages = totalPages;
+        HasPreviousPage = hasPreviousPage;
+        HasNextPage = hasNextPage;
+    }
+
+    public PaginatedResult()
+    {
+    }
+
+    public static async Task<PaginatedResult<T>> CreateAsync(
+        IQueryable<T> source,
+        int pageIndex,
+        int pageSize)
     {
         var count = await source.CountAsync();
         var items = await source
@@ -32,6 +55,5 @@ public class PaginatedResult<T>
             HasNextPage = hasNextPage
         };
     }
-
 }
 

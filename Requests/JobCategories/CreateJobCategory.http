@@ -1,7 +1,9 @@
 @host = http://localhost:5153/api
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMzYxMGU2Yy04ZTYzLTQ2NzItOTVhNi0zMDM3N2E3ZmFmOTAiLCJuYW1lIjoiSm9obiBEb2UiLCJqdGkiOiIwNGE5MDg2NC0xNzVlLTQxNjEtYmYzMi03OTA0NGVjYTZjYTkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNjgyMTc5MDUzLCJpc3MiOiJKb2JCb2FyZHMiLCJhdWQiOiJKb2JCb2FyZHMifQ.OsyWdaZyucA0MZhOnpQAkCmY0j7Y8KTLDcCo5qTf5OE
 
 POST {{host}}/jobCategories
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
     "name": "Test",

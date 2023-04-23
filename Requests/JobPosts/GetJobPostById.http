@@ -1,0 +1,3 @@
+@host = http://localhost:5153/api
+@id=9220e684-64d7-42a0-b738-8038e6d91289
+GET {{host}}/JobPosts/{{id}}

@@ -2,10 +2,12 @@ using AutoMapper;
 using JobBoards.Data.Contracts.JobLocation;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Persistence.Repositories.JobLocations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoards.Api.Controllers;
 
+[Authorize(Roles = "Admin,Employer")]
 public class JobLocationsController : ApiController
 {
     private readonly IJobLocationsRepository _jobLocationsRepository;
@@ -17,6 +19,7 @@ public class JobLocationsController : ApiController
         _mapper = mapper;
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> ListJobLocations()
     {
@@ -24,6 +27,7 @@ public class JobLocationsController : ApiController
         return Ok(jobLocations);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetJobLocationById(Guid id)
     {

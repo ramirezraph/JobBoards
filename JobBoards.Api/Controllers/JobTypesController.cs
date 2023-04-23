@@ -2,85 +2,88 @@
 using JobBoards.Data.Contracts.JobType;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Persistence.Repositories.JobTypes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobBoards.Api.Controllers
+namespace JobBoards.Api.Controllers;
+
+[Authorize(Roles = "Admin,Employer")]
+public class JobTypesController : ApiController
 {
-    public class JobTypesController : ApiController
+    private readonly IJobTypesRepository _jobTypesRepository;
+    private readonly IMapper _mapper;
+
+    public JobTypesController(IJobTypesRepository jobTypesRepository, IMapper mapper)
     {
-        private readonly IJobTypesRepository _jobTypesRepository;
-        private readonly IMapper _mapper;
+        _jobTypesRepository = jobTypesRepository;
+        _mapper = mapper;
+    }
 
-        public JobTypesController(IJobTypesRepository jobTypesRepository, IMapper mapper)
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> ListJobTypes()
+    {
+        List<JobType> jobTypes = await _jobTypesRepository.GetAllAsync();
+        return Ok(jobTypes);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetJobTypeById(Guid id)
+    {
+        var jobType = await _jobTypesRepository.GetByIdAsync(id);
+        if (jobType is null)
         {
-            _jobTypesRepository = jobTypesRepository;
-            _mapper = mapper;
+            return NotFound();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ListJobTypes()
+        return Ok(jobType);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateJobType(CreateJobTypeRequest request)
+    {
+        if (!ModelState.IsValid)
         {
-            List<JobType> jobTypes = await _jobTypesRepository.GetAllAsync();
-            return Ok(jobTypes);
+            return BadRequest(ModelState);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetJobTypeById(Guid id)
-        {
-            var jobType = await _jobTypesRepository.GetByIdAsync(id);
-            if (jobType is null)
-            {
-                return NotFound();
-            }
+        var newJobType = JobType.CreateNew(request.Name, request.Description);
+        await _jobTypesRepository.AddAsync(newJobType);
 
-            return Ok(jobType);
+        return CreatedAtAction(nameof(GetJobTypeById), new { id = newJobType.Id }, newJobType);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteJobType(Guid id)
+    {
+        var jobType = await _jobTypesRepository.GetByIdAsync(id);
+        if (jobType is null)
+        {
+            return NotFound();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateJobType(CreateJobTypeRequest request)
+        await _jobTypesRepository.RemoveAsync(jobType);
+        return NoContent();
+    }
+
+    [HttpPost("{id}")]
+    public async Task<IActionResult> UpdateJobType(UpdateJobTypeRequest request, Guid id)
+    {
+        if (!ModelState.IsValid)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var newJobType = JobType.CreateNew(request.Name, request.Description);
-            await _jobTypesRepository.AddAsync(newJobType);
-
-            return CreatedAtAction(nameof(GetJobTypeById), new { id = newJobType.Id }, newJobType);
+            return BadRequest(ModelState);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteJobType(Guid id)
+        var jobType = await _jobTypesRepository.GetByIdAsync(id);
+        if (jobType is null)
         {
-            var jobType = await _jobTypesRepository.GetByIdAsync(id);
-            if (jobType is null)
-            {
-                return NotFound();
-            }
-
-            await _jobTypesRepository.RemoveAsync(jobType);
-            return NoContent();
+            return NotFound();
         }
+        var updatedType = _mapper.Map<JobType>(request);
 
-        [HttpPost("{id}")]
-        public async Task<IActionResult> UpdateJobType(UpdateJobTypeRequest request, Guid id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        await _jobTypesRepository.UpdateAsync(jobType.Id, updatedType);
 
-            var jobType = await _jobTypesRepository.GetByIdAsync(id);
-            if (jobType is null)
-            {
-                return NotFound();
-            }
-            var updatedType = _mapper.Map<JobType>(request);
-
-            await _jobTypesRepository.UpdateAsync(jobType.Id, updatedType);
-
-            return Ok();
-        }
+        return Ok();
     }
 }

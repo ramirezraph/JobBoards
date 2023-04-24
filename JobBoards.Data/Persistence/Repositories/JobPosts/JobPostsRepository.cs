@@ -118,7 +118,7 @@ public class JobPostsRepository : IJobPostsRepository
 
     public async Task<int> GetCountAsync()
     {
-        return await _dbContext.JobPosts.CountAsync();
+        return await _dbContext.JobPosts.CountAsync(jp => jp.DeletedAt == null);
     }
 
     public async Task SoftDeleteAsync(Guid postId)

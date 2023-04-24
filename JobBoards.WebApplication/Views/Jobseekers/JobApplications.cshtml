@@ -2,6 +2,10 @@
 @using JobBoards.WebApplication.Utils
 @model JobApplicationsViewModel
 
+@{
+    var requestPath = ViewContext.HttpContext.Request.Path + ViewContext.HttpContext.Request.QueryString;
+}
+
 <style>
     .status-submitted {
         color: #54595E;
@@ -77,7 +81,8 @@
                             </div>
                             <div>
                                 <a class="btn btn-secondary mt-3" asp-controller="Jobs" asp-action="Details"
-                            asp-route-id="@jobApplication.JobPost.Id" class="btn btn-secondary me-2">
+                            asp-route-id="@jobApplication.JobPost.Id" asp-route-returnUrl="@requestPath"
+                                    class="btn btn-secondary me-2">
                                     View Application
                                 </a>
                                 @if (@jobApplication.Status.ToLower() != "withdrawn")

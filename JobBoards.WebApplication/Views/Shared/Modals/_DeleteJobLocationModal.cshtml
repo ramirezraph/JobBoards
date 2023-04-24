@@ -26,19 +26,38 @@
                 </p>
 
                 <div class="d-flex flex-column">
-                    @if (Model.NumberOfJobPostsWithLocation > 0)
+                    @if (Model.NumberOfJobPostsWithLocation == 1)
                     {
-                        <span class="text-danger mb-2">* There are @Model.NumberOfJobPostsWithLocation job posts with this
-                            location that will be affected.</span>
+                        <span class="text-danger mb-2">* You cannot remove this location yet. There is
+                            @Model.NumberOfJobPostsWithLocation job
+                            post with this location.</span>
+                        <span class="text-danger mb-2">* To remove, either update the job post or delete it.</span>
                     }
-                    <span class="text-danger">* This action is potentially destructive and cannot be undone.</span>
+                    else if (Model.NumberOfJobPostsWithLocation > 1)
+                    {
+                        <span class="text-danger mb-2">* You cannot remove this location yet. There are
+                            @Model.NumberOfJobPostsWithLocation job
+                            posts with this location.</span>
+                        <span class="text-danger mb-2">* To remove, either update those job posts or delete them.</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">* This action cannot be undone.</span>
+                    }
                 </div>
 
                 <div class="d-flex mt-4">
-                    <form asp-controller="Management" asp-action="DeleteJobLocation" method="post">
-                        <input type="hidden" name="id" value="@Model.JobLocation.Id" readonly />
-                        <button type="submit" class="btn btn-danger me-3">Yes, I understand</button>
-                    </form>
+                    @if (Model.NumberOfJobPostsWithLocation > 0)
+                    {
+                        <button type="button" class="btn w-25 btn-primary me-3" data-bs-dismiss="modal">Ok</button>
+                    }
+                    else
+                    {
+                        <form asp-controller="Management" asp-action="DeleteJobLocation" method="post">
+                            <input type="hidden" name="id" value="@Model.JobLocation.Id" readonly />
+                            <button type="submit" class="btn btn-danger me-3">Yes, please delete</button>
+                        </form>
+                    }
 
                     <button type="button" class="btn" data-bs-dismiss="modal">Cancel</button>
                 </div>

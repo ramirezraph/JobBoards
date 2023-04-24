@@ -38,6 +38,7 @@ public class ManagementController : BaseController
             NumberOfJobApplicationsToday = await _jobApplicationsRepository.GetNumberOfJobApplicationsTodayAsync(),
             TotalNumberOfJobPosts = await _jobPostsRepository.GetCountAsync(),
             TotalNumberOfJobApplications = await _jobApplicationsRepository.GetCountAsync(),
+            TotalNumberOfDeletedJobPosts = await _jobPostsRepository.GetCountOfDeletedPostsAsync(),
             RecentJobApplications = await _jobApplicationsRepository.GetThreeRecentJobApplicationAsync(),
             RecentJobPosts = await _jobPostsRepository.GetNewListingsAsync()
         };
@@ -100,6 +101,52 @@ public class ManagementController : BaseController
                 jobCategoryId = viewModel.Filters.JobCategoryId,
                 jobLocationId = viewModel.Filters.JobLocationId
             });
+    }
+
+    public async Task<IActionResult> DeletedJobPosts()
+    {
+        var deletedJobPosts = await _jobPostsRepository.GetAllDeletedAsync();
+
+        return View(deletedJobPosts);
+    }
+
+    public async Task<IActionResult> DisplayRestoreModal(Guid jobPostId)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(jobPostId);
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = new RestoreJobPostModalViewModel
+        {
+            JobPostId = jobPost.Id,
+            JobPostTitle = jobPost.Title
+        };
+
+        return PartialView("~/Views/Shared/Modals/_RestoreJobPostModal.cshtml", viewModel);
+    }
+
+    public async Task<IActionResult> RestoreJobPost(Guid jobPostId)
+    {
+        var jobPost = await _jobPostsRepository.GetByIdAsync(jobPostId);
+        if (jobPost is null)
+        {
+            return NotFound();
+        }
+
+        jobPost.DeletedAt = null;
+
+        await _jobPostsRepository.UpdateAsync(jobPost.Id, jobPost);
+
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = $"{jobPost.Title} has been restored.",
+            Type = "success"
+        });
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = jobPost.Id });
     }
 
     public IActionResult ViewJobApplicants(Guid jobPostId, string requestPath)

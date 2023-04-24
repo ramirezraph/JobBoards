@@ -1,0 +1,38 @@
+@using JobBoards.WebApplication.ViewModels.Shared
+@model RestoreJobPostModalViewModel
+
+<style>
+    .text-darkgray {
+        color: #54595E
+    }
+
+    .text-paragraph {
+        color: #68717A
+    }
+</style>
+
+<div class="modal fade" id="restoreJobPostModal" tabindex="-1" aria-labelledby="restoreJobPostModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <div class="d-flex justify-content-between">
+                    <h4 class="modal-title text-darkgray" id="restoreJobPostModalLabel">Restore Job Post</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <p class="mt-2 text-paragraph">
+                    Are you sure you want to restore <span class="text-info">@Model.JobPostTitle</span>?
+                </p>
+
+                <div class="d-flex mt-4">
+                    <a asp-controller="Management" asp-action="RestoreJobPost" asp-route-jobPostId="@Model.JobPostId"
+                        class="btn btn-primary me-3">
+                        Yes, please restore
+                    </a>
+
+                    <button type="button" class="btn" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -144,7 +144,7 @@
                                         @jobApplication.Status
                                     </div>
                                 </div>
-                                @if (jobApplication.Status.ToLower() != "withdrawn")
+                                @if (jobApplication.Status.ToLower() != "withdrawn" && jobApplication.JobPost.DeletedAt == null)
                                 {
                                     <div class="d-flex mt-3 p-0">
                                         <button

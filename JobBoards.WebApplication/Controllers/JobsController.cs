@@ -67,7 +67,6 @@ public class JobsController : BaseController
         IQueryable<JobPost> jobPosts = _jobPostsRepository.GetAllQueryable()
                                             .OrderByDescending(jp => jp.UpdatedAt)
                                                 .ThenByDescending(jp => jp.CreatedAt);
-
         // Filter all Inactive
         if (!User.IsInRole("Admin") && !User.IsInRole("Employer"))
         {
@@ -349,7 +348,7 @@ public class JobsController : BaseController
         return RedirectToAction(controllerName: "Jobs", actionName: "Details", routeValues: new { id = formValues.Id });
     }
 
-    public async Task<IActionResult> DisplayDeleteConfirmationModal(Guid jobPostId)
+    public async Task<IActionResult> DisplayDeleteConfirmationModal(Guid jobPostId, bool isSoftDelete = true)
     {
         var jobPost = await _jobPostsRepository.GetByIdAsync(jobPostId);
 
@@ -362,7 +361,8 @@ public class JobsController : BaseController
         {
             JobPostId = jobPost.Id,
             JobPost = jobPost,
-            NumberOfPendingJobApplications = jobPost.JobApplications.Count(ja => ja.Status.ToLower() != "withdrawn" && ja.Status.ToLower() != "not suitable")
+            NumberOfPendingJobApplications = jobPost.JobApplications.Count(ja => ja.Status.ToLower() != "withdrawn" && ja.Status.ToLower() != "not suitable"),
+            IsSoftDelete = isSoftDelete
         };
 
         return PartialView("~/Views/Shared/Modals/_DeleteJobPostModal.cshtml", viewModel);
@@ -370,14 +370,30 @@ public class JobsController : BaseController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> SoftDelete(Guid id)
+    {
+        await _jobPostsRepository.SoftDeleteAsync(id);
+
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job post deleted successfully.",
+            Type = "success"
+        });
+
+        return RedirectToAction(controllerName: "Jobs", actionName: "Index");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> HardDelete(Guid id)
     {
         await _jobPostsRepository.DeleteAsync(id);
 
         TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
         {
             Title = "Success",
-            Message = "Job post deleted successfully.",
+            Message = "Job post deleted completely.",
             Type = "success"
         });
 

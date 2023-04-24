@@ -1,0 +1,78 @@
+@using JobBoards.Data.Entities
+@model List<JobPost>
+
+@{
+    ViewData["Title"] = "Deleted Job Posts";
+
+    var requestPath = ViewContext.HttpContext.Request.Path + ViewContext.HttpContext.Request.QueryString;
+}
+
+<div class="container">
+    <span class="fw-bold">Deleted Job Posts</span>
+    <section class="text-start mt-3">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 gx-3">
+            @if (Model.Any())
+            {
+                @foreach (var deletedJobPost in Model)
+                {
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">@deletedJobPost.Title</h5>
+                                <p>@deletedJobPost.JobType.Name, @deletedJobPost.JobLocation.City,
+                                    @deletedJobPost.JobLocation.Country</p>
+                                <div class="row mb-2" style="font-size: 12px;">
+                                    <span class="col-4" style="font-weight: 500;">Deleted:</span>
+                                    <div class="col-8">
+                                        @deletedJobPost.DeletedAt?.ToString("MMMM dd, yyyy h:mm tt")
+                                    </div>
+                                </div>
+
+                                <button onclick="openPermanentDeleteModal('@deletedJobPost.Id.ToString()')"
+                                    class="btn btn-sm btn-danger">Delete</button>
+                                <button onclick="openRestorePostModal('@deletedJobPost.Id.ToString()')"
+                                    class="btn btn-sm btn-outline-danger">Restore</button>
+                                <a asp-controller="Jobs" asp-action="Details" asp-route-id="@deletedJobPost.Id"
+                            asp-route-returnUrl="@requestPath" class="btn btn-sm btn-outline-primary">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-black-50 mt-2">No deleted job post here yet.</p>
+            }
+        </div>
+    </section>
+    <div id="deletePostModalContainer"></div>
+    <div id="restorePostModalContainer"></div>
+</div>
+
+@section Modals {
+    <script>
+        function openPermanentDeleteModal(jobPostId) {
+            $.ajax({
+                url: "@Html.Raw(Url.Action("DisplayDeleteConfirmationModal", "Jobs", new { jobPostId = "__id__", isSoftDelete = false }))".replace('__id__', jobPostId),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#deletePostModalContainer').html(partialView);
+                    $('#confirmDeleteJobPostModal').modal('show');
+                }
+            });
+        }
+
+        function openRestorePostModal(jobPostId) {
+            $.ajax({
+                url: "@Html.Raw(Url.Action("DisplayRestoreModal", "Management", new { jobPostId = "__id__"}))".replace('__id__', jobPostId),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#restorePostModalContainer').html(partialView);
+                    $('#restoreJobPostModal').modal('show');
+                }
+            });
+        }
+    </script>
+}

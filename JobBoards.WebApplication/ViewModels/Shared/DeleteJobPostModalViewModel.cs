@@ -7,4 +7,5 @@ public class DeleteJobPostModalViewModel
     public Guid JobPostId { get; set; }
     public JobPost JobPost { get; set; } = null!;
     public int NumberOfPendingJobApplications { get; set; }
+    public bool IsSoftDelete { get; set; } = true;
 }

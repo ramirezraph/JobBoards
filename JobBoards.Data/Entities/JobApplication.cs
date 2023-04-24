@@ -41,7 +41,7 @@ public class JobApplication : Entity<Guid>
             jobSeekerId,
             "Submitted",
             DateTime.UtcNow,
-            null,
+            DateTime.UtcNow,
             null);
     }
 #pragma warning disable CS8618

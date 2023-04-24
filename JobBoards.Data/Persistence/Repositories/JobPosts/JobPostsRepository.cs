@@ -21,6 +21,19 @@ public class JobPostsRepository : IJobPostsRepository
     public async Task<List<JobPost>> GetAllAsync()
     {
         return await _dbContext.JobPosts
+            .Where(jp => jp.DeletedAt == null)
+            .Include(jp => jp.JobType)
+            .Include(jp => jp.JobCategory)
+            .Include(jp => jp.JobLocation)
+            .Include(jp => jp.CreatedBy)
+            .Include(jp => jp.JobApplications)
+            .ToListAsync();
+    }
+
+    public async Task<List<JobPost>> GetAllDeletedAsync()
+    {
+        return await _dbContext.JobPosts
+            .Where(jp => jp.DeletedAt != null)
             .Include(jp => jp.JobType)
             .Include(jp => jp.JobCategory)
             .Include(jp => jp.JobLocation)
@@ -32,6 +45,7 @@ public class JobPostsRepository : IJobPostsRepository
     public IQueryable<JobPost> GetAllQueryable()
     {
         return _dbContext.JobPosts
+            .Where(jp => jp.DeletedAt == null)
             .Include(jp => jp.JobType)
             .Include(jp => jp.JobCategory)
             .Include(jp => jp.JobLocation)
@@ -53,6 +67,7 @@ public class JobPostsRepository : IJobPostsRepository
     public async Task<List<JobPost>> GetNewListingsAsync()
     {
         return await _dbContext.JobPosts
+            .Where(jp => jp.DeletedAt == null)
             .Where(jp => jp.IsActive)
             .OrderByDescending(jp => jp.CreatedAt)
             .Take(3)
@@ -103,7 +118,26 @@ public class JobPostsRepository : IJobPostsRepository
 
     public async Task<int> GetCountAsync()
     {
-        return await _dbContext.JobPosts.CountAsync();
+        return await _dbContext.JobPosts.CountAsync(jp => jp.DeletedAt == null);
+    }
+
+    public async Task SoftDeleteAsync(Guid postId)
+    {
+        var post = await _dbContext.JobPosts.FindAsync(postId);
+        if (post != null)
+        {
+            post.IsActive = false;
+            post.DeletedAt = DateTime.UtcNow;
+
+            _dbContext.JobPosts.Update(post);
+
+            await _dbContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task<int> GetCountOfDeletedPostsAsync()
+    {
+        return await _dbContext.JobPosts.CountAsync(jp => jp.DeletedAt != null);
     }
 }
 

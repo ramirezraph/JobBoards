@@ -2,6 +2,10 @@
 @using JobBoards.WebApplication.Utils
 @model JobApplicationsViewModel
 
+@{
+    var requestPath = ViewContext.HttpContext.Request.Path + ViewContext.HttpContext.Request.QueryString;
+}
+
 <style>
     .status-submitted {
         color: #54595E;
@@ -56,19 +60,29 @@
                             </p>
                             <div class="row">
                                 <span class="col-2" style="font-weight: 500;">Status:</span>
-                                <div class="col-10 status-@(
+                                @if (jobApplication.JobPost.DeletedAt != null)
+                                {
+                                    <div class="col-10 text-danger">
+                                        Job no longer available
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-10 status-@(
                                 jobApplication.Status.ToLower().Replace(" ", ""))">
-                                    @jobApplication.Status
-                                    @if (@jobApplication.UpdatedAt.HasValue && jobApplication.Status.ToLower() != "withdrawn")
-                                    {
-                                        <span style="font-size: 12px; color: #54595E;">(updated
-                                            @jobApplication.UpdatedAt.Value.FormatDateToRelative())</span>
-                                    }
-                                </div>
+                                        @jobApplication.Status
+                                        @if (@jobApplication.UpdatedAt.HasValue && jobApplication.Status.ToLower() != "withdrawn")
+                                        {
+                                            <span style="font-size: 12px; color: #54595E;">(updated
+                                                @jobApplication.UpdatedAt.Value.FormatDateToRelative())</span>
+                                        }
+                                    </div>
+                                }
                             </div>
                             <div>
                                 <a class="btn btn-secondary mt-3" asp-controller="Jobs" asp-action="Details"
-                            asp-route-id="@jobApplication.JobPost.Id" class="btn btn-secondary me-2">
+                            asp-route-id="@jobApplication.JobPost.Id" asp-route-returnUrl="@requestPath"
+                                    class="btn btn-secondary me-2">
                                     View Application
                                 </a>
                                 @if (@jobApplication.Status.ToLower() != "withdrawn")

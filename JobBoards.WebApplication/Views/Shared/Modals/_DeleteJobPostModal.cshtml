@@ -20,26 +20,48 @@
                     <h4 class="modal-title text-darkgray" id="deleteJobPostModalLabel">Delete Job Post</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <p class="mt-2 text-paragraph">
-                    Are you sure you want to delete <span class="text-info">@Model.JobPost.Title</span>?
-                </p>
 
-                <div class="d-flex flex-column">
-                    @if (Model.NumberOfPendingJobApplications > 0)
-                    {
+                @if (Model.IsSoftDelete)
+                {
+                    <p class="mt-2 text-paragraph">
+                        Are you sure you want to delete <span class="text-info">@Model.JobPost.Title</span>?
+                    </p>
+                }
+                else
+                {
+                    <p class="mt-2 text-paragraph">
+                        Are you sure you want to permanently delete <span class="text-info">@Model.JobPost.Title</span>?
+                    </p>
+                    <div class="d-flex flex-column">
+                        <span class="text-danger">* This action is potentially destructive and cannot be undone.</span>
+                    </div>
+                }
+
+                @if (Model.NumberOfPendingJobApplications > 0)
+                {
+                    <div class="d-flex flex-column">
                         <span class="text-danger mb-2">* There are @Model.NumberOfPendingJobApplications pending job
                             applications
                             for
                             this job post.</span>
-                    }
-                    <span class="text-danger">* This action cannot be undone.</span>
-                </div>
+                    </div>
+                }
 
                 <div class="d-flex mt-4">
-                    <form asp-controller="Jobs" asp-action="Delete" method="post">
-                        <input type="hidden" name="id" value="@Model.JobPostId" readonly />
-                        <button type="submit" class="btn btn-danger me-3">Yes, I understand</button>
-                    </form>
+                    @if (Model.IsSoftDelete)
+                    {
+                        <form asp-controller="Jobs" asp-action="SoftDelete" method="post">
+                            <input type="hidden" name="id" value="@Model.JobPostId" readonly />
+                            <button type="submit" class="btn btn-danger me-3">Yes, please delete</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-controller="Jobs" asp-action="HardDelete" method="post">
+                            <input type="hidden" name="id" value="@Model.JobPostId" readonly />
+                            <button type="submit" class="btn btn-danger me-3">Yes, I understand</button>
+                        </form>
+                    }
 
                     <button type="button" class="btn" data-bs-dismiss="modal">Cancel</button>
                 </div>

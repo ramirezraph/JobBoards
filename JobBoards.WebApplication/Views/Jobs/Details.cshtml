@@ -71,6 +71,16 @@
                         </div>
                     </div>
 
+                    @if (Model.HasWriteAccess && Model.JobPost.DeletedAt != null)
+                    {
+                        <div class="row mt-2">
+                            <h6 class="col-4 d-inline">Deleted:</h6>
+                            <div class="col-8 text-danger">
+                                @Model.JobPost.DeletedAt?.ToString("MMMM dd, yyyy h:mm tt")
+                            </div>
+                        </div>
+                    }
+
                     @if (Model.HasWriteAccess)
                     {
                         <div class="row mt-2">
@@ -115,10 +125,19 @@
                         <h6 class="card-title">My Application</h6>
                         <div class="row mt-3">
                             <h6 class="col-4 d-inline">Status:</h6>
-                            <div class="col-8 status-@(
+                            @if (Model.JobPost.DeletedAt != null)
+                            {
+                                <div class="col-8 text-danger">
+                                    Job no longer available.
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-8 status-@(
                                 Model.JobApplication.Status.ToLower().Replace(" ", ""))">
-                                @Model.JobApplication.Status
-                            </div>
+                                    @Model.JobApplication.Status
+                                </div>
+                            }
                         </div>
                         <div class="row mt-3">
                             <h6 class="col-4 d-inline">Resume:</h6>
@@ -153,7 +172,7 @@
                     class="btn btn-primary btn-block w-100 mt-2">Apply Now</button>
             }
 
-            @if (Model.HasWriteAccess)
+            @if (Model.HasWriteAccess && Model.JobPost.DeletedAt == null)
             {
                 <a asp-controller="Jobs" asp-action="ToggleJobPostIsActive" asp-route-jobPostId="@Model.JobPost.Id"
                     class="btn btn-primary btn-block w-100 mt-1">
@@ -163,21 +182,31 @@
                 <a asp-controller="Jobs" asp-action="Update" asp-route-id="@Model.JobPost.Id"
                     class="btn btn-primary btn-block w-100 mt-1">Edit</a>
 
-                <button onclick="openDeletePostModal('@Model.JobPost.Id.ToString()')"
+                <button onclick="openDeletePostModal('@Model.JobPost.Id.ToString()', true)"
                     class="btn btn-danger btn-block w-100 mt-1">Delete</button>
             }
+
+            @if (Model.HasWriteAccess && Model.JobPost.DeletedAt != null)
+            {
+                <button onclick="openRestorePostModal('@Model.JobPost.Id.ToString()')"
+                    class="btn btn-primary btn-block w-100 mt-1">Restore</button>
+                <button onclick="openDeletePostModal('@Model.JobPost.Id.ToString()', false)"
+                    class="btn btn-danger btn-block w-100 mt-1">Delete permanently</button>
+            }
+
         </div>
     </div>
     <div id="deletePostModalContainer"></div>
     <div id="withdrawModalContainer"></div>
     <div id="applyNowModalContainer"></div>
+    <div id="restorePostModalContainer"></div>
 </div>
 
 @section Modals {
     <script>
-        function openDeletePostModal(jobPostId) {
+        function openDeletePostModal(jobPostId, isSoftDelete) {
             $.ajax({
-                url: '@Url.Action("DisplayDeleteConfirmationModal", "Jobs", new { jobPostId = "__id__" })'.replace('__id__', jobPostId),
+                url: "@Html.Raw(Url.Action("DisplayDeleteConfirmationModal", "Jobs", new { jobPostId = "__id__", isSoftDelete = "__mode__" }))".replace('__id__', jobPostId).replace('__mode__', isSoftDelete),
                 type: 'GET',
                 success: function (partialView) {
                     $('#deletePostModalContainer').html(partialView);
@@ -209,6 +238,17 @@
                     if (xhr.status === 401) {
                         window.location.replace('/Account/Login');
                     }
+                }
+            });
+        }
+
+        function openRestorePostModal(jobPostId) {
+            $.ajax({
+                url: "@Html.Raw(Url.Action("DisplayRestoreModal", "Management", new { jobPostId = "__id__"}))".replace('__id__', jobPostId),
+                type: 'GET',
+                success: function (partialView) {
+                    $('#restorePostModalContainer').html(partialView);
+                    $('#restoreJobPostModal').modal('show');
                 }
             });
         }

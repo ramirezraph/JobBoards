@@ -2,6 +2,7 @@ using AutoMapper;
 using JobBoards.Data.Contracts.JobLocation;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Persistence.Repositories.JobLocations;
+using JobBoards.Data.Persistence.Repositories.JobPosts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,12 +12,14 @@ namespace JobBoards.Api.Controllers;
 public class JobLocationsController : ApiController
 {
     private readonly IJobLocationsRepository _jobLocationsRepository;
+    private readonly IJobPostsRepository _jobPostsRepository;
     private readonly IMapper _mapper;
 
-    public JobLocationsController(IJobLocationsRepository jobLocationsRepository, IMapper mapper)
+    public JobLocationsController(IJobLocationsRepository jobLocationsRepository, IMapper mapper, IJobPostsRepository jobPostsRepository)
     {
         _jobLocationsRepository = jobLocationsRepository;
         _mapper = mapper;
+        _jobPostsRepository = jobPostsRepository;
     }
 
     [AllowAnonymous]
@@ -61,6 +64,12 @@ public class JobLocationsController : ApiController
         if (jobLocation is null)
         {
             return NotFound();
+        }
+
+        var jobPosts = await _jobPostsRepository.GetAllAsync();
+        if (jobPosts.Count(jp => jp.JobLocationId == jobLocation.Id) > 0)
+        {
+            return Conflict("Unable to delete location. Location is still in used.");
         }
 
         await _jobLocationsRepository.RemoveAsync(jobLocation);

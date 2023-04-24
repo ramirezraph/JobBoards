@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using JobBoards.Data.Contracts.JobType;
 using JobBoards.Data.Entities;
+using JobBoards.Data.Persistence.Repositories.JobPosts;
 using JobBoards.Data.Persistence.Repositories.JobTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +12,14 @@ namespace JobBoards.Api.Controllers;
 public class JobTypesController : ApiController
 {
     private readonly IJobTypesRepository _jobTypesRepository;
+    private readonly IJobPostsRepository _jobPostsRepository;
     private readonly IMapper _mapper;
 
-    public JobTypesController(IJobTypesRepository jobTypesRepository, IMapper mapper)
+    public JobTypesController(IJobTypesRepository jobTypesRepository, IMapper mapper, IJobPostsRepository jobPostsRepository)
     {
         _jobTypesRepository = jobTypesRepository;
         _mapper = mapper;
+        _jobPostsRepository = jobPostsRepository;
     }
 
     [AllowAnonymous]
@@ -61,6 +64,12 @@ public class JobTypesController : ApiController
         if (jobType is null)
         {
             return NotFound();
+        }
+
+        var jobPosts = await _jobPostsRepository.GetAllAsync();
+        if (jobPosts.Count(jp => jp.JobTypeId == jobType.Id) > 0)
+        {
+            return Conflict("Unable to delete job type. Job type is still in used.");
         }
 
         await _jobTypesRepository.RemoveAsync(jobType);

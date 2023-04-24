@@ -238,6 +238,19 @@ public class ManagementController : BaseController
         {
             return NotFound();
         }
+
+        var jobPosts = await _jobPostsRepository.GetAllAsync();
+        if (jobPosts.Count(jp => jp.JobCategoryId == jobCategory.Id) > 0)
+        {
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+            {
+                Title = "Failed",
+                Message = "Unable to remove category. Category is still in used.",
+                Type = "danger"
+            });
+            return RedirectToAction("JobCategories");
+        }
+
         await _jobCategoriesRepository.RemoveAsync(jobCategory);
 
         TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
@@ -378,6 +391,19 @@ public class ManagementController : BaseController
         {
             return NotFound();
         }
+
+        var jobPosts = await _jobPostsRepository.GetAllAsync();
+        if (jobPosts.Count(jp => jp.JobLocationId == jobLocation.Id) > 0)
+        {
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+            {
+                Title = "Failed",
+                Message = "Unable to remove location. Location is still in used.",
+                Type = "danger"
+            });
+            return RedirectToAction("JobLocations");
+        }
+
         await _jobLocationsRepository.RemoveAsync(jobLocation);
 
         TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification

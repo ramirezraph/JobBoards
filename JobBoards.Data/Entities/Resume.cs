@@ -37,7 +37,7 @@ public class Resume : Entity<Guid>
             jobSeekerId,
             uri,
             fileName,
-            DateTime.UtcNow,
+            DateTime.Now,
             null,
             null);
     }

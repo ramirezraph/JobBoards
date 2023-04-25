@@ -46,7 +46,7 @@ namespace JobBoards.Data.Persistence.Repositories.JobTypes
 
             jobType.Name = entity.Name;
             jobType.Description = entity.Description;
-            jobType.UpdatedAt = DateTime.UtcNow;
+            jobType.UpdatedAt = DateTime.Now;
 
             _dbContext.JobTypes.Update(jobType);
 

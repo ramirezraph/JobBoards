@@ -45,7 +45,7 @@ public class JobLocationsRepository : IJobLocationsRepository
 
         jobLocation.City = entity.City;
         jobLocation.Country = entity.Country;
-        jobLocation.UpdatedAt = DateTime.UtcNow;
+        jobLocation.UpdatedAt = DateTime.Now;
 
         _dbContext.JobLocations.Update(jobLocation);
 

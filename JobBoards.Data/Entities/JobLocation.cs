@@ -31,7 +31,7 @@ public class JobLocation : Entity<Guid>
             Guid.NewGuid(),
             city,
             country,
-            DateTime.UtcNow,
+            DateTime.Now,
             null,
             null);
     }

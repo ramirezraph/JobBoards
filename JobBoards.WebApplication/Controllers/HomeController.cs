@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using JobBoards.WebApplication.Models;
 using JobBoards.WebApplication.ViewModels.Home;
 using JobBoards.Data.Persistence.Repositories.JobPosts;
-using JobBoards.WebApplication.ViewModels.Shared;
 
 namespace JobBoards.WebApplication.Controllers;
 

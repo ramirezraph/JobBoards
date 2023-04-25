@@ -239,6 +239,11 @@ public class JobsController : BaseController
     [Authorize(Roles = "Admin, Employer")]
     public async Task<IActionResult> Create(CreateViewModel viewModel)
     {
+        if (viewModel.Form.MaxSalary < viewModel.Form.MinSalary)
+        {
+            ModelState.AddModelError("Form.MaxSalary", "Max Salary must be greater than the Min Salary.");
+        }
+
         if (!ModelState.IsValid)
         {
             viewModel.JobCategories = await _jobCategoriesRepository.GetAllAsync();
@@ -306,6 +311,11 @@ public class JobsController : BaseController
     [Authorize(Roles = "Admin, Employer")]
     public async Task<IActionResult> Update(EditViewModel viewModel)
     {
+        if (viewModel.Form.MaxSalary < viewModel.Form.MinSalary)
+        {
+            ModelState.AddModelError("Form.MaxSalary", "Max Salary must be greater than the Min Salary.");
+        }
+
         if (!ModelState.IsValid)
         {
             viewModel.JobCategories = await _jobCategoriesRepository.GetAllAsync();

@@ -28,9 +28,9 @@ public class CreateViewModel
         public double MinSalary { get; set; }
 
         [Required]
-        [Range(0, double.MaxValue, ErrorMessage = "Please enter a valid salary.")]
+        [Range(1, double.MaxValue, ErrorMessage = "Please enter a valid salary.")]
         // [Compare("MinSalary", ErrorMessage = "Maximum salary must be greater than minimum salary.")]
-            public double MaxSalary { get; set; }
+        public double MaxSalary { get; set; }
 
         public bool IsActive { get; set; } = true;
 

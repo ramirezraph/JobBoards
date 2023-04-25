@@ -1,3 +1,4 @@
+using Azure;
 using Azure.Storage.Blobs;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Identity;
@@ -217,17 +218,38 @@ public class JobseekersController : BaseController
         // Get the blob client for the resume
         var blobClient = blobContainerClient.GetBlobClient(blobName);
 
-        // Download the resume as a stream
-        var stream = await blobClient.OpenReadAsync();
-
-        // Get the file name from the resume blob URI
-        var fileName = Path.GetFileName(resumeUri.LocalPath);
-
-        // Return the resume file as a FileStreamResult
-        return new FileStreamResult(stream, "application/octet-stream")
+        try
         {
-            FileDownloadName = $"{jobSeekerProfile.User.FullName}-resume{Path.GetExtension(fileName)}"
-        };
+            var stream = await blobClient.OpenReadAsync();
+
+            var fileName = Path.GetFileName(resumeUri.LocalPath);
+
+            // Return the resume file as a FileStreamResult
+            return new FileStreamResult(stream, "application/octet-stream")
+            {
+                FileDownloadName = $"{jobSeekerProfile.User.FullName}-resume{Path.GetExtension(fileName)}"
+            };
+        }
+        catch (RequestFailedException ex) when (ex.Status == 404)
+        {
+            // Blob does not exists.
+
+            string referer = Request.Headers["Referer"].ToString();
+
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+            {
+                Title = "Failed",
+                Message = "Failed to download resume. Resume file cannot be found.",
+                Type = "danger"
+            });
+
+            if (string.IsNullOrEmpty(referer))
+            {
+                return RedirectToAction(controllerName: "Home", actionName: "Index");
+            }
+
+            return Redirect(referer);
+        }
     }
 
     [HttpGet]

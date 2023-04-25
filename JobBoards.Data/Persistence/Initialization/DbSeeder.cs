@@ -85,22 +85,23 @@ public static class DbSeeder
 
         var jobLocations = new List<JobLocation>
         {
-            JobLocation.CreateNew("Quezon City", "Philippines"),
             JobLocation.CreateNew("Makati", "Philippines"),
-            JobLocation.CreateNew("Imus, Cavite", "Philippines"),
-            JobLocation.CreateNew("Marikina", "Philippines"),
-            JobLocation.CreateNew("Navotas", "Philippines"),
+            JobLocation.CreateNew("Pangasinan", "Philippines"),
+            JobLocation.CreateNew("Iloilo", "Philippines"),
+            JobLocation.CreateNew("Cebu", "Philippines"),
+            JobLocation.CreateNew("Batangas", "Philippines"),
             JobLocation.CreateNew("Manila", "Philippines"),
-            JobLocation.CreateNew("Mandaluyong", "Philippines"),
-            JobLocation.CreateNew("Meycauayan, Bulacan", "Philippines"),
-            JobLocation.CreateNew("Paranaque", "Philippines"),
-            JobLocation.CreateNew("Taguig", "Philippines"),
-            JobLocation.CreateNew("Bulakan, Bulacan", "Philippines"),
-            JobLocation.CreateNew("Angeles, Pampanga", "Philippines"),
-            JobLocation.CreateNew("Las Pinas", "Philippines"),
-            JobLocation.CreateNew("Mariveles, Bataan", "Philippines"),
-            JobLocation.CreateNew("Calamba, Laguna", "Philippines"),
-            JobLocation.CreateNew("Batangas", "Philippines")
+            JobLocation.CreateNew("Baguio", "Philippines"),
+            JobLocation.CreateNew("Bicol", "Philippines"),
+            JobLocation.CreateNew("Cavite", "Philippines"),
+            JobLocation.CreateNew("Isabela", "Philippines"),
+            JobLocation.CreateNew("Laguna", "Philippines"),
+            JobLocation.CreateNew("La-Union", "Philippines"),
+            JobLocation.CreateNew("Marinduque", "Philippines"),
+            JobLocation.CreateNew("Mindoro", "Philippines"),
+            JobLocation.CreateNew("NCR", "Philippines"),
+            JobLocation.CreateNew("Quezon", "Philippines"),
+            JobLocation.CreateNew("Boracay-Aklan", "Philippines"),
         };
 
         await dbContext.JobLocations.AddRangeAsync(jobLocations);

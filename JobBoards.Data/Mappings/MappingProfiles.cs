@@ -5,6 +5,7 @@ using JobBoards.Data.Contracts.JobLocation;
 using JobBoards.Data.Contracts.JobPost;
 using JobBoards.Data.Contracts.JobSeekers;
 using JobBoards.Data.Contracts.JobType;
+using JobBoards.Data.Contracts.Management;
 using JobBoards.Data.Contracts.Resume;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Identity;
@@ -70,6 +71,9 @@ public class MappingProfiles : Profile
             .ForPath(dest => dest.Resume.Id, opt => opt.MapFrom(src => src.JobSeeker.ResumeId))
             .ForPath(dest => dest.Resume.FileName, opt => opt.MapFrom(src => src.JobSeeker.Resume.FileName))
             .ForPath(dest => dest.Resume.Uri, opt => opt.MapFrom(src => src.JobSeeker.Resume.Uri));
+
+        // Management
+        CreateMap<ApplicationUser, UserResponse>().ReverseMap();
     }
 
 }

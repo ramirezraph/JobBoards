@@ -31,7 +31,7 @@ public class JobType : Entity<Guid>
             Guid.NewGuid(),
             name,
             description,
-            DateTime.UtcNow,
+            DateTime.Now,
             null,
             null);
     }

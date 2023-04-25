@@ -98,7 +98,7 @@ public class JobApplicationsRepository : IJobApplicationsRepository
         if (jobApplication is not null)
         {
             jobApplication.Status = "Withdrawn";
-            jobApplication.UpdatedAt = DateTime.UtcNow;
+            jobApplication.UpdatedAt = DateTime.Now;
 
             _dbContext.JobApplications.Update(jobApplication);
             await _dbContext.SaveChangesAsync();
@@ -111,7 +111,7 @@ public class JobApplicationsRepository : IJobApplicationsRepository
         if (jobApplication is not null)
         {
             jobApplication.Status = newStatus;
-            jobApplication.UpdatedAt = DateTime.UtcNow;
+            jobApplication.UpdatedAt = DateTime.Now;
 
             _dbContext.JobApplications.Update(jobApplication);
             await _dbContext.SaveChangesAsync();

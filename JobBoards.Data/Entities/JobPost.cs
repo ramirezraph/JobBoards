@@ -82,8 +82,8 @@ public class JobPost : Entity<Guid>
             jobTypeId,
             expiration,
             createdById,
-            DateTime.UtcNow,
-            DateTime.UtcNow,
+            DateTime.Now,
+            DateTime.Now,
             null);
     }
 

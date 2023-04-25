@@ -101,7 +101,7 @@ public class JobPostsRepository : IJobPostsRepository
         jobPost.JobLocationId = entity.JobLocationId;
         jobPost.Description = entity.Description;
 
-        jobPost.UpdatedAt = DateTime.UtcNow;
+        jobPost.UpdatedAt = DateTime.Now;
 
         _dbContext.JobPosts.Update(jobPost);
         await _dbContext.SaveChangesAsync();
@@ -127,7 +127,7 @@ public class JobPostsRepository : IJobPostsRepository
         if (post != null)
         {
             post.IsActive = false;
-            post.DeletedAt = DateTime.UtcNow;
+            post.DeletedAt = DateTime.Now;
 
             _dbContext.JobPosts.Update(post);
 

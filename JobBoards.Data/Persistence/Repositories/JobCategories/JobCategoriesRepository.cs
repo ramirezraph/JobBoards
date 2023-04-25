@@ -45,7 +45,7 @@ public class JobCategoriesRepository : IJobCategoriesRepository
 
         jobCategory.Name = entity.Name;
         jobCategory.Description = entity.Description;
-        jobCategory.UpdatedAt = DateTime.UtcNow;
+        jobCategory.UpdatedAt = DateTime.Now;
 
         _dbContext.JobCategories.Update(jobCategory);
 

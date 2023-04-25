@@ -13,7 +13,7 @@
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Jobs" asp-action="Index">Job Listing</a>
                 </li>
-                @if (User.IsInRole("Admin"))
+                @if (User.IsInRole("Admin") || User.IsInRole("Employer"))
                 {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -25,15 +25,19 @@
                             </li>
                             <li><a class="dropdown-item" asp-controller="Management" asp-action="JobApplications">Job
                                     Applications</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" asp-controller="Management" asp-action="JobCategories">Job
-                                    Categories</a>
-                            </li>
-                            <li><a class="dropdown-item" asp-controller="Management" asp-action="JobLocations">Job
-                                    Locations</a>
-                            </li>
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" asp-controller="Management" asp-action="JobCategories">Job
+                                        Categories</a>
+                                </li>
+                                <li><a class="dropdown-item" asp-controller="Management" asp-action="JobLocations">Job
+                                        Locations</a>
+                                </li>
+                            }
                         </ul>
                     </li>
                 }

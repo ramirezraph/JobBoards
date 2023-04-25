@@ -871,6 +871,75 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Management",
+			"item": [
+				{
+					"name": "generate-random-user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/management/generate-random-users?size=1&role=Employer",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"management",
+								"generate-random-users"
+							],
+							"query": [
+								{
+									"key": "size",
+									"value": "1"
+								},
+								{
+									"key": "role",
+									"value": "Employer"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-jobseekers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/management/get-all-jobseekers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"management",
+								"get-all-jobseekers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-all-employers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/management/get-all-employers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"management",
+								"get-all-employers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
 	"auth": {

@@ -49,30 +49,33 @@ public class FakerService : IFakerService
             await _userManager.CreateAsync(fakeUser, "Pass123$");
             await _userManager.AddToRoleAsync(fakeUser, role);
 
-            var jobseekerProfile = await _jobSeekersRepository.RegisterUserAsJobSeeker(fakeUser.Id);
-
-            if (jobseekerProfile is null)
+            var isJobseeker = await _userManager.IsInRoleAsync(fakeUser, "User");
+            if (isJobseeker)
             {
-                throw new ArgumentNullException("Failed to register fake user as jobseeker.");
-            }
+                var jobseekerProfile = await _jobSeekersRepository.RegisterUserAsJobSeeker(fakeUser.Id);
 
-            // Generate fake resume
-            var fakeResume = _resumeFaker.Generate();
+                if (jobseekerProfile is null)
+                {
+                    throw new ArgumentNullException("Failed to register fake user as jobseeker.");
+                }
 
-            await _jobSeekersRepository.UpdateResumeAsync(jobseekerProfile.Id, fakeResume.Uri, fakeResume.FileName);
+                // Generate fake resume
+                var fakeResume = _resumeFaker.Generate();
+                await _jobSeekersRepository.UpdateResumeAsync(jobseekerProfile.Id, fakeResume.Uri, fakeResume.FileName);
 
-            // Apply to random job posts
-            if (jobPostsIds.Any())
-            {
-                var newJobApplication = new Faker<JobApplication>()
-                                .RuleFor(ja => ja.Id, f => Guid.NewGuid())
-                                .RuleFor(ja => ja.JobSeekerId, f => jobseekerProfile.Id)
-                                .RuleFor(ja => ja.JobPostId, f => f.PickRandom<Guid>(jobPostsIds))
-                                .RuleFor(ja => ja.Status, f => f.PickRandom(jobApplicationStatuses))
-                                .RuleFor(ja => ja.CreatedAt, f => DateTime.Now)
-                                .RuleFor(ja => ja.UpdatedAt, f => DateTime.Now);
+                // Apply to random job posts
+                if (jobPostsIds.Any())
+                {
+                    var newJobApplication = new Faker<JobApplication>()
+                                    .RuleFor(ja => ja.Id, f => Guid.NewGuid())
+                                    .RuleFor(ja => ja.JobSeekerId, f => jobseekerProfile.Id)
+                                    .RuleFor(ja => ja.JobPostId, f => f.PickRandom<Guid>(jobPostsIds))
+                                    .RuleFor(ja => ja.Status, f => f.PickRandom(jobApplicationStatuses))
+                                    .RuleFor(ja => ja.CreatedAt, f => DateTime.Now)
+                                    .RuleFor(ja => ja.UpdatedAt, f => DateTime.Now);
 
-                await _jobApplicationsRepository.AddAsync(newJobApplication.Generate());
+                    await _jobApplicationsRepository.AddAsync(newJobApplication.Generate());
+                }
             }
         }
 

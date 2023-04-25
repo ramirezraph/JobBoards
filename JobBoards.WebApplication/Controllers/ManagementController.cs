@@ -1,21 +1,18 @@
 using JobBoards.Data.Common.Models;
 using JobBoards.Data.Entities;
-using JobBoards.Data.Entities.Common;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobCategories;
 using JobBoards.Data.Persistence.Repositories.JobLocations;
 using JobBoards.Data.Persistence.Repositories.JobPosts;
-using JobBoards.WebApplication.ViewModels.Jobs;
 using JobBoards.WebApplication.ViewModels.Management;
 using JobBoards.WebApplication.ViewModels.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Security.Claims;
 
 namespace JobBoards.WebApplication.Controllers;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin, Employer")]
 public class ManagementController : BaseController
 {
     private readonly IJobPostsRepository _jobPostsRepository;
@@ -157,6 +154,7 @@ public class ManagementController : BaseController
             routeValues: new { id = jobPostId, returnUrl = requestPath });
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> JobCategories()
     {
         var viewModel = new ManageJobCategoriesViewModel
@@ -166,6 +164,7 @@ public class ManagementController : BaseController
         return View(viewModel);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> CreateJobCategory()
     {
@@ -176,6 +175,7 @@ public class ManagementController : BaseController
         return View(viewModel);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateJobCategory(ManageJobCategoriesViewModel.JobCategoryForm form)
@@ -208,6 +208,7 @@ public class ManagementController : BaseController
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> EditJobCategory(Guid id)
     {
@@ -226,6 +227,7 @@ public class ManagementController : BaseController
         return View(viewModel);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> EditJobCategory(ManageJobCategoriesViewModel viewModel)
 
@@ -275,7 +277,7 @@ public class ManagementController : BaseController
         return PartialView("~/Views/Shared/Modals/_DeleteJobCategoryModal.cshtml", viewModel);
     }
 
-
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteJobCategory(Guid id)
@@ -310,6 +312,7 @@ public class ManagementController : BaseController
         return RedirectToAction("JobCategories");
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> JobLocations()
     {
         var viewModel = new ManageJobLocationsViewModel
@@ -319,6 +322,7 @@ public class ManagementController : BaseController
         return View(viewModel);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> CreateJobLocation()
     {
@@ -329,6 +333,7 @@ public class ManagementController : BaseController
         return View(viewModel);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateJobLocation(ManageJobLocationsViewModel.JobLocationForm form)
@@ -362,6 +367,7 @@ public class ManagementController : BaseController
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<IActionResult> EditJobLocation(Guid id)
     {
@@ -380,6 +386,7 @@ public class ManagementController : BaseController
         return View(viewModel);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> EditJobLocation(ManageJobLocationsViewModel viewModel)
 
@@ -429,6 +436,7 @@ public class ManagementController : BaseController
         return PartialView("~/Views/Shared/Modals/_DeleteJobLocationModal.cshtml", viewModel);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteJobLocation(Guid id)

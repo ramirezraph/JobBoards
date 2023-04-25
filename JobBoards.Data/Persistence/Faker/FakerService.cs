@@ -39,7 +39,8 @@ public class FakerService : IFakerService
 
     public async Task<List<ApplicationUser>> GenerateFakeUsers(int size, string role = "User")
     {
-        var fakeUsers = _applicationUserFaker.GenerateForever().Take(size);
+        var fakeUsers = _applicationUserFaker.GenerateForever().Take(size).ToList();
+
         var jobPostsIds = _jobPostsRepository.GetAllQueryable().Select(jp => jp.Id);
         var jobApplicationStatuses = new[] { "Submitted", "Interview", "Shortlisted", "Not Suitable", "Withdrawn" };
 
@@ -75,6 +76,6 @@ public class FakerService : IFakerService
             }
         }
 
-        return fakeUsers.ToList();
+        return fakeUsers;
     }
 }

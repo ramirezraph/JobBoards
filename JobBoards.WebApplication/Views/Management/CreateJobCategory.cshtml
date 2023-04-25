@@ -43,12 +43,14 @@
     <form asp-action="CreateJobCategory" method="post">
         <div class="form-group">
             <label for="name">Name</label>
-            <input type="text" id="name" name="Name" class="form-control" placeholder="Enter Job Category Name" required>
+            <input type="text" asp-for="JobCategoriesForm.Name" class="form-control"
+                placeholder="Enter Job Category Name" />
             <span asp-validation-for="JobCategoriesForm.Name" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label for="description">Description</label>
-            <textarea id="description" name="Description" class="form-control" placeholder="Enter Job Category Description" rows="4"></textarea>
+            <textarea asp-for="JobCategoriesForm.Description" class="form-control"
+                placeholder="Enter Job Category Description" rows="4"></textarea>
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Create</button>

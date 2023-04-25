@@ -11,8 +11,10 @@ namespace JobBoards.WebApplication.ViewModels.Management
         public class JobLocationForm
         {
             public Guid JobLocationId { get; set; }
+
             [Required(ErrorMessage = "Please enter a city.")]
             public string City { get; set; } = default!;
+
             [Required(ErrorMessage = "Please enter a country.")]
             public string Country { get; set; } = default!;
 

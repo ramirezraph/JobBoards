@@ -178,14 +178,14 @@ public class ManagementController : BaseController
     [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateJobCategory(ManageJobCategoriesViewModel.JobCategoryForm form)
+    public async Task<IActionResult> CreateJobCategory(ManageJobCategoriesViewModel viewModel)
     {
         if (ModelState.IsValid)
         {
             var jobCategory = new JobCategory
             {
-                Name = form.Name,
-                Description = form.Description
+                Name = viewModel.JobCategoriesForm.Name,
+                Description = viewModel.JobCategoriesForm.Description
             };
             await _jobCategoriesRepository.AddAsync(jobCategory);
 
@@ -200,10 +200,11 @@ public class ManagementController : BaseController
         }
         else
         {
-            var viewModel = new ManageJobCategoriesViewModel
+            viewModel = new ManageJobCategoriesViewModel
             {
-                JobCategoriesForm = form
+                JobCategoriesForm = viewModel.JobCategoriesForm
             };
+
             return View(viewModel);
         }
     }
@@ -336,15 +337,16 @@ public class ManagementController : BaseController
     [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateJobLocation(ManageJobLocationsViewModel.JobLocationForm form)
+    public async Task<IActionResult> CreateJobLocation(ManageJobLocationsViewModel viewModel)
     {
         if (ModelState.IsValid)
         {
             var jobLocation = new JobLocation
             {
-                City = form.City,
-                Country = form.Country
+                City = viewModel.JobLocationsForm.City,
+                Country = viewModel.JobLocationsForm.Country
             };
+
             await _jobLocationsRepository.AddAsync(jobLocation);
 
             TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
@@ -358,9 +360,9 @@ public class ManagementController : BaseController
         }
         else
         {
-            var viewModel = new ManageJobLocationsViewModel
+            viewModel = new ManageJobLocationsViewModel
             {
-                JobLocationsForm = form
+                JobLocationsForm = viewModel.JobLocationsForm
             };
 
             return View(viewModel);

@@ -18,7 +18,7 @@ public class BaseController : Controller
 
             if (toastData is not null)
             {
-                if (filterContext.Result is RedirectToActionResult)
+                if (filterContext.Result is RedirectToActionResult || filterContext.Result is RedirectResult)
                 {
                     TempData.Keep("ShowToast");
                 }

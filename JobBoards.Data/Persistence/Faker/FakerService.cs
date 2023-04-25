@@ -64,6 +64,7 @@ public class FakerService : IFakerService
             if (jobPostsIds.Any())
             {
                 var newJobApplication = new Faker<JobApplication>()
+                                .RuleFor(ja => ja.Id, f => Guid.NewGuid())
                                 .RuleFor(ja => ja.JobSeekerId, f => jobseekerProfile.Id)
                                 .RuleFor(ja => ja.JobPostId, f => f.PickRandom<Guid>(jobPostsIds))
                                 .RuleFor(ja => ja.Status, f => f.PickRandom(jobApplicationStatuses))

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace JobBoards.Data.Contracts.JobPost;
+
 public class CreateJobPostRequest
 {
     [Required]

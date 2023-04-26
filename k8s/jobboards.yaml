@@ -67,7 +67,7 @@ spec:
     spec:
       containers:
         - name: jobboardsapi
-          image: raphaelramirez/jobboards-api:1.1.0
+          image: raphaelramirez/jobboards-api:2.0.0
           imagePullPolicy: Always
           ports:
             - containerPort: 6001
@@ -110,7 +110,7 @@ spec:
     spec:
       containers:
         - name: jobboardswebapp
-          image: raphaelramirez/jobboards-mvc:1.4.0
+          image: raphaelramirez/jobboards-mvc:2.0.0
           imagePullPolicy: Always
           ports:
             - containerPort: 5001

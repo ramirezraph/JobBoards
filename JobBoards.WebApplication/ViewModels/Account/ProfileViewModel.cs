@@ -35,6 +35,7 @@ public class ProfileViewModel
     public string UserId { get; set; } = default!;
 
     [Required]
+    [RegularExpression(@"^[\p{L}\s'-]+$", ErrorMessage = "Full name must only contain letters, spaces, hyphens, and apostrophes")]
     [DisplayName("Full Name")]
     public string FullName { get; set; } = default!;
 

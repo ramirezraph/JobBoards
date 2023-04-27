@@ -5,7 +5,9 @@ namespace JobBoards.Data.Contracts.Account;
 public class RegisterRequest
 {
     [Required]
-    public string FullName { get; set; } = default!;
+    [RegularExpression(@"^[\p{L}\s'-]+$", ErrorMessage = "Full name must only contain letters, spaces, hyphens, and apostrophes")]
+    public string FullName { get; set; }
+
     [Required]
     public string Email { get; set; } = default!;
 

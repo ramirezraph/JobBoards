@@ -5,7 +5,9 @@ namespace JobBoards.WebApplication.ViewModels.Account;
 public class RegisterViewModel
 {
     [Required]
-    public string FullName { get; set; } = default!;
+    [RegularExpression(@"^[\p{L}\s'-]+$", ErrorMessage = "Full name must only contain letters, spaces, hyphens, and apostrophes")]
+    public string FullName { get; set; }
+
 
     [Required]
     [EmailAddress]

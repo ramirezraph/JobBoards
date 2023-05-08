@@ -17,6 +17,7 @@ using JobBoards.WebApplication.ViewModels.Shared;
 using Newtonsoft.Json;
 using static JobBoards.WebApplication.ViewModels.Jobs.IndexViewModel;
 using JobBoards.Data.Common.Models;
+using JobBoards.Data.ApiServices.JobCategoryAPI;
 
 namespace JobBoards.WebApplication.Controllers;
 
@@ -31,6 +32,7 @@ public class JobsController : BaseController
     private readonly IJobTypesRepository _jobTypesRepository;
     private readonly IJobApplicationsRepository _jobApplicationsRepository;
     private readonly IJobSeekersRepository _jobSeekersRepository;
+    private readonly IJobCategoryAPI _jobCategoryAPI;
 
     public JobsController(
         IMapper mapper,
@@ -41,7 +43,8 @@ public class JobsController : BaseController
         IJobLocationsRepository jobLocationsRepository,
         IJobTypesRepository jobTypesRepository,
         IJobApplicationsRepository jobApplicationsRepository,
-        IJobSeekersRepository jobSeekersRepository)
+        IJobSeekersRepository jobSeekersRepository,
+        IJobCategoryAPI jobCategoryAPI)
     {
         _mapper = mapper;
         _userManager = userManager;
@@ -52,6 +55,7 @@ public class JobsController : BaseController
         _jobTypesRepository = jobTypesRepository;
         _jobApplicationsRepository = jobApplicationsRepository;
         _jobSeekersRepository = jobSeekersRepository;
+        _jobCategoryAPI = jobCategoryAPI;
     }
 
     [HttpGet]
@@ -117,10 +121,12 @@ public class JobsController : BaseController
 
         var paginatedJobPosts = await PaginatedResult<JobPost>.CreateAsync(jobPosts, pageNumber ?? 1, 4);
 
+        var jobCategories = await _jobCategoryAPI.GetAllAsync();
+
         var viewModel = new IndexViewModel
         {
             Pagination = paginatedJobPosts,
-            JobCategories = await _jobCategoriesRepository.GetAllAsync(),
+            JobCategories = jobCategories.ToList(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
             JobTypes = jobTypesViewModels,
             HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),

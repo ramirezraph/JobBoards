@@ -5,6 +5,7 @@ using JobBoards.Data.Persistence;
 using JobBoards.Data.Mappings;
 using JobBoards.Data.AzureStorage;
 using JobBoards.Data.Authentication;
+using JobBoards.Data.ApiServices;
 
 namespace JobBoards.Data;
 
@@ -26,6 +27,7 @@ public static class DependencyInjection
             .AddPersistence(configuration)
             .AddIdentity()
             .AddAzureStorage(configuration)
-            .AddMappings();
+            .AddMappings()
+            .AddRestApiServices();
     }
 }

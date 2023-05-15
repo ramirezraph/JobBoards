@@ -1,4 +1,5 @@
 using Azure.Storage.Blobs;
+using JobBoards.Data.ApiServices;
 using JobBoards.Data.Identity;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using JobBoards.Data.Persistence.Repositories.Resumes;
@@ -15,17 +16,19 @@ public class AccountController : BaseController
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly IHttpClientService _httpClientService;
     private readonly IJobSeekersRepository _jobSeekersRepository;
     private readonly IResumesRepository _resumesRepository;
     private readonly BlobServiceClient _blobServiceClient;
 
-    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJobSeekersRepository jobSeekersRepository, IResumesRepository resumesRepository, BlobServiceClient blobServiceClient)
+    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJobSeekersRepository jobSeekersRepository, IResumesRepository resumesRepository, BlobServiceClient blobServiceClient, IHttpClientService httpClientService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _jobSeekersRepository = jobSeekersRepository;
         _resumesRepository = resumesRepository;
         _blobServiceClient = blobServiceClient;
+        _httpClientService = httpClientService;
     }
 
     [HttpGet]
@@ -49,6 +52,15 @@ public class AccountController : BaseController
             ViewBag.LoginFailedMessage = "Login failed. Please check your email and password and try again.";
             return View(loginViewModel);
         }
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            ViewBag.LoginFailedMessage = "Login failed. Please check your email and password and try again.";
+            return View(loginViewModel);
+        }
+
+        await _httpClientService.Authorize(user);
 
         return RedirectToAction(actionName: "Index", controllerName: "Home");
     }
@@ -90,6 +102,9 @@ public class AccountController : BaseController
 
         // Sign in the user
         await _signInManager.SignInAsync(newUser, isPersistent: false);
+
+        await _httpClientService.Authorize(newUser);
+
         return RedirectToAction(actionName: "Index", controllerName: "Home");
     }
 

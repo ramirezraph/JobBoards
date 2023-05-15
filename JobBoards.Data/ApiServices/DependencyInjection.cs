@@ -9,7 +9,7 @@ public static class DependencyInjection
     {
         services.AddHttpClient<IHttpClientService, HttpClientService>(client =>
         {
-            client.BaseAddress = new Uri("http://localhost:5153/api/");
+            client.BaseAddress = new Uri("https://localhost:7227/api/");
         });
 
         services.AddTransient<IJobCategoryAPI, JobCategoryAPI.JobCategoryAPI>();

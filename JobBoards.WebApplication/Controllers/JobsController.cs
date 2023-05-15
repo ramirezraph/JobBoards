@@ -121,12 +121,10 @@ public class JobsController : BaseController
 
         var paginatedJobPosts = await PaginatedResult<JobPost>.CreateAsync(jobPosts, pageNumber ?? 1, 4);
 
-        var jobCategories = await _jobCategoryAPI.GetAllAsync();
-
         var viewModel = new IndexViewModel
         {
             Pagination = paginatedJobPosts,
-            JobCategories = jobCategories.ToList(),
+            JobCategories = await _jobCategoryAPI.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
             JobTypes = jobTypesViewModels,
             HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),

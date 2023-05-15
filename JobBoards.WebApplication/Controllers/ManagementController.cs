@@ -1,4 +1,7 @@
+using AutoMapper;
+using JobBoards.Data.ApiServices.JobCategoryAPI;
 using JobBoards.Data.Common.Models;
+using JobBoards.Data.Contracts.JobCategory;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
 using JobBoards.Data.Persistence.Repositories.JobCategories;
@@ -19,13 +22,17 @@ public class ManagementController : BaseController
     private readonly IJobApplicationsRepository _jobApplicationsRepository;
     private readonly IJobCategoriesRepository _jobCategoriesRepository;
     private readonly IJobLocationsRepository _jobLocationsRepository;
+    private readonly IJobCategoryAPI _jobCategoryAPI;
+    private readonly IMapper _mapper;
 
-    public ManagementController(IJobPostsRepository jobPostsRepository, IJobApplicationsRepository jobApplicationsRepository, IJobCategoriesRepository jobCategoriesRepository, IJobLocationsRepository jobLocationsRepository)
+    public ManagementController(IJobPostsRepository jobPostsRepository, IJobApplicationsRepository jobApplicationsRepository, IJobCategoriesRepository jobCategoriesRepository, IJobLocationsRepository jobLocationsRepository, IJobCategoryAPI jobCategoryAPI, IMapper mapper)
     {
         _jobPostsRepository = jobPostsRepository;
         _jobApplicationsRepository = jobApplicationsRepository;
         _jobCategoriesRepository = jobCategoriesRepository;
         _jobLocationsRepository = jobLocationsRepository;
+        _jobCategoryAPI = jobCategoryAPI;
+        _mapper = mapper;
     }
 
     public async Task<IActionResult> Dashboard()
@@ -159,7 +166,7 @@ public class ManagementController : BaseController
     {
         var viewModel = new ManageJobCategoriesViewModel
         {
-            JobCategories = await _jobCategoriesRepository.GetAllAsync()
+            JobCategories = await _jobCategoryAPI.GetAllAsync()
         };
         return View(viewModel);
     }
@@ -170,7 +177,7 @@ public class ManagementController : BaseController
     {
         var viewModel = new ManageJobCategoriesViewModel
         {
-            JobCategories = await _jobCategoriesRepository.GetAllAsync()
+            JobCategories = await _jobCategoryAPI.GetAllAsync()
         };
         return View(viewModel);
     }
@@ -213,7 +220,7 @@ public class ManagementController : BaseController
     [HttpGet]
     public async Task<IActionResult> EditJobCategory(Guid id)
     {
-        var jobCategory = await _jobCategoriesRepository.GetByIdAsync(id);
+        var jobCategory = await _jobCategoryAPI.GetByIdAsync(id);
         if (jobCategory is null)
         {
             return NotFound();
@@ -241,12 +248,23 @@ public class ManagementController : BaseController
 
         var formValues = viewModel.JobCategoriesForm;
 
-        var updatedJobCategory = JobCategory.CreateNew(
+        var dto = _mapper.Map<UpdateJobCategoryRequest>(JobCategory.CreateNew(
                    formValues.Name,
                    formValues.Description
-               );
+               ));
 
-        await _jobCategoriesRepository.UpdateAsync(viewModel.JobCategoriesForm.JobCategoryId, updatedJobCategory);
+        var updatedJobCategory = await _jobCategoryAPI.UpdateAsync(formValues.JobCategoryId, dto);
+        if (updatedJobCategory is null)
+        {
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+            {
+                Title = "Failed",
+                Message = "Job Category update failed.",
+                Type = "danger"
+            });
+
+            return RedirectToAction(controllerName: "Management", actionName: "JobCategories");
+        }
 
         TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
         {

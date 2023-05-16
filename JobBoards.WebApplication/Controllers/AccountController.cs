@@ -65,8 +65,8 @@ public class AccountController : BaseController
         }
 
         await _signInManager.CreateUserPrincipalAsync(user);
-        var jwt = await _jwtTokenGenerator.GenerateToken(user);
-        _httpContextAccessor?.HttpContext?.Session.SetString("JWT", jwt);
+
+        await storeJwt(user);
 
         return RedirectToAction(actionName: "Index", controllerName: "Home");
     }
@@ -109,8 +109,7 @@ public class AccountController : BaseController
         // Sign in the user
         await _signInManager.SignInAsync(newUser, isPersistent: false);
 
-        var jwt = await _jwtTokenGenerator.GenerateToken(newUser);
-        _httpContextAccessor?.HttpContext?.Session.SetString("JWT", jwt);
+        await storeJwt(newUser);
 
         return RedirectToAction(actionName: "Index", controllerName: "Home");
     }
@@ -257,8 +256,7 @@ public class AccountController : BaseController
 
         await _signInManager.RefreshSignInAsync(user);
 
-        var jwt = await _jwtTokenGenerator.GenerateToken(user);
-        _httpContextAccessor?.HttpContext?.Session.SetString("JWT", jwt);
+        await storeJwt(user);
 
         TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
         {
@@ -277,7 +275,21 @@ public class AccountController : BaseController
         await _signInManager.SignOutAsync();
 
         _httpContextAccessor?.HttpContext?.Session.Clear();
+        _httpContextAccessor?.HttpContext?.Response.Cookies.Delete("jwt");
 
         return RedirectToAction(actionName: "Index", controllerName: "Home");
+    }
+
+    private async Task storeJwt(ApplicationUser user)
+    {
+        var jwt = await _jwtTokenGenerator.GenerateToken(user);
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+        };
+        _httpContextAccessor?.HttpContext?.Response.Cookies.Append("jwt", jwt, cookieOptions);
+        //_httpContextAccessor?.HttpContext?.Session.SetString("JWT", jwt);
     }
 }

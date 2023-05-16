@@ -1,12 +1,7 @@
 using JobBoards.Data.ApiServices.JobCategoryAPI;
-using JobBoards.Data.Authentication;
-using JobBoards.Data.Identity;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 
 namespace JobBoards.Data.ApiServices;
 
@@ -20,15 +15,10 @@ public static class DependencyInjection
                     client.BaseAddress = new Uri("https://localhost:7227/api/");
 
                     var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-                    var session = httpContextAccessor.HttpContext?.Session;
-
-                    if (session != null)
+                    var jwtCookie = httpContextAccessor?.HttpContext?.Request.Cookies["jwt"];
+                    if (!string.IsNullOrEmpty(jwtCookie))
                     {
-                        var jwt = session.GetString("JWT");
-                        if (!string.IsNullOrEmpty(jwt))
-                        {
-                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
-                        }
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie);
                     }
                 });
 

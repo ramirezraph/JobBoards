@@ -1,5 +1,6 @@
 using Azure.Storage.Blobs;
 using JobBoards.Data.ApiServices;
+using JobBoards.Data.Authentication;
 using JobBoards.Data.Identity;
 using JobBoards.Data.Persistence.Repositories.JobSeekers;
 using JobBoards.Data.Persistence.Repositories.Resumes;
@@ -20,8 +21,10 @@ public class AccountController : BaseController
     private readonly IJobSeekersRepository _jobSeekersRepository;
     private readonly IResumesRepository _resumesRepository;
     private readonly BlobServiceClient _blobServiceClient;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJobSeekersRepository jobSeekersRepository, IResumesRepository resumesRepository, BlobServiceClient blobServiceClient, IHttpClientService httpClientService)
+    public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IJobSeekersRepository jobSeekersRepository, IResumesRepository resumesRepository, BlobServiceClient blobServiceClient, IHttpClientService httpClientService, IJwtTokenGenerator jwtTokenGenerator, IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -29,6 +32,8 @@ public class AccountController : BaseController
         _resumesRepository = resumesRepository;
         _blobServiceClient = blobServiceClient;
         _httpClientService = httpClientService;
+        _jwtTokenGenerator = jwtTokenGenerator;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     [HttpGet]
@@ -52,15 +57,16 @@ public class AccountController : BaseController
             ViewBag.LoginFailedMessage = "Login failed. Please check your email and password and try again.";
             return View(loginViewModel);
         }
-
-        var user = await _userManager.GetUserAsync(User);
+        var user = await _userManager.FindByEmailAsync(loginViewModel.Email);
         if (user is null)
         {
             ViewBag.LoginFailedMessage = "Login failed. Please check your email and password and try again.";
             return View(loginViewModel);
         }
 
-        await _httpClientService.Authorize(user);
+        await _signInManager.CreateUserPrincipalAsync(user);
+        var jwt = await _jwtTokenGenerator.GenerateToken(user);
+        _httpContextAccessor?.HttpContext?.Session.SetString("JWT", jwt);
 
         return RedirectToAction(actionName: "Index", controllerName: "Home");
     }
@@ -103,7 +109,8 @@ public class AccountController : BaseController
         // Sign in the user
         await _signInManager.SignInAsync(newUser, isPersistent: false);
 
-        await _httpClientService.Authorize(newUser);
+        var jwt = await _jwtTokenGenerator.GenerateToken(newUser);
+        _httpContextAccessor?.HttpContext?.Session.SetString("JWT", jwt);
 
         return RedirectToAction(actionName: "Index", controllerName: "Home");
     }
@@ -250,6 +257,9 @@ public class AccountController : BaseController
 
         await _signInManager.RefreshSignInAsync(user);
 
+        var jwt = await _jwtTokenGenerator.GenerateToken(user);
+        _httpContextAccessor?.HttpContext?.Session.SetString("JWT", jwt);
+
         TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
         {
             Title = "Success",
@@ -265,6 +275,8 @@ public class AccountController : BaseController
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
+
+        _httpContextAccessor?.HttpContext?.Session.Clear();
 
         return RedirectToAction(actionName: "Index", controllerName: "Home");
     }

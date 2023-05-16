@@ -16,6 +16,9 @@ public enum ApiEndpoint
     [Endpoint("jobcategories/{id}")]
     GetJobCategoryById,
 
+    [Endpoint("jobcategories")]
+    CreateJobCategory,
+
     [Endpoint("jobcategories/{id}")]
     DeleteJobCategory,
 

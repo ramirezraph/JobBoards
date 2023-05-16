@@ -1,5 +1,6 @@
 using JobBoards.Data.Contracts.JobCategory;
 using JobBoards.Data.Entities;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace JobBoards.Data.ApiServices.JobCategoryAPI;
@@ -7,17 +8,23 @@ namespace JobBoards.Data.ApiServices.JobCategoryAPI;
 public class JobCategoryAPI : IJobCategoryAPI
 {
     private readonly IHttpClientService _httpClientService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public JobCategoryAPI(IHttpClientService httpClientService)
+    public JobCategoryAPI(IHttpClientService httpClientService, IHttpContextAccessor httpContextAccessor)
     {
         _httpClientService = httpClientService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<List<JobCategory>> GetAllAsync()
     {
-        var response = await _httpClientService.GetAsync(ApiEndpoint.GetAllJobCategories);
+        var response = await _httpClientService
+            .GetAsync(ApiEndpoint.GetAllJobCategories);
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            return new();
+        }
 
         var content = await response.Content.ReadAsStringAsync();
         var jobCategories = JsonConvert.DeserializeObject<List<JobCategory>>(content);
@@ -28,7 +35,6 @@ public class JobCategoryAPI : IJobCategoryAPI
     public async Task<JobCategory?> GetByIdAsync(Guid id)
     {
         var response = await _httpClientService.GetAsync(ApiEndpoint.GetJobCategoryById, id);
-
         if (!response.IsSuccessStatusCode)
         {
             return null;
@@ -40,9 +46,25 @@ public class JobCategoryAPI : IJobCategoryAPI
         return jobCategory;
     }
 
-    public async Task<JobCategory?> UpdateAsync(Guid id, UpdateJobCategoryRequest updatedJobCategory)
+    public async Task<bool> UpdateAsync(Guid id, UpdateJobCategoryRequest updatedJobCategory)
     {
-        var response = await _httpClientService.PutAsync(ApiEndpoint.UpdateJobCategory, updatedJobCategory, id);
+        var response = await _httpClientService
+            .PostAsync(ApiEndpoint.UpdateJobCategory, updatedJobCategory, id);
+
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        var response = await _httpClientService
+            .DeleteAsync(ApiEndpoint.DeleteJobCategory, id);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<JobCategory?> CreateAsync(CreateJobCategoryRequest newJobCategory)
+    {
+        var response = await _httpClientService
+            .PostAsync(ApiEndpoint.CreateJobCategory, newJobCategory);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -53,15 +75,5 @@ public class JobCategoryAPI : IJobCategoryAPI
         var jobCategory = JsonConvert.DeserializeObject<JobCategory>(content);
 
         return jobCategory;
-    }
-
-    public Task DeleteAsync(Guid id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<JobCategory?> CreateAsync(CreateJobCategoryRequest newJobCategory)
-    {
-        throw new NotImplementedException();
     }
 }

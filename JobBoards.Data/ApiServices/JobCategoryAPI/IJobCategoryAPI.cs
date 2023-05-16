@@ -8,6 +8,6 @@ public interface IJobCategoryAPI
     Task<List<JobCategory>> GetAllAsync();
     Task<JobCategory?> GetByIdAsync(Guid id);
     Task<JobCategory?> CreateAsync(CreateJobCategoryRequest newJobCategory);
-    Task<JobCategory?> UpdateAsync(Guid id, UpdateJobCategoryRequest updatedJobCategory);
-    Task DeleteAsync(Guid id);
+    Task<bool> UpdateAsync(Guid id, UpdateJobCategoryRequest updatedJobCategory);
+    Task<bool> DeleteAsync(Guid id);
 }

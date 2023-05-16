@@ -23,11 +23,10 @@ public static class DependencyInjection
 
     public static IServiceCollection AddWebAppData(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-
         return services
             .AddPersistence(configuration)
             .AddIdentity()
+            .AddWebAuthentication(configuration)
             .AddAzureStorage(configuration)
             .AddMappings()
             .AddRestApiServices();

@@ -4,7 +4,6 @@ using JobBoards.Data.Common.Models;
 using JobBoards.Data.Contracts.JobCategory;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Persistence.Repositories.JobApplications;
-using JobBoards.Data.Persistence.Repositories.JobCategories;
 using JobBoards.Data.Persistence.Repositories.JobLocations;
 using JobBoards.Data.Persistence.Repositories.JobPosts;
 using JobBoards.WebApplication.ViewModels.Management;
@@ -20,16 +19,19 @@ public class ManagementController : BaseController
 {
     private readonly IJobPostsRepository _jobPostsRepository;
     private readonly IJobApplicationsRepository _jobApplicationsRepository;
-    private readonly IJobCategoriesRepository _jobCategoriesRepository;
     private readonly IJobLocationsRepository _jobLocationsRepository;
     private readonly IJobCategoryAPI _jobCategoryAPI;
     private readonly IMapper _mapper;
 
-    public ManagementController(IJobPostsRepository jobPostsRepository, IJobApplicationsRepository jobApplicationsRepository, IJobCategoriesRepository jobCategoriesRepository, IJobLocationsRepository jobLocationsRepository, IJobCategoryAPI jobCategoryAPI, IMapper mapper)
+    public ManagementController(
+        IJobPostsRepository jobPostsRepository,
+        IJobApplicationsRepository jobApplicationsRepository,
+        IJobLocationsRepository jobLocationsRepository,
+        IJobCategoryAPI jobCategoryAPI,
+        IMapper mapper)
     {
         _jobPostsRepository = jobPostsRepository;
         _jobApplicationsRepository = jobApplicationsRepository;
-        _jobCategoriesRepository = jobCategoriesRepository;
         _jobLocationsRepository = jobLocationsRepository;
         _jobCategoryAPI = jobCategoryAPI;
         _mapper = mapper;
@@ -80,7 +82,7 @@ public class ManagementController : BaseController
         var viewModel = new ManageJobApplicationsViewModel
         {
             Pagination = paginatedJobPosts,
-            JobCategories = await _jobCategoriesRepository.GetAllAsync(),
+            JobCategories = await _jobCategoryAPI.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
             Filters = new ManageJobApplicationsViewModel.FilterForm
             {
@@ -187,25 +189,7 @@ public class ManagementController : BaseController
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> CreateJobCategory(ManageJobCategoriesViewModel viewModel)
     {
-        if (ModelState.IsValid)
-        {
-            var jobCategory = new JobCategory
-            {
-                Name = viewModel.JobCategoriesForm.Name,
-                Description = viewModel.JobCategoriesForm.Description
-            };
-            await _jobCategoriesRepository.AddAsync(jobCategory);
-
-            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
-            {
-                Title = "Success",
-                Message = "Job Category created successfully.",
-                Type = "success"
-            });
-
-            return RedirectToAction(nameof(JobCategories));
-        }
-        else
+        if (!ModelState.IsValid)
         {
             viewModel = new ManageJobCategoriesViewModel
             {
@@ -214,6 +198,36 @@ public class ManagementController : BaseController
 
             return View(viewModel);
         }
+
+        var dto = _mapper.Map<CreateJobCategoryRequest>(JobCategory.CreateNew(
+                   viewModel.JobCategoriesForm.Name,
+                   viewModel.JobCategoriesForm.Description));
+        var newJobCategory = await _jobCategoryAPI.CreateAsync(dto);
+        if (newJobCategory is null)
+        {
+            viewModel = new ManageJobCategoriesViewModel
+            {
+                JobCategoriesForm = viewModel.JobCategoriesForm
+            };
+
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+            {
+                Title = "Failed",
+                Message = "Job Category create failed.",
+                Type = "danger"
+            });
+
+            return View(viewModel);
+        }
+
+        TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+        {
+            Title = "Success",
+            Message = "Job Category created successfully.",
+            Type = "success"
+        });
+
+        return RedirectToAction(nameof(JobCategories));
     }
 
     [Authorize(Roles = "Admin")]
@@ -229,7 +243,7 @@ public class ManagementController : BaseController
         var viewModel = new ManageJobCategoriesViewModel
         {
             JobCategoriesForm = new ManageJobCategoriesViewModel.JobCategoryForm(jobCategory),
-            JobCategories = await _jobCategoriesRepository.GetAllAsync()
+            JobCategories = await _jobCategoryAPI.GetAllAsync()
         };
 
         return View(viewModel);
@@ -242,7 +256,7 @@ public class ManagementController : BaseController
     {
         if (!ModelState.IsValid)
         {
-            viewModel.JobCategories = await _jobCategoriesRepository.GetAllAsync();
+            viewModel.JobCategories = await _jobCategoryAPI.GetAllAsync();
             return View(viewModel);
         }
 
@@ -253,8 +267,8 @@ public class ManagementController : BaseController
                    formValues.Description
                ));
 
-        var updatedJobCategory = await _jobCategoryAPI.UpdateAsync(formValues.JobCategoryId, dto);
-        if (updatedJobCategory is null)
+        var isUpdateSuccess = await _jobCategoryAPI.UpdateAsync(formValues.JobCategoryId, dto);
+        if (!isUpdateSuccess)
         {
             TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
             {
@@ -278,7 +292,7 @@ public class ManagementController : BaseController
 
     public async Task<IActionResult> DisplayDeleteJobCategoryConfirmationModal(Guid jobCategoryId)
     {
-        var jobCategory = await _jobCategoriesRepository.GetByIdAsync(jobCategoryId);
+        var jobCategory = await _jobCategoryAPI.GetByIdAsync(jobCategoryId);
 
         if (jobCategory is null)
         {
@@ -301,7 +315,7 @@ public class ManagementController : BaseController
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteJobCategory(Guid id)
     {
-        var jobCategory = await _jobCategoriesRepository.GetByIdAsync(id);
+        var jobCategory = await _jobCategoryAPI.GetByIdAsync(id);
         if (jobCategory is null)
         {
             return NotFound();
@@ -319,7 +333,17 @@ public class ManagementController : BaseController
             return RedirectToAction("JobCategories");
         }
 
-        await _jobCategoriesRepository.RemoveAsync(jobCategory);
+        var isDeleteSuccess = await _jobCategoryAPI.DeleteAsync(jobCategory.Id);
+        if (!isDeleteSuccess)
+        {
+            TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
+            {
+                Title = "Failed",
+                Message = "Failed to remove category.",
+                Type = "danger"
+            });
+            return RedirectToAction("JobCategories");
+        }
 
         TempData["ShowToast"] = JsonConvert.SerializeObject(new ToastNotification
         {

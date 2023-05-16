@@ -4,12 +4,15 @@ using JobBoards.Data.Persistence.Initialization;
 
 var builder = WebApplication.CreateBuilder(args);
 {
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    builder.Services.AddControllersWithViews();
+
+    builder.Services.AddSession();
+    builder.Services.AddHttpContextAccessor();
+
     builder.Services
         .AddWebAppData(builder.Configuration)
         .AddDbInitializer();
-
-    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-    builder.Services.AddControllersWithViews();
 }
 
 var app = builder.Build();
@@ -33,6 +36,7 @@ var app = builder.Build();
     app.UseRouting();
     app.UseAuthentication();
     app.UseAuthorization();
+    app.UseSession();
     app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");

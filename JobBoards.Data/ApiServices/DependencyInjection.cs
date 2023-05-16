@@ -1,5 +1,7 @@
 using JobBoards.Data.ApiServices.JobCategoryAPI;
+using JobBoards.Data.Common;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
 
@@ -13,6 +15,13 @@ public static class DependencyInjection
                 .ConfigureHttpClient((serviceProvider, client) =>
                 {
                     client.BaseAddress = new Uri("https://localhost:7227/api/");
+
+                    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+                    var apiKeyFromConfiguration = configuration.GetValue<string>(ApiConstants.ApiKeyName);
+                    if (!string.IsNullOrEmpty(apiKeyFromConfiguration))
+                    {
+                        client.DefaultRequestHeaders.Add(ApiConstants.ApiKeyHeader, apiKeyFromConfiguration);
+                    }
 
                     var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
                     var jwtCookie = httpContextAccessor?.HttpContext?.Request.Cookies["jwt"];

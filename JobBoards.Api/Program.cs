@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
+using JobBoards.Api.Middlewares;
 using JobBoards.Data;
+using JobBoards.Data.Cors;
 using JobBoards.Data.Persistence.Initialization;
 using Microsoft.OpenApi.Models;
 
@@ -55,6 +57,8 @@ var app = builder.Build();
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseHttpsRedirection();
+    app.UseCorsPolicy();
+    app.UseMiddleware<ApiKeyAuthenticationMiddleware>();
     app.UseAuthentication();
     app.UseAuthorization();
     app.MapControllers();

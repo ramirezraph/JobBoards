@@ -32,7 +32,6 @@ public class JobsController : BaseController
     private readonly IJobTypesRepository _jobTypesRepository;
     private readonly IJobApplicationsRepository _jobApplicationsRepository;
     private readonly IJobSeekersRepository _jobSeekersRepository;
-    private readonly IJobCategoryAPI _jobCategoryAPI;
 
     public JobsController(
         IMapper mapper,
@@ -43,8 +42,7 @@ public class JobsController : BaseController
         IJobLocationsRepository jobLocationsRepository,
         IJobTypesRepository jobTypesRepository,
         IJobApplicationsRepository jobApplicationsRepository,
-        IJobSeekersRepository jobSeekersRepository,
-        IJobCategoryAPI jobCategoryAPI)
+        IJobSeekersRepository jobSeekersRepository)
     {
         _mapper = mapper;
         _userManager = userManager;
@@ -55,7 +53,6 @@ public class JobsController : BaseController
         _jobTypesRepository = jobTypesRepository;
         _jobApplicationsRepository = jobApplicationsRepository;
         _jobSeekersRepository = jobSeekersRepository;
-        _jobCategoryAPI = jobCategoryAPI;
     }
 
     [HttpGet]
@@ -124,7 +121,7 @@ public class JobsController : BaseController
         var viewModel = new IndexViewModel
         {
             Pagination = paginatedJobPosts,
-            JobCategories = await _jobCategoryAPI.GetAllAsync(),
+            JobCategories = await _jobCategoriesRepository.GetAllAsync(),
             JobLocations = await _jobLocationsRepository.GetAllAsync(),
             JobTypes = jobTypesViewModels,
             HasWriteAccess = User.IsInRole("Admin") || User.IsInRole("Employer"),

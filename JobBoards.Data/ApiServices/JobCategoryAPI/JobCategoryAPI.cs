@@ -8,12 +8,10 @@ namespace JobBoards.Data.ApiServices.JobCategoryAPI;
 public class JobCategoryAPI : IJobCategoryAPI
 {
     private readonly IHttpClientService _httpClientService;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public JobCategoryAPI(IHttpClientService httpClientService, IHttpContextAccessor httpContextAccessor)
+    public JobCategoryAPI(IHttpClientService httpClientService)
     {
         _httpClientService = httpClientService;
-        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<List<JobCategory>> GetAllAsync()

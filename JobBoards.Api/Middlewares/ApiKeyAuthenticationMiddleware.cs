@@ -4,7 +4,7 @@ namespace JobBoards.Api.Middlewares;
 
 public class ApiKeyAuthenticationMiddleware
 {
-    private readonly RequestDelegate _next;
+    private readonly RequestDelegate _next; 
     public ApiKeyAuthenticationMiddleware(RequestDelegate next)
     {
         _next = next;

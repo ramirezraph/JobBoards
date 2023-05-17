@@ -1,6 +1,7 @@
 using AutoMapper;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Persistence.Context;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace JobBoards.Data.Persistence.Repositories.JobCategories;
@@ -21,12 +22,18 @@ public class JobCategoriesRepository : IJobCategoriesRepository
 
     public async Task<List<JobCategory>> GetAllAsync()
     {
-        return await _dbContext.JobCategories.ToListAsync();
+        return await _dbContext.JobCategories
+            .FromSql($"EXEC getJobCategories")
+            .ToListAsync();
     }
 
     public async Task<JobCategory?> GetByIdAsync(Guid id)
     {
-        return await _dbContext.JobCategories.FindAsync(id);
+        var jobCategory = await _dbContext.JobCategories
+            .FromSql($"EXEC getJobCategoryById {id}")
+            .ToListAsync();
+
+        return jobCategory.FirstOrDefault();
     }
 
     public async Task RemoveAsync(JobCategory entity)

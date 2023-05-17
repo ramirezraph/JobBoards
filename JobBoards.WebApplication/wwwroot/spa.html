@@ -1,0 +1,38 @@
+﻿﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Single Page Application</title>
+</head>
+<body>
+    <center>Cors Policy Check</center>
+    <div align="center">
+        <button type="button" onclick="getCategories()">Get Request</button>
+    </div>
+
+    <div id="categories">
+
+    </div>
+
+    <script>
+        function getCategories() {
+            var httpClient = new XMLHttpRequest();
+            httpClient.onreadystatechange = function () {
+                console.log(this.readyState);
+                console.log(this.responseText);
+                if (this.readyState == 4 && this.status == 200 ) {
+                    document.getElementById("categories").innerHTML = this.responseText;
+                    console.log(this.responseText);
+                }
+                else {
+                    console.log("No Response");
+                }
+            }
+            httpClient.open("GET", "https://localhost:7227/api/jobcategories");
+            httpClient.setRequestHeader("x-api-key", "0845a90a-3fa3-4f74-ae31-a56dc7d4622b");
+            httpClient.send();
+        }
+    </script>
+</body>
+</html>

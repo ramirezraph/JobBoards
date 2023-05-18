@@ -32,7 +32,7 @@ public class JobCategoryAPI : IJobCategoryAPI
 
     public async Task<JobCategory?> GetByIdAsync(Guid id)
     {
-        var response = await _httpClientService.GetAsync(ApiEndpoint.GetJobCategoryById, id);
+        var response = await _httpClientService.GetAsync(ApiEndpoint.GetJobCategoryById, new { Id = id });
         if (!response.IsSuccessStatusCode)
         {
             return null;
@@ -47,7 +47,7 @@ public class JobCategoryAPI : IJobCategoryAPI
     public async Task<bool> UpdateAsync(Guid id, UpdateJobCategoryRequest updatedJobCategory)
     {
         var response = await _httpClientService
-            .PostAsync(ApiEndpoint.UpdateJobCategory, updatedJobCategory, id);
+            .PostAsync(ApiEndpoint.UpdateJobCategory, updatedJobCategory, new { Id = id });
 
         return response.IsSuccessStatusCode;
     }
@@ -55,7 +55,7 @@ public class JobCategoryAPI : IJobCategoryAPI
     public async Task<bool> DeleteAsync(Guid id)
     {
         var response = await _httpClientService
-            .DeleteAsync(ApiEndpoint.DeleteJobCategory, id);
+            .DeleteAsync(ApiEndpoint.DeleteJobCategory, new { Id = id });
         return response.IsSuccessStatusCode;
     }
 

@@ -1,8 +1,4 @@
-using System.Net.Http.Headers;
 using System.Text;
-using JobBoards.Data.Authentication;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace JobBoards.Data.ApiServices;
@@ -16,14 +12,14 @@ public class HttpClientService : IHttpClientService
         _httpClient = httpClient;
     }
 
-    public async Task<HttpResponseMessage> GetAsync(ApiEndpoint endpoint, params object[] uriParameters)
+    public async Task<HttpResponseMessage> GetAsync(ApiEndpoint endpoint, object? uriParameters)
     {
         var url = ApiEndpointExtensions.BuildApiUrl(endpoint, uriParameters);
         var response = await _httpClient.GetAsync(url);
         return response;
     }
 
-    public async Task<HttpResponseMessage> PostAsync<TRequest>(ApiEndpoint endpoint, TRequest request, params object[] uriParameters)
+    public async Task<HttpResponseMessage> PostAsync<TRequest>(ApiEndpoint endpoint, TRequest request, object? uriParameters)
     {
         var url = ApiEndpointExtensions.BuildApiUrl(endpoint, uriParameters);
         var json = JsonConvert.SerializeObject(request);
@@ -32,7 +28,7 @@ public class HttpClientService : IHttpClientService
         return response;
     }
 
-    public async Task<HttpResponseMessage> PutAsync<TRequest>(ApiEndpoint endpoint, TRequest request, params object[] uriParameters)
+    public async Task<HttpResponseMessage> PutAsync<TRequest>(ApiEndpoint endpoint, TRequest request, object? uriParameters)
     {
         var url = ApiEndpointExtensions.BuildApiUrl(endpoint, uriParameters);
         var json = JsonConvert.SerializeObject(request);
@@ -41,7 +37,7 @@ public class HttpClientService : IHttpClientService
         return response;
     }
 
-    public async Task<HttpResponseMessage> DeleteAsync(ApiEndpoint endpoint, params object[] uriParameters)
+    public async Task<HttpResponseMessage> DeleteAsync(ApiEndpoint endpoint, object? uriParameters)
     {
         var url = ApiEndpointExtensions.BuildApiUrl(endpoint, uriParameters);
         var response = await _httpClient.DeleteAsync(url);

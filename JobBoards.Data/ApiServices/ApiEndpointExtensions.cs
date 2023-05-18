@@ -1,26 +1,29 @@
+using System.Reflection;
 using System.Text;
 
 namespace JobBoards.Data.ApiServices;
 
 public static class ApiEndpointExtensions
 {
-    public static string BuildApiUrl(ApiEndpoint endpoint, params object[] uriParameters)
+    public static string BuildApiUrl(ApiEndpoint endpoint, object? uriParameters)
     {
         var template = GetEndpointTemplate(endpoint);
         var url = new StringBuilder(template);
 
-        if (uriParameters == null || uriParameters.Length == 0)
+        if (uriParameters == null)
         {
             return url.ToString();
         }
 
-        foreach (var parameter in uriParameters)
+        Type objectType = uriParameters.GetType();
+        PropertyInfo[] properties = objectType.GetProperties();
+
+        foreach (var property in properties)
         {
-            var index = url.ToString().IndexOf("{");
-            if (index >= 0)
-            {
-                url.Replace(url.ToString().Substring(index, url.ToString().IndexOf("}") - index + 1), parameter.ToString());
-            }
+            string propertyName = property.Name.ToLowerInvariant();
+            object? propertyValue = property.GetValue(uriParameters);
+
+            url.Replace("{"+propertyName+"}", propertyValue?.ToString());
         }
 
         return url.ToString();
@@ -34,7 +37,7 @@ public static class ApiEndpointExtensions
         {
             throw new Exception($"Missing endpoint attribute for endpoint '{endpoint}'.");
         }
-        return attribute.Template;
+        return attribute.Template.ToLowerInvariant();
     }
 
 

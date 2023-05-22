@@ -17,8 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.Build();
 {
-    await DbInitializer.InitializeDatabase(app.Services);
-
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {

@@ -59,12 +59,10 @@ public class DbInitializer : IDbInitializer
                 }
 
                 await context.Database.MigrateAsync();
-
-                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                var dbInitializerService = services.GetRequiredService<IDbInitializer>();
-
-                await dbInitializerService.Initialize();
             }
+
+            var dbInitializerService = services.GetRequiredService<IDbInitializer>();
+            await dbInitializerService.Initialize();
         }
     }
 }

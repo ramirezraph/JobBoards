@@ -26,7 +26,7 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "watch",
+            "label": "watch api",
             "command": "dotnet",
             "type": "process",
             "args": [
@@ -34,6 +34,18 @@
                 "run",
                 "--project",
                 "${workspaceFolder}/JobBoards.Api/JobBoards.Api.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch webapp",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/JobBoards.WebApplication/JobBoards.WebApplication.csproj"
             ],
             "problemMatcher": "$msCompile"
         },

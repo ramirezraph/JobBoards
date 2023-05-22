@@ -1,6 +1,5 @@
 using JobBoards.Data.Contracts.JobCategory;
 using JobBoards.Data.Entities;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace JobBoards.Data.ApiServices.JobCategoryAPI;

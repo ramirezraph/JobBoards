@@ -14,7 +14,7 @@ public static class DependencyInjection
         services.AddHttpClient<IHttpClientService, HttpClientService>()
                 .ConfigureHttpClient((serviceProvider, client) =>
                 {
-                    client.BaseAddress = new Uri("https://localhost:7227/api/");
+                    client.BaseAddress = new Uri("http://localhost:5153/api/");
 
                     var configuration = serviceProvider.GetRequiredService<IConfiguration>();
                     var apiKeyFromConfiguration = configuration.GetValue<string>(ApiConstants.ApiKeyName);

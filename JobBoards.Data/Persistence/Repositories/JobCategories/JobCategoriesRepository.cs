@@ -1,23 +1,36 @@
-using AutoMapper;
 using JobBoards.Data.Entities;
 using JobBoards.Data.Persistence.Context;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace JobBoards.Data.Persistence.Repositories.JobCategories;
 
 public class JobCategoriesRepository : IJobCategoriesRepository
 {
     private readonly JobBoardsDbContext _dbContext;
-    public JobCategoriesRepository(JobBoardsDbContext dbContext)
+    private readonly ILogger<JobCategoriesRepository> _logger;
+    public JobCategoriesRepository(JobBoardsDbContext dbContext, ILogger<JobCategoriesRepository> logger)
     {
         _dbContext = dbContext;
+        _logger = logger;
     }
 
     public async Task AddAsync(JobCategory entity)
     {
-        await _dbContext.JobCategories.AddAsync(entity);
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            var parameters = new[] {
+                new SqlParameter("@Name", entity.Name),
+                new SqlParameter("@Description", string.IsNullOrEmpty(entity.Description) ? DBNull.Value : entity.Description),
+                new SqlParameter("@CreatedAt", DateTime.Now)
+            };
+            await _dbContext.Database.ExecuteSqlRawAsync("EXEC createJobCategory @Name, @Description, @CreatedAt", parameters);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Failed to create job category. " + ex.ToString());
+        }
     }
 
     public async Task<List<JobCategory>> GetAllAsync()
@@ -38,8 +51,7 @@ public class JobCategoriesRepository : IJobCategoriesRepository
 
     public async Task RemoveAsync(JobCategory entity)
     {
-        _dbContext.JobCategories.Remove(entity);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.Database.ExecuteSqlAsync($"DELETE FROM JobCategories WHERE Id = {entity.Id}");
     }
 
     public async Task UpdateAsync(Guid id, JobCategory entity)
@@ -50,12 +62,19 @@ public class JobCategoriesRepository : IJobCategoriesRepository
             throw new Exception("Trying to update job category that doesn't exists.");
         }
 
-        jobCategory.Name = entity.Name;
-        jobCategory.Description = entity.Description;
-        jobCategory.UpdatedAt = DateTime.Now;
-
-        _dbContext.JobCategories.Update(jobCategory);
-
-        await _dbContext.SaveChangesAsync();
+        try
+        {
+            var parameters = new[] {
+                new SqlParameter("@Id", id),
+                new SqlParameter("@Name", entity.Name),
+                new SqlParameter("@Description", string.IsNullOrEmpty(entity.Description) ? DBNull.Value : entity.Description),
+                new SqlParameter("@UpdatedAt", DateTime.Now)
+            };
+            await _dbContext.Database.ExecuteSqlRawAsync("EXEC updateJobCategory @Id, @Name, @Description, @UpdatedAt", parameters);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Failed to update job category. " + ex.ToString());
+        }
     }
 }

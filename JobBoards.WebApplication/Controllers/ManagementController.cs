@@ -181,6 +181,7 @@ public class ManagementController : BaseController
         {
             JobCategories = await _jobCategoryAPI.GetAllAsync()
         };
+
         return View(viewModel);
     }
 

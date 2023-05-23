@@ -3,7 +3,7 @@ using System.Text;
 
 namespace JobBoards.Data.ApiServices;
 
-public static class ApiEndpointExtensions
+public static class ApiUtils
 {
     public static string BuildApiUrl(ApiEndpoint endpoint, object? uriParameters)
     {
@@ -23,7 +23,7 @@ public static class ApiEndpointExtensions
             string propertyName = property.Name.ToLowerInvariant();
             object? propertyValue = property.GetValue(uriParameters);
 
-            url.Replace("{"+propertyName+"}", propertyValue?.ToString());
+            url.Replace("{" + propertyName + "}", propertyValue?.ToString());
         }
 
         return url.ToString();

@@ -8,11 +8,6 @@ TalentConnex is a web application developed with .NET technologies that offers a
 - SQL Server 2022
 - Docker and Kubernetes
 
-# Members
-- Joagne Ann F. Fernando
-- Prince Joshua M. Guintu
-- Raphael Isiah L. Ramirez
-
 # Wireframe
 
 We used Figma to design the user interface of the web application. Click the link below to view the figma project.
